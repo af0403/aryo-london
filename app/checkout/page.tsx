@@ -8,7 +8,7 @@ import type { Stripe, StripeCardElement } from "@stripe/stripe-js";
 import { formatPrice } from "../../lib/format";
 import { getProduct } from "../../lib/products";
 import { getStripe } from "../../lib/stripe-client";
-import { createClient } from "../../lib/supabase/client";
+import { createClient, isSupabaseConfigured } from "../../lib/supabase/client";
 import { useCart } from "../../components/cart-provider";
 
 const COUNTRIES = [
@@ -46,6 +46,7 @@ export default function CheckoutPage() {
 
   // Pre-fill email from Supabase session
   useEffect(() => {
+    if (!isSupabaseConfigured) return;
     const supabase = createClient();
     supabase.auth.getSession().then(({ data }) => {
       const u = data.session?.user;
@@ -53,7 +54,7 @@ export default function CheckoutPage() {
       setEmail(u.email ?? "");
       const fn = u.user_metadata?.first_name as string | undefined;
       if (fn) setFirstName(fn);
-    });
+    }).catch(() => null);
   }, []);
 
   // Mount Stripe card element
