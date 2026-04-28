@@ -2516,6 +2516,141 @@ body:has(.home-main) .site-footer {
   text-underline-offset: 3px;
 }
 
+/* ─── Payment method tabs ────────────────────────────────────── */
+
+.payment-tabs {
+  display: flex;
+  gap: 0;
+  margin-bottom: 1.25rem;
+  border: 1px solid var(--line-strong);
+}
+
+.payment-tab {
+  flex: 1;
+  padding: 0.55rem 1rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-family: var(--font-body, sans-serif);
+  background: transparent;
+  border: none;
+  border-right: 1px solid var(--line-strong);
+  cursor: pointer;
+  transition: background 120ms ease, color 120ms ease;
+  color: var(--text-muted);
+}
+
+.payment-tab:last-child {
+  border-right: none;
+}
+
+.payment-tab.is-active {
+  background: var(--text);
+  color: var(--text-inverse);
+}
+
+/* ─── Crypto payment panel ───────────────────────────────────── */
+
+.crypto-connect-hint {
+  margin: 0 0 1rem;
+  font-size: 0.78rem;
+  letter-spacing: 0.03em;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.crypto-payment-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.crypto-wallet-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+}
+
+.crypto-wallet-label {
+  text-transform: uppercase;
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  color: var(--text-muted);
+}
+
+.crypto-wallet-address {
+  flex: 1;
+  font-feature-settings: "tnum";
+}
+
+.crypto-change-wallet {
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-muted);
+  padding: 0;
+}
+
+.crypto-amount-display {
+  padding: 0.9rem 0.75rem;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  font-size: 0.9rem;
+  letter-spacing: 0.04em;
+}
+
+.crypto-amount-gbp {
+  font-family: var(--font-body, sans-serif);
+  color: var(--text-muted);
+}
+
+.crypto-amount-sep {
+  color: var(--text-muted);
+  padding: 0 0.25rem;
+}
+
+.crypto-amount-eth {
+  font-family: var(--font-display, serif);
+  font-size: 1.05rem;
+}
+
+.crypto-price-loading,
+.crypto-price-error {
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+}
+
+.crypto-confirming {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.crypto-tx-note {
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  word-break: break-all;
+}
+
+.crypto-confirming-note {
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
 /* ─── Postcode lookup ─────────────────────────────────────────── */
 
 .postcode-lookup-indicator {

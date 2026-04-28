@@ -10,6 +10,8 @@ import { getProduct } from "../../lib/products";
 import { getStripe } from "../../lib/stripe-client";
 import { createClient, isSupabaseConfigured } from "../../lib/supabase/client";
 import { useCart } from "../../components/cart-provider";
+import { CryptoPaymentSection } from "../../components/crypto-payment";
+import { isWalletConnectConfigured } from "../../lib/walletconnect";
 
 const COUNTRIES = [
   "United Kingdom", "United States", "Australia", "Canada", "France",
@@ -33,6 +35,7 @@ export default function CheckoutPage() {
   const [stripeReady, setStripeReady] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [paymentMethod, setPaymentMethod] = useState<"card" | "crypto">("card");
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -508,32 +511,75 @@ export default function CheckoutPage() {
 
           <p className="checkout-section-title">Payment</p>
 
-          {mounted && !stripeReady ? (
-            <div className="checkout-notice">
-              <p>
-                Online payment is coming soon. To place your order now, email us at{" "}
-                <a href="mailto:support@aryo.london">support@aryo.london</a> and we will process it directly.
-              </p>
-            </div>
-          ) : (
-            <div className="checkout-stripe-wrap">
-              <div className="checkout-stripe-label">
-                <span>🔒</span>
-                <span>Secure payment powered by Stripe</span>
-              </div>
-              <div className="stripe-card-element" ref={cardMountRef} id="stripe-card-element" />
-            </div>
+          {/* Payment method tabs */}
+          <div className="payment-tabs">
+            <button
+              type="button"
+              className={`payment-tab ${paymentMethod === "card" ? "is-active" : ""}`}
+              onClick={() => setPaymentMethod("card")}
+            >
+              Card
+            </button>
+            {isWalletConnectConfigured && (
+              <button
+                type="button"
+                className={`payment-tab ${paymentMethod === "crypto" ? "is-active" : ""}`}
+                onClick={() => setPaymentMethod("crypto")}
+              >
+                Crypto
+              </button>
+            )}
+          </div>
+
+          {/* Card payment */}
+          {paymentMethod === "card" && (
+            <>
+              {mounted && !stripeReady ? (
+                <div className="checkout-notice">
+                  <p>
+                    Online payment is coming soon. To place your order now, email us at{" "}
+                    <a href="mailto:support@aryo.london">support@aryo.london</a> and we will process it directly.
+                  </p>
+                </div>
+              ) : (
+                <div className="checkout-stripe-wrap">
+                  <div className="checkout-stripe-label">
+                    <span>🔒</span>
+                    <span>Secure payment powered by Stripe</span>
+                  </div>
+                  <div className="stripe-card-element" ref={cardMountRef} id="stripe-card-element" />
+                </div>
+              )}
+              {error && <p className="checkout-error">{error}</p>}
+              <button
+                className="checkout-submit"
+                type="submit"
+                disabled={busy}
+              >
+                {busy ? "Processing…" : "Place order"}
+              </button>
+            </>
           )}
 
-          {error && <p className="checkout-error">{error}</p>}
-
-          <button
-            className="checkout-submit"
-            type="submit"
-            disabled={busy}
-          >
-            {busy ? "Processing…" : "Place order"}
-          </button>
+          {/* Crypto payment */}
+          {paymentMethod === "crypto" && isWalletConnectConfigured && (
+            <CryptoPaymentSection
+              orderTotal={subtotal}
+              firstName={firstName}
+              lastName={lastName}
+              email={email}
+              items={lineItems.map((i) => ({
+                slug: i.slug,
+                size: i.size,
+                quantity: i.quantity,
+                name: i.product.name,
+                color: i.product.color,
+                price: i.product.price,
+                fulfillment: i.product.fulfillment,
+              }))}
+              onClearCart={clearCart}
+            />
+          )}
         </div>
       </form>
     </main>

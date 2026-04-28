@@ -4,6 +4,7 @@ import { Cormorant_Garamond, Instrument_Sans } from "next/font/google";
 
 import "../app/globals.css";
 import { CartProvider } from "../components/cart-provider";
+import { Web3Providers } from "../components/web3-providers";
 import { CartUI } from "../components/cart-ui";
 import { FooterSignupForm } from "../components/footer-signup-form";
 import { HeaderAccountButton } from "../components/header-account-button";
@@ -47,6 +48,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body className={`${cormorant.variable} ${instrument.variable}`}>
+        <Web3Providers>
         <CartProvider>
           <div className="site-announcement-bar">Complimentary worldwide shipping on all orders</div>
 
@@ -109,6 +111,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </div>
           </footer>
         </CartProvider>
+        </Web3Providers>
       </body>
     </html>
   );
