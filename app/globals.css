@@ -2516,6 +2516,60 @@ body:has(.home-main) .site-footer {
   text-underline-offset: 3px;
 }
 
+/* ─── Postcode lookup ─────────────────────────────────────────── */
+
+.postcode-lookup-indicator {
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+.postcode-suggestions {
+  position: absolute;
+  top: calc(100% + 2px);
+  left: 0;
+  right: 0;
+  z-index: 20;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  background: #f0eeeb;
+  border: 1px solid var(--line-strong);
+  border-top: none;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.postcode-suggestion-item {
+  padding: 0.6rem 0.75rem;
+  font-size: 0.8rem;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  border-bottom: 1px solid var(--line);
+  transition: background 120ms ease;
+}
+
+.postcode-suggestion-item:last-child {
+  border-bottom: none;
+}
+
+.postcode-suggestion-item:hover {
+  background: var(--surface-raised, #e8e4de);
+}
+
+.postcode-lookup-message {
+  margin: 0.35rem 0 0;
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+.postcode-lookup-found {
+  color: #4a7c59;
+}
+
 /* ─── Size Guide ─────────────────────────────────────────────── */
 
 .size-guide-wrap {

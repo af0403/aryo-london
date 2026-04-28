@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { Stripe, StripeCardElement } from "@stripe/stripe-js";
@@ -16,6 +16,10 @@ const COUNTRIES = [
   "Germany", "Ireland", "Italy", "Netherlands", "New Zealand",
   "Spain", "Sweden", "Switzerland", "United Arab Emirates", "Other",
 ];
+
+const FULL_POSTCODE_RE = /^[A-Z]{1,2}\d[A-Z\d]?\s*\d[A-Z]{2}$/i;
+
+type PostcodeLookupStatus = "idle" | "loading" | "found" | "not-found";
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -39,6 +43,13 @@ export default function CheckoutPage() {
   const [city, setCity] = useState("");
   const [postcode, setPostcode] = useState("");
   const [country, setCountry] = useState("United Kingdom");
+
+  // Postcode lookup
+  const [postcodeSuggestions, setPostcodeSuggestions] = useState<string[]>([]);
+  const [postcodeStatus, setPostcodeStatus] = useState<PostcodeLookupStatus>("idle");
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const postcodeDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const postcodeLookupWrapRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setMounted(true);
@@ -88,6 +99,93 @@ export default function CheckoutPage() {
       cardRef.current = null;
     };
   }, [mounted]);
+
+  // Close suggestions on outside click
+  useEffect(() => {
+    const handleOutside = (e: MouseEvent) => {
+      if (
+        postcodeLookupWrapRef.current &&
+        !postcodeLookupWrapRef.current.contains(e.target as Node)
+      ) {
+        setShowSuggestions(false);
+      }
+    };
+    document.addEventListener("mousedown", handleOutside);
+    return () => document.removeEventListener("mousedown", handleOutside);
+  }, []);
+
+  const lookupPostcode = useCallback(async (value: string) => {
+    const v = value.trim();
+    if (v.length < 2) {
+      setPostcodeSuggestions([]);
+      setShowSuggestions(false);
+      setPostcodeStatus("idle");
+      return;
+    }
+
+    if (FULL_POSTCODE_RE.test(v)) {
+      // Full lookup
+      setPostcodeStatus("loading");
+      setShowSuggestions(false);
+      try {
+        const res = await fetch(
+          `https://api.postcodes.io/postcodes/${encodeURIComponent(v)}`
+        );
+        const data = (await res.json()) as {
+          status: number;
+          result: { postcode: string; post_town: string } | null;
+        };
+        if (data.status === 200 && data.result) {
+          const town = data.result.post_town
+            .split(" ")
+            .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+            .join(" ");
+          setCity(town);
+          setCountry("United Kingdom");
+          setPostcode(data.result.postcode);
+          setPostcodeStatus("found");
+        } else {
+          setPostcodeStatus("not-found");
+        }
+      } catch {
+        setPostcodeStatus("not-found");
+      }
+    } else {
+      // Autocomplete
+      try {
+        const res = await fetch(
+          `https://api.postcodes.io/postcodes/${encodeURIComponent(v)}/autocomplete`
+        );
+        const data = (await res.json()) as {
+          status: number;
+          result: string[] | null;
+        };
+        const suggestions = (data.result ?? []).slice(0, 6);
+        setPostcodeSuggestions(suggestions);
+        setShowSuggestions(suggestions.length > 0);
+        setPostcodeStatus("idle");
+      } catch {
+        setPostcodeSuggestions([]);
+        setShowSuggestions(false);
+      }
+    }
+  }, []); // state setters are stable
+
+  const handlePostcodeChange = (value: string) => {
+    setPostcode(value);
+    setPostcodeStatus("idle");
+    if (postcodeDebounceRef.current) clearTimeout(postcodeDebounceRef.current);
+    postcodeDebounceRef.current = setTimeout(() => {
+      lookupPostcode(value);
+    }, 400);
+  };
+
+  const selectSuggestion = async (suggestion: string) => {
+    setPostcode(suggestion);
+    setShowSuggestions(false);
+    setPostcodeSuggestions([]);
+    await lookupPostcode(suggestion);
+  };
 
   const lineItems = items
     .map((item) => {
@@ -156,7 +254,6 @@ export default function CheckoutPage() {
       }
 
       if (paymentIntent?.status === "succeeded") {
-        // Send confirmation email
         await fetch("/api/send-email", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -174,7 +271,7 @@ export default function CheckoutPage() {
             })),
             total: subtotal,
           }),
-        }).catch(() => null); // non-blocking
+        }).catch(() => null);
 
         clearCart();
         router.push(
@@ -337,16 +434,59 @@ export default function CheckoutPage() {
                 onChange={(e) => setCity(e.target.value)}
               />
             </div>
-            <div className="checkout-field">
-              <label className="checkout-label" htmlFor="co-postcode">Postcode</label>
+
+            {/* Postcode with lookup */}
+            <div
+              className="checkout-field"
+              ref={postcodeLookupWrapRef}
+              style={{ position: "relative" }}
+            >
+              <label className="checkout-label" htmlFor="co-postcode">
+                Postcode
+                {postcodeStatus === "loading" && (
+                  <span className="postcode-lookup-indicator"> — looking up…</span>
+                )}
+              </label>
               <input
                 id="co-postcode"
                 className="checkout-input"
                 type="text"
                 required
                 value={postcode}
-                onChange={(e) => setPostcode(e.target.value)}
+                placeholder="e.g. SW1A 2AA"
+                autoComplete="postal-code"
+                onChange={(e) => handlePostcodeChange(e.target.value)}
+                onFocus={() => postcodeSuggestions.length > 0 && setShowSuggestions(true)}
               />
+
+              {showSuggestions && postcodeSuggestions.length > 0 && (
+                <ul className="postcode-suggestions" role="listbox" aria-label="Postcode suggestions">
+                  {postcodeSuggestions.map((s) => (
+                    <li
+                      key={s}
+                      className="postcode-suggestion-item"
+                      role="option"
+                      onMouseDown={(e) => {
+                        e.preventDefault(); // prevent blur before click
+                        void selectSuggestion(s);
+                      }}
+                    >
+                      {s}
+                    </li>
+                  ))}
+                </ul>
+              )}
+
+              {postcodeStatus === "not-found" && (
+                <p className="postcode-lookup-message">
+                  Postcode not found — please enter your address manually.
+                </p>
+              )}
+              {postcodeStatus === "found" && (
+                <p className="postcode-lookup-message postcode-lookup-found">
+                  Town and country filled automatically.
+                </p>
+              )}
             </div>
           </div>
 
