@@ -1,0 +1,10 @@
+.next
+.next-store
+node_modules
+.vercel
+.env
+.env.local
+.env.production
+dist
+.claude
+*.log
