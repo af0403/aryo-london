@@ -2653,11 +2653,38 @@ body:has(.home-main) .site-footer {
 
 /* ─── Postcode lookup ─────────────────────────────────────────── */
 
-.postcode-lookup-indicator {
-  font-size: 0.72rem;
-  letter-spacing: 0.06em;
-  color: var(--text-muted);
-  font-weight: 400;
+.postcode-field-wrap {
+  position: relative;
+}
+
+.postcode-input-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.5rem;
+  align-items: stretch;
+}
+
+.postcode-find-btn {
+  height: 3rem;
+  padding: 0 1rem;
+  background: #111111;
+  color: #ffffff;
+  border: none;
+  font-size: 0.65rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: opacity 150ms ease;
+}
+
+.postcode-find-btn:hover {
+  opacity: 0.8;
+}
+
+.postcode-find-btn:disabled {
+  opacity: 0.5;
+  cursor: default;
 }
 
 .postcode-suggestions {
@@ -2665,15 +2692,16 @@ body:has(.home-main) .site-footer {
   top: calc(100% + 2px);
   left: 0;
   right: 0;
-  z-index: 20;
+  z-index: 200;
   margin: 0;
   padding: 0;
   list-style: none;
   background: #f0eeeb;
   border: 1px solid var(--line-strong);
   border-top: none;
-  max-height: 200px;
+  max-height: 220px;
   overflow-y: auto;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
 }
 
 .postcode-suggestion-item {
