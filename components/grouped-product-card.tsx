@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -102,11 +103,13 @@ export const GroupedProductCard = ({ group }: { group: ProductGroup }) => {
         onMouseLeave={handleMouseLeave}
       >
         {gallery.map((img, i) => (
-          <img
+          <Image
             key={img.src}
             src={img.src}
             alt={i === 0 ? `${group.name} in ${active.color}` : ""}
             aria-hidden={i !== 0 || undefined}
+            fill
+            sizes="(max-width: 768px) 100vw, 50vw"
             style={{ opacity: i === imgIdx ? 1 : 0 }}
           />
         ))}

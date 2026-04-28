@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useState } from "react";
 
 import type { Product } from "../lib/products";
@@ -24,15 +25,26 @@ export const ProductShowcase = ({ product }: { product: Product }) => {
             onClick={() => setActiveIndex(index)}
             aria-label={`Show image ${index + 1}`}
           >
-            <img src={item.src} alt="" aria-hidden="true" />
+            <Image
+              src={item.src}
+              alt=""
+              aria-hidden="true"
+              width={68}
+              height={90}
+              sizes="68px"
+              style={{ objectFit: "cover", objectPosition: "top center", width: "100%", height: "100%" }}
+            />
           </button>
         ))}
       </div>
 
       <figure className="product-showcase-frame">
-        <img
+        <Image
           src={media.src}
           alt={media.alt}
+          fill
+          priority
+          sizes="(max-width: 768px) 100vw, 60vw"
           style={{
             objectFit: media.fit ?? product.leadImageFit ?? "cover",
             objectPosition: media.position ?? product.leadImagePosition ?? "center center",

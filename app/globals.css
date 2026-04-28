@@ -957,6 +957,7 @@ body:has(.home-main) {
 }
 
 .home-entry-image-wrap {
+  position: relative;
   overflow: hidden;
   height: 100%;
 }
@@ -1444,6 +1445,7 @@ body:has(.home-main) .site-footer {
 }
 
 .product-showcase-frame {
+  position: relative;
   margin: 0;
   aspect-ratio: 3 / 4;
   display: grid;
