@@ -7,7 +7,7 @@ import type { Stripe, StripeCardElement } from "@stripe/stripe-js";
 
 import { formatPrice } from "../../lib/format";
 import { getProduct } from "../../lib/products";
-import { getStripe } from "../../lib/stripe-client";
+import { stripePromise } from "../../lib/stripe-client";
 import { createClient, isSupabaseConfigured } from "../../lib/supabase/client";
 import { useCart } from "../../components/cart-provider";
 import { CryptoPaymentSection } from "../../components/crypto-payment";
@@ -97,7 +97,7 @@ export default function CheckoutPage() {
 
     let card: StripeCardElement | null = null;
 
-    getStripe().then((stripe) => {
+    stripePromise.then((stripe) => {
       if (!stripe || !cardMountRef.current) return;
       stripeRef.current = stripe;
 
