@@ -20,8 +20,26 @@ const COUNTRIES = [
 ];
 
 const FULL_POSTCODE_RE = /^[A-Z]{1,2}\d[A-Z\d]?\s*\d[A-Z]{2}$/i;
+const GETADDRESS_KEY = process.env.NEXT_PUBLIC_GETADDRESS_API_KEY ?? "";
 
-type PostcodeLookupStatus = "idle" | "loading" | "found" | "not-found" | "searching";
+type PostcodeLookupStatus = "idle" | "loading" | "found" | "not-found" | "searching" | "select" | "rate-limited";
+
+type GetAddressResult = {
+  line_1: string;
+  line_2: string;
+  line_3: string;
+  line_4: string;
+  locality: string;
+  town_or_city: string;
+  county: string;
+  country: string;
+};
+
+function formatAddressOption(a: GetAddressResult): string {
+  return [a.line_1, a.line_2, a.line_3, a.locality, a.town_or_city]
+    .filter(Boolean)
+    .join(", ");
+}
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -51,6 +69,8 @@ export default function CheckoutPage() {
   const [postcodeSuggestions, setPostcodeSuggestions] = useState<string[]>([]);
   const [postcodeStatus, setPostcodeStatus] = useState<PostcodeLookupStatus>("idle");
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [addressResults, setAddressResults] = useState<GetAddressResult[]>([]);
+  const [showAddressSelect, setShowAddressSelect] = useState(false);
   const postcodeDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const postcodeLookupWrapRef = useRef<HTMLDivElement>(null);
 
@@ -117,6 +137,20 @@ export default function CheckoutPage() {
     return () => document.removeEventListener("mousedown", handleOutside);
   }, []);
 
+  const applyAddress = useCallback((a: GetAddressResult) => {
+    setAddress1(a.line_1);
+    setAddress2([a.line_2, a.line_3, a.line_4].filter(Boolean).join(", "));
+    setCity(a.town_or_city || a.locality || "");
+    setCountry("United Kingdom");
+  }, []);
+
+  const selectAddress = useCallback((a: GetAddressResult) => {
+    applyAddress(a);
+    setShowAddressSelect(false);
+    setAddressResults([]);
+    setPostcodeStatus("found");
+  }, [applyAddress]);
+
   const doFullLookup = useCallback(async (raw: string) => {
     const v = raw.trim().replace(/\s+/g, " ").toUpperCase();
     if (!FULL_POSTCODE_RE.test(v)) {
@@ -125,6 +159,47 @@ export default function CheckoutPage() {
     }
     setPostcodeStatus("loading");
     setShowSuggestions(false);
+    setShowAddressSelect(false);
+    setAddressResults([]);
+
+    // Primary: getAddress.io for full street addresses
+    if (GETADDRESS_KEY) {
+      try {
+        const res = await fetch(
+          `https://api.getaddress.io/find/${encodeURIComponent(v)}?api-key=${GETADDRESS_KEY}&expand=true`
+        );
+        if (res.status === 429) {
+          setPostcodeStatus("rate-limited");
+          return;
+        }
+        if (res.ok) {
+          const data = (await res.json()) as {
+            postcode?: string;
+            addresses: GetAddressResult[];
+          };
+          const addresses = data.addresses ?? [];
+          if (addresses.length > 0) {
+            setPostcode(data.postcode ?? v);
+            setCountry("United Kingdom");
+            if (addresses.length === 1) {
+              applyAddress(addresses[0]);
+              setPostcodeStatus("found");
+            } else {
+              setAddressResults(addresses);
+              setShowAddressSelect(true);
+              setPostcodeStatus("select");
+            }
+            return;
+          }
+          // empty address list — fall through to postcodes.io
+        }
+        // 404 or other error — fall through to postcodes.io
+      } catch {
+        // network error — fall through to postcodes.io
+      }
+    }
+
+    // Fallback: postcodes.io for city/district only
     try {
       const res = await fetch(
         `https://api.postcodes.io/postcodes/${encodeURIComponent(v)}`
@@ -135,13 +210,10 @@ export default function CheckoutPage() {
           postcode: string;
           post_town: string | null;
           admin_district: string | null;
-          thoroughfare: string | null;
-          premise: string | null;
         } | null;
       };
       if (data.status === 200 && data.result) {
         const r = data.result;
-        // post_town is null in the free API; fall back to admin_district
         const rawCity = r.post_town ?? r.admin_district ?? "";
         const town = rawCity
           .split(" ")
@@ -150,17 +222,14 @@ export default function CheckoutPage() {
         setPostcode(r.postcode);
         if (town) setCity(town);
         setCountry("United Kingdom");
-        // Fill address line 1 only when premise/thoroughfare are available
-        const line1 = [r.premise, r.thoroughfare].filter(Boolean).join(" ");
-        if (line1 && !address1) setAddress1(line1);
         setPostcodeStatus("found");
       } else {
         setPostcodeStatus("not-found");
       }
     } catch {
-      setPostcodeStatus("idle"); // fail silently
+      setPostcodeStatus("idle");
     }
-  }, [address1]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [applyAddress]);
 
   const lookupPostcode = useCallback(async (value: string) => {
     const v = value.trim();
@@ -174,7 +243,7 @@ export default function CheckoutPage() {
     if (FULL_POSTCODE_RE.test(v)) {
       await doFullLookup(v);
     } else {
-      // Autocomplete on partial input
+      // Partial autocomplete via postcodes.io
       try {
         const res = await fetch(
           `https://api.postcodes.io/postcodes/${encodeURIComponent(v)}/autocomplete`
@@ -195,10 +264,10 @@ export default function CheckoutPage() {
   }, [doFullLookup]);
 
   const handlePostcodeChange = (value: string) => {
-    // Uppercase and strip leading/trailing spaces as user types
     const normalised = value.toUpperCase();
     setPostcode(normalised);
     setPostcodeStatus("idle");
+    setShowAddressSelect(false);
     if (postcodeDebounceRef.current) clearTimeout(postcodeDebounceRef.current);
     postcodeDebounceRef.current = setTimeout(() => {
       void lookupPostcode(normalised);
@@ -214,7 +283,6 @@ export default function CheckoutPage() {
 
   const handleFindAddress = () => {
     if (postcodeDebounceRef.current) clearTimeout(postcodeDebounceRef.current);
-    setPostcodeStatus("searching");
     void doFullLookup(postcode);
   };
 
@@ -526,16 +594,45 @@ export default function CheckoutPage() {
 
               {postcodeStatus === "not-found" && (
                 <p className="postcode-lookup-message">
-                  Address not found — please enter manually.
+                  No addresses found — please enter manually.
+                </p>
+              )}
+              {postcodeStatus === "rate-limited" && (
+                <p className="postcode-lookup-message">
+                  Address lookup unavailable — please enter manually.
                 </p>
               )}
               {postcodeStatus === "found" && (
                 <p className="postcode-lookup-message postcode-lookup-found">
-                  Address details filled automatically.
+                  Address filled automatically.
+                </p>
+              )}
+              {postcodeStatus === "select" && (
+                <p className="postcode-lookup-message postcode-lookup-found">
+                  {addressResults.length} addresses found — select below.
                 </p>
               )}
             </div>
           </div>
+
+          {/* Address picker — shown when getAddress.io returns multiple results */}
+          {showAddressSelect && addressResults.length > 0 && (
+            <div className="checkout-field">
+              <label className="checkout-label">Select your address</label>
+              <ul className="address-results-list" role="listbox" aria-label="Address results">
+                {addressResults.map((a, i) => (
+                  <li
+                    key={i}
+                    className="address-result-item"
+                    role="option"
+                    onClick={() => selectAddress(a)}
+                  >
+                    {formatAddressOption(a)}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
 
           <div className="checkout-field">
             <label className="checkout-label" htmlFor="co-country">Country</label>
