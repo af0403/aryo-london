@@ -7,7 +7,7 @@ import type { Stripe, StripeCardElement } from "@stripe/stripe-js";
 
 import { formatPrice } from "../../lib/format";
 import { getProduct } from "../../lib/products";
-import { stripePromise } from "../../lib/stripe-client";
+import { stripePromise, stripeEnabled } from "../../lib/stripe-client";
 import { createClient, isSupabaseConfigured } from "../../lib/supabase/client";
 import { useCart } from "../../components/cart-provider";
 import { CryptoPaymentSection } from "../../components/crypto-payment";
@@ -675,7 +675,7 @@ export default function CheckoutPage() {
           {/* Card payment */}
           {paymentMethod === "card" && (
             <>
-              {mounted && !stripeReady ? (
+              {!stripeEnabled ? (
                 <div className="checkout-notice">
                   <p>
                     Online payment is coming soon. To place your order now, email us at{" "}
@@ -688,7 +688,9 @@ export default function CheckoutPage() {
                     <span>🔒</span>
                     <span>Secure payment powered by Stripe</span>
                   </div>
+                  {/* Always rendered so cardMountRef is available when stripePromise resolves */}
                   <div className="stripe-card-element" ref={cardMountRef} id="stripe-card-element" />
+                  {!stripeReady && <p className="checkout-stripe-loading">Loading payment form…</p>}
                 </div>
               )}
               {error && <p className="checkout-error">{error}</p>}

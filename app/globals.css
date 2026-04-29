@@ -2347,6 +2347,13 @@ body:has(.home-main) .site-footer {
   min-height: 2.5rem;
 }
 
+.checkout-stripe-loading {
+  margin: 0.5rem 0 0;
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+}
+
 .checkout-error {
   font-size: 0.7rem;
   letter-spacing: 0.06em;
