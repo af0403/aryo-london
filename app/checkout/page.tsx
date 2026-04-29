@@ -20,9 +20,8 @@ const COUNTRIES = [
 ];
 
 const FULL_POSTCODE_RE = /^[A-Z]{1,2}\d[A-Z\d]?\s*\d[A-Z]{2}$/i;
-const GETADDRESS_KEY = process.env.NEXT_PUBLIC_GETADDRESS_API_KEY ?? "";
 
-type PostcodeLookupStatus = "idle" | "loading" | "found" | "not-found" | "searching" | "select" | "rate-limited";
+type PostcodeLookupStatus = "idle" | "loading" | "found" | "not-found" | "select" | "rate-limited";
 
 type GetAddressResult = {
   line_1: string;
@@ -34,6 +33,12 @@ type GetAddressResult = {
   county: string;
   country: string;
 };
+
+type PostcodeLookupResponse =
+  | { source: "getaddress"; postcode: string; addresses: GetAddressResult[] }
+  | { source: "postcodes.io"; postcode: string; city: string }
+  | { source: "not-found" }
+  | { source: "error" };
 
 function formatAddressOption(a: GetAddressResult): string {
   return [a.line_1, a.line_2, a.town_or_city || a.locality]
@@ -162,67 +167,28 @@ export default function CheckoutPage() {
     setShowAddressSelect(false);
     setAddressResults([]);
 
-    // Primary: getAddress.io for full street addresses
-    if (GETADDRESS_KEY) {
-      try {
-        const res = await fetch(
-          `https://api.getaddress.io/find/${encodeURIComponent(v)}?api-key=${GETADDRESS_KEY}&expand=true`
-        );
-        if (res.status === 429) {
-          setPostcodeStatus("rate-limited");
-          return;
-        }
-        if (res.ok) {
-          const data = (await res.json()) as {
-            postcode?: string;
-            addresses: GetAddressResult[];
-          };
-          const addresses = data.addresses ?? [];
-          if (addresses.length > 0) {
-            setPostcode(data.postcode ?? v);
-            setCountry("United Kingdom");
-            if (addresses.length === 1) {
-              applyAddress(addresses[0]);
-              setPostcodeStatus("found");
-            } else {
-              setAddressResults(addresses);
-              setShowAddressSelect(true);
-              setPostcodeStatus("select");
-            }
-            return;
-          }
-          // empty address list — fall through to postcodes.io
-        }
-        // 404 or other error — fall through to postcodes.io
-      } catch {
-        // network error — fall through to postcodes.io
-      }
-    }
-
-    // Fallback: postcodes.io for city/district only
     try {
-      const res = await fetch(
-        `https://api.postcodes.io/postcodes/${encodeURIComponent(v)}`
-      );
-      const data = (await res.json()) as {
-        status: number;
-        result: {
-          postcode: string;
-          post_town: string | null;
-          admin_district: string | null;
-        } | null;
-      };
-      if (data.status === 200 && data.result) {
-        const r = data.result;
-        const rawCity = r.post_town ?? r.admin_district ?? "";
-        const town = rawCity
-          .split(" ")
-          .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
-          .join(" ");
-        setPostcode(r.postcode);
-        if (town) setCity(town);
+      const res = await fetch(`/api/postcode-lookup?postcode=${encodeURIComponent(v)}`);
+      const data = (await res.json()) as PostcodeLookupResponse;
+
+      if (data.source === "getaddress") {
+        setPostcode(data.postcode);
+        setCountry("United Kingdom");
+        if (data.addresses.length === 1) {
+          applyAddress(data.addresses[0]);
+          setPostcodeStatus("found");
+        } else {
+          setAddressResults(data.addresses);
+          setShowAddressSelect(true);
+          setPostcodeStatus("select");
+        }
+      } else if (data.source === "postcodes.io") {
+        setPostcode(data.postcode);
+        if (data.city) setCity(data.city);
         setCountry("United Kingdom");
         setPostcodeStatus("found");
+      } else if (data.source === "error") {
+        setPostcodeStatus("rate-limited");
       } else {
         setPostcodeStatus("not-found");
       }
@@ -276,6 +242,8 @@ export default function CheckoutPage() {
 
   const handlePostcodeBlur = () => {
     if (postcodeDebounceRef.current) clearTimeout(postcodeDebounceRef.current);
+    // Don't re-trigger lookup if the address picker is already showing
+    if (showAddressSelect) return;
     if (postcode.trim().length >= 5) {
       void doFullLookup(postcode);
     }
@@ -566,11 +534,9 @@ export default function CheckoutPage() {
                   type="button"
                   className="postcode-find-btn"
                   onClick={handleFindAddress}
-                  disabled={postcodeStatus === "loading" || postcodeStatus === "searching"}
+                  disabled={postcodeStatus === "loading"}
                 >
-                  {postcodeStatus === "loading" || postcodeStatus === "searching"
-                    ? "Searching…"
-                    : "Find"}
+                  {postcodeStatus === "loading" ? "Searching…" : "Find"}
                 </button>
               </div>
 
@@ -625,7 +591,10 @@ export default function CheckoutPage() {
                     key={i}
                     className="address-result-item"
                     role="option"
-                    onClick={() => selectAddress(a)}
+                    onMouseDown={(e) => {
+                      e.preventDefault(); // prevent postcode input blur before selection fires
+                      selectAddress(a);
+                    }}
                   >
                     {formatAddressOption(a)}
                   </li>
