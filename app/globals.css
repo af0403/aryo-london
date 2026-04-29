@@ -22,6 +22,18 @@
   box-sizing: border-box;
 }
 
+/* Eliminate iOS blue tap-highlight on every interactive element */
+a,
+button,
+input,
+select,
+textarea,
+[role="button"],
+[role="option"],
+summary {
+  -webkit-tap-highlight-color: transparent;
+}
+
 html {
   scroll-behavior: smooth;
 }
@@ -301,6 +313,7 @@ body:has(.home-main) {
   border: 0;
   background: transparent;
   cursor: pointer;
+  color: inherit;
 }
 
 .icon-button {
@@ -1892,6 +1905,11 @@ body:has(.home-main) .site-footer {
     gap: 2rem 1.5rem;
   }
 
+  /* Slide 2 editorial: cap image so copy is always visible below */
+  .home-entry-image-wrap {
+    max-height: 62svh;
+  }
+
   /* Thumbnail strip: horizontal row below main image on mobile */
   .product-showcase {
     grid-template-columns: 1fr;
@@ -1954,6 +1972,73 @@ body:has(.home-main) .site-footer {
 
   .site-menu-panel {
     padding-inline: 1.25rem;
+  }
+
+  /* ── Checkout ── */
+  .checkout-field-row {
+    grid-template-columns: 1fr;
+  }
+
+  .checkout-stripe-wrap {
+    padding: 0.85rem;
+  }
+
+  .stripe-card-element,
+  #stripe-card-element {
+    min-height: 44px;
+  }
+
+  /* ── Postcode find button ── */
+  .postcode-find-btn {
+    min-height: 44px;
+    height: auto;
+  }
+
+  /* ── Postcode / address suggestions: larger tap targets ── */
+  .postcode-suggestion-item,
+  .address-result-item {
+    padding: 0.75rem 0.85rem;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+  }
+
+  /* ── Size pills and colorway buttons: 44px tap target ── */
+  .product-size-pill,
+  .card-size-pill {
+    min-height: 2.75rem;
+  }
+
+  .collection-card-colorway {
+    min-height: 2.4rem;
+    padding: 0.35rem 0.7rem;
+  }
+
+  /* ── Home carousel slide 2: smaller heading on tiny screens ── */
+  .home-entry-heading {
+    font-size: clamp(2.4rem, 10vw, 3.8rem);
+  }
+
+  .home-entry-editorial-copy {
+    padding: 1.5rem 1.25rem;
+    gap: 1rem;
+  }
+
+  /* ── Home footer slide: allow content to scroll within the slide ── */
+  .home-slide-footer {
+    overflow-y: auto;
+  }
+
+  /* ── Hero watermark: hide on very small screens to prevent overflow ── */
+  .hero-watermark {
+    display: none;
+  }
+
+  /* ── Announcement bar: tighten font so it fits on one line ── */
+  .site-announcement-bar {
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    padding: 0 0.75rem;
   }
 }
 
@@ -2391,7 +2476,8 @@ body:has(.home-main) .site-footer {
 }
 
 .stripe-card-element {
-  min-height: 2.5rem;
+  min-height: 2.75rem;
+  padding: 0.2rem 0;
 }
 
 .checkout-stripe-loading {
@@ -2436,6 +2522,11 @@ body:has(.home-main) .site-footer {
 
   .checkout-summary {
     position: static;
+    order: 2;
+  }
+
+  .checkout-form-section {
+    order: 1;
   }
 }
 
