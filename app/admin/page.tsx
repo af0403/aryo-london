@@ -30,6 +30,15 @@ export default function AdminPage() {
           <h2>Collection controls</h2>
           <p>Products, stock levels, campaign assets, and launch settings.</p>
         </article>
+
+        <article className="admin-card">
+          <p className="admin-label">Support</p>
+          <h2>Email agent log</h2>
+          <p>Review AI-handled support emails, read original messages, and send manual overrides.</p>
+          <Link className="inline-link" href="/admin/email-agent?key=aryo-admin-2024">
+            Open email log
+          </Link>
+        </article>
       </div>
     </main>
   );
