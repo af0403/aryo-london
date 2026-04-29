@@ -67,12 +67,12 @@ export const products: Product[] = [
     price: 200,
     launchState: "live",
     fulfillment: "made-to-order",
-    fulfillmentNote: "Made to order. Please allow around 3 weeks before dispatch.",
-    summary: "The lead outerwear piece from Pennicella, built around structure, silver hardware, and a controlled noir finish.",
+    fulfillmentNote: "Made to order — current lead time approximately 3 weeks before dispatch.",
+    summary: "The lead outerwear piece from Pennicella, built around structure, silver hardware, and a controlled Noir finish.",
     shortDescription:
-      "A cropped jacket with pointed collar, silver zip beneath snap closure, and black lining.",
+      "Made to order in our signature Pennicella fabric. Cropped silhouette with pointed collar, silver zip and snap closures, and black lining. ARYO MADE IN LONDON interior label.",
     longDescription:
-      "The Structure Jacket in noir is the clearest expression of the first ARYO release. The silhouette is sharp, the surface stays quiet, and the hardware is kept bright enough to frame the garment without overpowering it.",
+      "The Structure Jacket in Noir is the clearest expression of the first ARYO release. Made to order in our signature Pennicella fabric — named after the Italian word for brushstroke — the silhouette is sharp, the surface stays quiet, and the silver hardware is kept bright enough to frame the garment without overpowering it. Fully lined, with the ARYO MADE IN LONDON label at the interior.",
     leadImage: "/assets/generated/luma-pack/product-noir-jacket.png",
     leadImagePosition: "center top",
     leadImageFit: "cover",
@@ -82,28 +82,30 @@ export const products: Product[] = [
     gallery: [
       {
         src: "/assets/generated/luma-pack/product-noir-jacket.png",
-        alt: "Front view of the noir structure jacket",
+        alt: "Front view of the Noir Structure Jacket",
         fit: "cover",
         position: "center top",
       },
       {
         src: "/assets/generated/luma-pack/product-noir-jacket-open.png",
-        alt: "Noir structure jacket open, showing collar and hardware detail",
+        alt: "Noir Structure Jacket open, showing collar and hardware detail",
         fit: "cover",
         position: "center top",
       },
       {
         src: "/assets/generated/luma-pack/detail-noir-hardware.png",
-        alt: "Close-up of the structure jacket silver hardware and closure",
+        alt: "Silver zip and snap closure detail on the Noir Structure Jacket",
         fit: "cover",
         position: "center center",
       },
     ],
     details: [
       { label: "Colour", value: "Noir" },
-      { label: "Construction", value: "Structured cropped jacket" },
+      { label: "Fabric", value: "Pennicella — signature ARYO fabric" },
+      { label: "Construction", value: "Structured cropped jacket, fully lined" },
       { label: "Closure", value: "Silver zip beneath snap closure" },
-      { label: "Interior", value: "Black lining" },
+      { label: "Label", value: "ARYO MADE IN LONDON interior label" },
+      { label: "Fulfillment", value: "Made to order — approximately 3 weeks" },
       { label: "Origin", value: "Made in London" },
     ],
     variants: createVariants("structure-jacket-noir", "noir", {
@@ -114,7 +116,9 @@ export const products: Product[] = [
       XL: null,
     }),
     notes: [
-      "Silver zip and snap hardware are kept deliberately clean against the textured noir surface.",
+      "Made to order in all sizes. No stock is held — each piece is produced after purchase.",
+      "Silver zip and snap hardware are kept deliberately clean against the textured Noir surface.",
+      "Current lead time is approximately 3 weeks before dispatch.",
     ],
   },
   {
@@ -128,11 +132,11 @@ export const products: Product[] = [
     fulfillment: "stocked",
     editionNote: "Only 100 made.",
     summary:
-      "A limited edition of 100. The noir trouser is presented as sold out.",
+      "A limited edition of 100. The Noir Essential Trouser is now sold out.",
     shortDescription:
-      "Straight, relaxed trouser in noir Pennicella with white ARYO signature embroidery. Only 100 made.",
+      "Relaxed straight-leg trouser in our signature Pennicella fabric. Elasticated waistband. ARYO signature embroidery on the back pocket. Only 100 made.",
     longDescription:
-      "The noir Essential Trouser balances the structure jacket with a softer, longer line. The fit stays calm and fluid while the signature embroidery and heavy texture keep it anchored inside the Pennicella language. Only 100 pieces were made.",
+      "The Noir Essential Trouser balances the Structure Jacket with a softer, longer line. Crafted in our signature Pennicella fabric — named after the Italian word for brushstroke — the fit stays calm and fluid while the ARYO signature embroidery on the back pocket keeps it anchored inside the Pennicella language. Only 100 pieces were made.",
     leadImage: "/assets/generated/luma-pack/product-noir-trouser.png",
     leadImagePosition: "center top",
     leadImageFit: "cover",
@@ -142,21 +146,29 @@ export const products: Product[] = [
     gallery: [
       {
         src: "/assets/generated/luma-pack/product-noir-trouser.png",
-        alt: "Front view of the noir essential trouser",
+        alt: "Front view of the Noir Essential Trouser",
+        fit: "cover",
+        position: "center top",
+      },
+      {
+        src: "/assets/reference/black-trouser-back.jpeg",
+        alt: "Back view of the Noir Essential Trouser",
         fit: "cover",
         position: "center top",
       },
       {
         src: "/assets/generated/luma-pack/detail-noir-embroidery.png",
-        alt: "White ARYO signature embroidery detail on the noir trouser",
+        alt: "ARYO signature embroidery on the back pocket of the Noir Essential Trouser",
         fit: "cover",
         position: "center center",
       },
     ],
     details: [
       { label: "Colour", value: "Noir" },
+      { label: "Fabric", value: "Pennicella — signature ARYO fabric" },
       { label: "Silhouette", value: "Relaxed straight leg" },
-      { label: "Signature", value: "White embroidery at upper leg" },
+      { label: "Waistband", value: "Elasticated" },
+      { label: "Signature", value: "ARYO embroidery on the back pocket" },
       { label: "Edition", value: "Only 100 made" },
       { label: "Status", value: "Sold out" },
       { label: "Origin", value: "Made in London" },
@@ -171,6 +183,7 @@ export const products: Product[] = [
     notes: [
       "This colourway is now sold out. Only 100 pieces were produced.",
       "The piece remains visible to preserve the complete Pennicella launch edit.",
+      "Back pocket features the ARYO signature embroidery.",
     ],
   },
   {
@@ -184,11 +197,11 @@ export const products: Product[] = [
     fulfillment: "stocked",
     editionNote: "Only 100 made.",
     summary:
-      "A limited edition of 100. The lighter trouser expression for the drop, cut in ivory with blue signature embroidery.",
+      "A limited edition of 100. The lighter trouser expression for the drop, cut in Ivory with blue signature embroidery on the back pocket.",
     shortDescription:
-      "Straight, relaxed trouser in ivory Pennicella with blue ARYO signature embroidery. Only 100 made.",
+      "Relaxed straight-leg trouser in our signature Pennicella fabric. Elasticated waistband. ARYO signature embroidery on the back pocket. Only 100 made.",
     longDescription:
-      "The ivory Essential Trouser opens the collection through a brighter tone without changing the proportion. The blue signature detail stays quiet, which lets the material and silhouette carry the luxury of the piece. Only 100 pieces were produced.",
+      "The Ivory Essential Trouser opens the collection through a brighter tone without changing the proportion. Crafted in our signature Pennicella fabric — named after the Italian word for brushstroke — the blue ARYO signature embroidery on the back pocket stays quiet, which lets the material and silhouette carry the luxury of the piece. Only 100 pieces were produced.",
     leadImage: "/assets/generated/luma-pack/product-ivory-trouser.png",
     leadImagePosition: "center top",
     leadImageFit: "cover",
@@ -198,21 +211,29 @@ export const products: Product[] = [
     gallery: [
       {
         src: "/assets/generated/luma-pack/product-ivory-trouser.png",
-        alt: "Front view of the ivory essential trouser",
+        alt: "Front view of the Ivory Essential Trouser",
+        fit: "cover",
+        position: "center top",
+      },
+      {
+        src: "/assets/reference/ivory-trouser-back.jpeg",
+        alt: "Back view of the Ivory Essential Trouser",
         fit: "cover",
         position: "center top",
       },
       {
         src: "/assets/generated/luma-pack/detail-ivory-embroidery.png",
-        alt: "Blue ARYO signature embroidery detail on the ivory trouser",
+        alt: "ARYO signature embroidery on the back pocket of the Ivory Essential Trouser",
         fit: "cover",
         position: "center center",
       },
     ],
     details: [
       { label: "Colour", value: "Ivory" },
+      { label: "Fabric", value: "Pennicella — signature ARYO fabric" },
       { label: "Silhouette", value: "Relaxed straight leg" },
-      { label: "Signature", value: "Blue embroidery at upper leg" },
+      { label: "Waistband", value: "Elasticated" },
+      { label: "Signature", value: "ARYO embroidery on the back pocket" },
       { label: "Edition", value: "Only 100 made" },
       { label: "Availability", value: "XS unavailable / S to XL in stock" },
       { label: "Origin", value: "Made in London" },
@@ -227,6 +248,7 @@ export const products: Product[] = [
     notes: [
       "Only 100 pieces were produced across both trouser colourways.",
       "Extra small is not currently available in this colourway.",
+      "Back pocket features the ARYO signature embroidery.",
     ],
   },
   {
@@ -238,13 +260,13 @@ export const products: Product[] = [
     price: 200,
     launchState: "live",
     fulfillment: "made-to-order",
-    fulfillmentNote: "Made to order. Please allow around 3 weeks before dispatch.",
+    fulfillmentNote: "Made to order — current lead time approximately 3 weeks before dispatch.",
     summary:
-      "The ivory outerwear expression, available made to order.",
+      "The Ivory outerwear expression, made to order in our signature Pennicella fabric.",
     shortDescription:
-      "Ivory version of the Structure Jacket, available made to order with a 3 week lead time.",
+      "Made to order in our signature Pennicella fabric. Ivory version of the Structure Jacket — cropped silhouette with pointed collar, silver zip and snap closures, and full lining. ARYO MADE IN LONDON interior label.",
     longDescription:
-      "The ivory Structure Jacket launches as a made-to-order piece so the collection can carry the lighter direction without forcing artificial stock pressure. The silhouette remains consistent with the noir jacket while the ivory colourway opens a softer dimension in the range.",
+      "The Ivory Structure Jacket is made to order in our signature Pennicella fabric — named after the Italian word for brushstroke — so the collection can carry the lighter direction without forcing artificial stock pressure. The silhouette remains consistent with the Noir jacket: sharp, cropped, fully lined, with silver zip and snap closures. The Ivory colourway opens a softer dimension in the range while the structure remains uncompromised.",
     leadImage: "/assets/generated/luma-pack/product-ivory-jacket.png",
     leadImagePosition: "center top",
     leadImageFit: "cover",
@@ -254,22 +276,18 @@ export const products: Product[] = [
     gallery: [
       {
         src: "/assets/generated/luma-pack/product-ivory-jacket.png",
-        alt: "Ivory structure jacket — made to order colourway",
+        alt: "Ivory Structure Jacket — made to order",
         fit: "cover",
         position: "center top",
-      },
-      {
-        src: "/assets/generated/luma-pack/detail-ivory-embroidery.png",
-        alt: "Embroidery detail on the ivory structure jacket",
-        fit: "cover",
-        position: "center center",
       },
     ],
     details: [
       { label: "Colour", value: "Ivory" },
-      { label: "Status", value: "Made to order" },
-      { label: "Lead time", value: "Approximately 3 weeks before dispatch" },
-      { label: "Silhouette", value: "Structure Jacket" },
+      { label: "Fabric", value: "Pennicella — signature ARYO fabric" },
+      { label: "Construction", value: "Structured cropped jacket, fully lined" },
+      { label: "Closure", value: "Silver zip beneath snap closure" },
+      { label: "Label", value: "ARYO MADE IN LONDON interior label" },
+      { label: "Fulfillment", value: "Made to order — approximately 3 weeks" },
       { label: "Origin", value: "Made in London" },
     ],
     variants: createVariants("structure-jacket-ivory", "ivory", {
@@ -280,7 +298,8 @@ export const products: Product[] = [
       XL: null,
     }),
     notes: [
-      "This colourway is available on a made-to-order basis.",
+      "Made to order in all sizes. No stock is held — each piece is produced after purchase.",
+      "Current lead time is approximately 3 weeks before dispatch.",
     ],
   },
 ];

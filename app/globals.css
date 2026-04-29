@@ -550,6 +550,8 @@ body:has(.home-main) {
   height: 2.8rem;
   border: 1px solid var(--line);
   background: transparent;
+  color: var(--text);
+  -webkit-tap-highlight-color: transparent;
   font-size: 0.6rem;
   letter-spacing: 0.22em;
   text-transform: uppercase;

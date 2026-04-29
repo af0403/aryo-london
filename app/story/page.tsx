@@ -17,10 +17,12 @@ export default function StoryPage() {
           weight over time.
         </p>
         <p>
-          The name Pennicella comes from the Italian for brushstroke. It is the opening collection and the clearest
-          expression of what ARYO stands for: structure, texture, and restraint over volume, graphics, or noise. The
-          debut release introduces two silhouettes across two colourways — noir and ivory — each finished with
-          signature hardware and embroidery that sit inside the garment rather than on top of it.
+          The name Pennicella comes from the Italian for brushstroke. It is both the opening collection and the name
+          of the signature ARYO fabric — a textured, structured material developed specifically for the house.
+          Pennicella is the clearest expression of what ARYO stands for: structure, texture, and restraint over
+          volume, graphics, or noise. The debut release introduces two silhouettes across two colourways — Noir and
+          Ivory — each finished with signature hardware and embroidery that sit inside the garment rather than on
+          top of it.
         </p>
         <p>
           Production is kept deliberately tight. Made-to-order pieces are produced only after purchase. Stocked
