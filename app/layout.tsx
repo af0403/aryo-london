@@ -41,8 +41,8 @@ export const metadata: Metadata = {
       { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
       { url: "/favicon.svg", type: "image/svg+xml" },
     ],
-    apple: "/apple-touch-icon.jpg",
-    shortcut: "/favicon-32x32.png",
+    apple: "/apple-touch-icon.png",
+    shortcut: "/favicon.svg",
   },
   openGraph: {
     title: "ARYO | Pennicella | AF by ARYO",
@@ -61,7 +61,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
         <link rel="shortcut icon" href="/favicon-32x32.png" />
-        <link rel="apple-touch-icon" href="/apple-touch-icon.jpg" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
       </head>
       <body className={`${cormorant.variable} ${instrument.variable}`}>
         <Web3Providers>
