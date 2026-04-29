@@ -36,7 +36,7 @@ type GetAddressResult = {
 };
 
 function formatAddressOption(a: GetAddressResult): string {
-  return [a.line_1, a.line_2, a.line_3, a.locality, a.town_or_city]
+  return [a.line_1, a.line_2, a.town_or_city || a.locality]
     .filter(Boolean)
     .join(", ");
 }
@@ -139,7 +139,7 @@ export default function CheckoutPage() {
 
   const applyAddress = useCallback((a: GetAddressResult) => {
     setAddress1(a.line_1);
-    setAddress2([a.line_2, a.line_3, a.line_4].filter(Boolean).join(", "));
+    setAddress2(a.line_2 || "");
     setCity(a.town_or_city || a.locality || "");
     setCountry("United Kingdom");
   }, []);
