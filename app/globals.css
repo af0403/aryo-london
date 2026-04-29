@@ -20,10 +20,20 @@
 
 * {
   box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
 }
 
-/* Eliminate iOS blue tap-highlight on every interactive element */
+/* Prevent every iOS link-colour override — all states, all interactive elements */
 a,
+a:link,
+a:visited,
+a:hover,
+a:active {
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  color: inherit;
+  text-decoration: none;
+}
+
 button,
 input,
 select,
@@ -31,7 +41,13 @@ textarea,
 [role="button"],
 [role="option"],
 summary {
-  -webkit-tap-highlight-color: transparent;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  color: inherit;
+}
+
+/* SVGs inherit the current text colour so currentColor resolves correctly */
+svg {
+  color: inherit;
 }
 
 html {
@@ -70,11 +86,6 @@ body::before {
     radial-gradient(circle at 82% 10%, rgba(255, 255, 255, 0.42), transparent 22rem);
   pointer-events: none;
   z-index: -1;
-}
-
-a {
-  color: inherit;
-  text-decoration: none;
 }
 
 img {
@@ -296,6 +307,7 @@ body:has(.home-main) {
   font-size: 2.4rem;
   letter-spacing: 0.5em;
   font-weight: 600;
+  color: var(--text);
 }
 
 .icon-button,
@@ -313,7 +325,9 @@ body:has(.home-main) {
   border: 0;
   background: transparent;
   cursor: pointer;
-  color: inherit;
+  /* Explicit colour — iOS Safari cannot override with its link-blue default */
+  color: var(--text);
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
 
 .icon-button {
