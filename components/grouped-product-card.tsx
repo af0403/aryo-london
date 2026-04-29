@@ -113,14 +113,6 @@ export const GroupedProductCard = ({ group }: { group: ProductGroup }) => {
             style={{ opacity: i === imgIdx ? 1 : 0 }}
           />
         ))}
-        {hovering &&
-          Array.from({ length: gallery.length - 1 }, (_, i) => (
-            <span
-              key={i}
-              className="card-zone-divider"
-              style={{ left: `${((i + 1) / gallery.length) * 100}%` }}
-            />
-          ))}
       </Link>
 
       <div className="collection-card-copy">

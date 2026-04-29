@@ -5,7 +5,7 @@ import { ChevronDownIcon } from "./site-icons";
 
 const hero = {
   label: "Pennicella | AF by ARYO",
-  image: "/assets/generated/aryo-campaign-noir.png",
+  image: "/assets/generated/aryo-campaign-noir.jpg",
   href: "/collections/pennicella",
   ctaLabel: "Explore Pennicella",
 };

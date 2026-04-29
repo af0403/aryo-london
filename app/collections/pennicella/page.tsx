@@ -30,13 +30,13 @@ const productGroups: ProductGroup[] = [
       {
         color: "Noir",
         slug: "essential-trouser-noir",
-        image: "/assets/generated/luma-pack/product-noir-trouser.png",
+        image: "/assets/generated/luma-pack/product-noir-trouser-front.jpg",
         status: "Sold out",
       },
       {
         color: "Ivory",
         slug: "essential-trouser-ivory",
-        image: "/assets/generated/luma-pack/product-ivory-trouser.png",
+        image: "/assets/generated/luma-pack/product-ivory-trouser-front.jpg",
         status: "Available",
       },
     ],

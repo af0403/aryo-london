@@ -137,15 +137,15 @@ export const products: Product[] = [
       "Relaxed straight-leg trouser in our signature Pennicella fabric. Elasticated waistband. ARYO signature embroidery on the back pocket. Only 100 made.",
     longDescription:
       "The Noir Essential Trouser balances the Structure Jacket with a softer, longer line. Crafted in our signature Pennicella fabric — named after the Italian word for brushstroke — the fit stays calm and fluid while the ARYO signature embroidery on the back pocket keeps it anchored inside the Pennicella language. Only 100 pieces were made.",
-    leadImage: "/assets/processed/product-noir-trouser-clean.png",
+    leadImage: "/assets/generated/luma-pack/product-noir-trouser-front.jpg",
     leadImagePosition: "center top",
     leadImageFit: "cover",
-    cardImage: "/assets/processed/product-noir-trouser-clean.png",
+    cardImage: "/assets/generated/luma-pack/product-noir-trouser-front.jpg",
     cardImagePosition: "center top",
     cardImageFit: "cover",
     gallery: [
       {
-        src: "/assets/processed/product-noir-trouser-clean.png",
+        src: "/assets/generated/luma-pack/product-noir-trouser-front.jpg",
         alt: "Front view of the Noir Essential Trouser",
         fit: "cover",
         position: "center top",
@@ -202,15 +202,15 @@ export const products: Product[] = [
       "Relaxed straight-leg trouser in our signature Pennicella fabric. Elasticated waistband. ARYO signature embroidery on the back pocket. Only 100 made.",
     longDescription:
       "The Ivory Essential Trouser opens the collection through a brighter tone without changing the proportion. Crafted in our signature Pennicella fabric — named after the Italian word for brushstroke — the blue ARYO signature embroidery on the back pocket stays quiet, which lets the material and silhouette carry the luxury of the piece. Only 100 pieces were produced.",
-    leadImage: "/assets/processed/product-ivory-trouser-clean.png",
+    leadImage: "/assets/generated/luma-pack/product-ivory-trouser-front.jpg",
     leadImagePosition: "center top",
     leadImageFit: "cover",
-    cardImage: "/assets/processed/product-ivory-trouser-clean.png",
+    cardImage: "/assets/generated/luma-pack/product-ivory-trouser-front.jpg",
     cardImagePosition: "center top",
     cardImageFit: "cover",
     gallery: [
       {
-        src: "/assets/processed/product-ivory-trouser-clean.png",
+        src: "/assets/generated/luma-pack/product-ivory-trouser-front.jpg",
         alt: "Front view of the Ivory Essential Trouser",
         fit: "cover",
         position: "center top",
@@ -222,7 +222,7 @@ export const products: Product[] = [
         position: "center top",
       },
       {
-        src: "/assets/processed/ivory-embroidery-closeup.jpg",
+        src: "/assets/generated/luma-pack/detail-ivory-embroidery-closeup.jpg",
         alt: "ARYO signature embroidery close-up detail on the Ivory Essential Trouser",
         fit: "cover",
         position: "center center",

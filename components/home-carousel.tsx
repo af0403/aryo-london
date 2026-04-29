@@ -92,7 +92,7 @@ export const HomeCarousel = () => {
                   <Link className="hero-slide-frame" href="/collections/pennicella">
                     <Image
                       className="hero-slide-image"
-                      src="/assets/generated/aryo-campaign-noir.png"
+                      src="/assets/generated/aryo-campaign-noir.jpg"
                       alt="Pennicella | AF by ARYO"
                       fill
                       priority
