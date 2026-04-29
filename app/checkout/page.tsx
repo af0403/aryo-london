@@ -76,6 +76,7 @@ export default function CheckoutPage() {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [addressResults, setAddressResults] = useState<GetAddressResult[]>([]);
   const [showAddressSelect, setShowAddressSelect] = useState(false);
+  const [lookupSource, setLookupSource] = useState<"getaddress" | "postcodes.io" | null>(null);
   const postcodeDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const postcodeLookupWrapRef = useRef<HTMLDivElement>(null);
 
@@ -172,6 +173,7 @@ export default function CheckoutPage() {
       const data = (await res.json()) as PostcodeLookupResponse;
 
       if (data.source === "getaddress") {
+        setLookupSource("getaddress");
         setPostcode(data.postcode);
         setCountry("United Kingdom");
         if (data.addresses.length === 1) {
@@ -183,6 +185,7 @@ export default function CheckoutPage() {
           setPostcodeStatus("select");
         }
       } else if (data.source === "postcodes.io") {
+        setLookupSource("postcodes.io");
         setPostcode(data.postcode);
         if (data.city) setCity(data.city);
         setCountry("United Kingdom");
@@ -568,9 +571,14 @@ export default function CheckoutPage() {
                   Address lookup unavailable — please enter manually.
                 </p>
               )}
-              {postcodeStatus === "found" && (
+              {postcodeStatus === "found" && lookupSource === "getaddress" && (
                 <p className="postcode-lookup-message postcode-lookup-found">
                   Address filled automatically.
+                </p>
+              )}
+              {postcodeStatus === "found" && lookupSource === "postcodes.io" && (
+                <p className="postcode-lookup-message postcode-lookup-found">
+                  City filled — please enter your street address above.
                 </p>
               )}
               {postcodeStatus === "select" && (

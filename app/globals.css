@@ -1642,6 +1642,53 @@ body:has(.home-main) .site-footer {
   gap: 0.55rem;
 }
 
+/* ─── Contact form ───────────────────────────────────────────── */
+
+.contact-form-wrap {
+  width: var(--page-width);
+  margin-inline: auto;
+  padding: 3rem 0 5rem;
+  max-width: 640px;
+}
+
+.contact-form {
+  display: grid;
+  gap: 1rem;
+}
+
+.contact-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.contact-textarea {
+  height: auto;
+  resize: vertical;
+  padding: 0.75rem 0.9rem;
+  line-height: 1.5;
+}
+
+.contact-submit {
+  width: auto;
+  align-self: start;
+  padding-inline: 2.5rem;
+}
+
+.contact-success {
+  font-size: 0.9rem;
+  letter-spacing: 0.04em;
+  color: #4a7c59;
+  line-height: 1.6;
+  padding: 1.2rem 0;
+}
+
+@media (max-width: 600px) {
+  .contact-form-row {
+    grid-template-columns: 1fr;
+  }
+}
+
 .admin-table-wrap {
   overflow-x: auto;
 }
