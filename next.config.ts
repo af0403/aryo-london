@@ -10,6 +10,16 @@ const pkStatus = pk.startsWith("pk_live_")
   : "NOT SET — checkout will show contact fallback";
 console.log(`[ARYO build] NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: ${pkStatus}`);
 
-const nextConfig: NextConfig = {};
+const nextConfig: NextConfig = {
+  webpack(config) {
+    // Optional deps from MetaMask SDK and WalletConnect's pino logger
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      "@react-native-async-storage/async-storage": false,
+      "pino-pretty": false,
+    };
+    return config;
+  },
+};
 
 export default nextConfig;
