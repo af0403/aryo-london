@@ -71,9 +71,9 @@ export const products: Product[] = [
     fulfillmentNote: "Made to order — current lead time approximately 3 weeks before dispatch.",
     summary: "The lead outerwear piece from Pennicella, built around structure, silver hardware, and a controlled Noir finish.",
     shortDescription:
-      "Made to order in our signature Pennicella fabric. Cropped silhouette with pointed collar, silver zip and snap closures, and black lining. ARYO MADE IN LONDON interior label.",
+      "Made to order in our signature Pennicella fabric. Cut to a size M block with concealed zip placket, four-popper front fastening, functional cuff vents, and welt pockets inside and out. Fully lined in black cotton. Made in London.",
     longDescription:
-      "The Structure Jacket in Noir is the clearest expression of the first ARYO release. Made to order in our signature Pennicella fabric — named after the Italian word for brushstroke — the silhouette is sharp, the surface stays quiet, and the silver hardware is kept bright enough to frame the garment without overpowering it. Fully lined, with the ARYO MADE IN LONDON label at the interior.",
+      "The Structure Jacket is crafted in our signature Pennicella fabric — named after the Italian word for brushstroke. Made to order in London. Each piece is produced individually after your order is placed.",
     leadImage: "/assets/generated/luma-pack/product-noir-jacket.png",
     leadImagePosition: "center top",
     leadImageFit: "cover",
@@ -101,13 +101,16 @@ export const products: Product[] = [
       },
     ],
     details: [
-      { label: "Colour", value: "Noir" },
-      { label: "Fabric", value: "Pennicella — signature ARYO fabric" },
-      { label: "Construction", value: "Structured cropped jacket, fully lined" },
-      { label: "Closure", value: "Silver zip beneath snap closure" },
-      { label: "Label", value: "ARYO MADE IN LONDON interior label" },
-      { label: "Fulfillment", value: "Made to order — approximately 3 weeks" },
-      { label: "Origin", value: "Made in London" },
+      { label: "Fabric", value: "Black Fleck Pennicella" },
+      { label: "Lining", value: "Black cotton, fully lined" },
+      { label: "Fit", value: "Size M pattern — see size guide" },
+      { label: "Closure", value: "59cm open-ended front metal zip with concealed zip placket" },
+      { label: "Fastening", value: "4 concealed poppers on front placket" },
+      { label: "Pockets", value: "2 outer welt pockets (5cm × 19cm), 1 inner left chest welt pocket (2cm × 14cm), 1 inner right zip pocket (14cm)" },
+      { label: "Cuffs", value: "Functional cuff vent with concealed popper, 4cm felled finish" },
+      { label: "Topstitch", value: "0.6cm topstitch on collar, front edge, placket and pockets" },
+      { label: "Made in", value: "London, England" },
+      { label: "Fulfillment", value: "Made to order — current lead time approximately 3 weeks" },
     ],
     variants: createVariants("structure-jacket-noir", "noir", {
       XS: null,
@@ -118,7 +121,7 @@ export const products: Product[] = [
     }),
     notes: [
       "Made to order in all sizes. No stock is held — each piece is produced after purchase.",
-      "Silver zip and snap hardware are kept deliberately clean against the textured Noir surface.",
+      "Pattern is cut to a size M block. For custom sizing enquiries contact support@aryo.london.",
       "Current lead time is approximately 3 weeks before dispatch.",
     ],
   },
@@ -265,9 +268,9 @@ export const products: Product[] = [
     summary:
       "The Ivory outerwear expression, made to order in our signature Pennicella fabric.",
     shortDescription:
-      "Made to order in our signature Pennicella fabric. Ivory version of the Structure Jacket — cropped silhouette with pointed collar, silver zip and snap closures, and full lining. ARYO MADE IN LONDON interior label.",
+      "Made to order in our signature Pennicella fabric. Cut to a size M block with concealed zip placket, four-popper front fastening, functional cuff vents, and welt pockets inside and out. Fully lined. Made in London.",
     longDescription:
-      "The Ivory Structure Jacket is made to order in our signature Pennicella fabric — named after the Italian word for brushstroke — so the collection can carry the lighter direction without forcing artificial stock pressure. The silhouette remains consistent with the Noir jacket: sharp, cropped, fully lined, with silver zip and snap closures. The Ivory colourway opens a softer dimension in the range while the structure remains uncompromised.",
+      "The Structure Jacket is crafted in our signature Pennicella fabric — named after the Italian word for brushstroke. Made to order in London. Each piece is produced individually after your order is placed.",
     leadImage: "/assets/generated/luma-pack/product-ivory-jacket.png",
     leadImagePosition: "center top",
     leadImageFit: "cover",
@@ -283,13 +286,16 @@ export const products: Product[] = [
       },
     ],
     details: [
-      { label: "Colour", value: "Ivory" },
-      { label: "Fabric", value: "Pennicella — signature ARYO fabric" },
-      { label: "Construction", value: "Structured cropped jacket, fully lined" },
-      { label: "Closure", value: "Silver zip beneath snap closure" },
-      { label: "Label", value: "ARYO MADE IN LONDON interior label" },
-      { label: "Fulfillment", value: "Made to order — approximately 3 weeks" },
-      { label: "Origin", value: "Made in London" },
+      { label: "Fabric", value: "Ivory Pennicella" },
+      { label: "Lining", value: "Black cotton, fully lined" },
+      { label: "Fit", value: "Size M pattern — see size guide" },
+      { label: "Closure", value: "59cm open-ended front metal zip with concealed zip placket" },
+      { label: "Fastening", value: "4 concealed poppers on front placket" },
+      { label: "Pockets", value: "2 outer welt pockets (5cm × 19cm), 1 inner left chest welt pocket (2cm × 14cm), 1 inner right zip pocket (14cm)" },
+      { label: "Cuffs", value: "Functional cuff vent with concealed popper, 4cm felled finish" },
+      { label: "Topstitch", value: "0.6cm topstitch on collar, front edge, placket and pockets" },
+      { label: "Made in", value: "London, England" },
+      { label: "Fulfillment", value: "Made to order — current lead time approximately 3 weeks" },
     ],
     variants: createVariants("structure-jacket-ivory", "ivory", {
       XS: null,
@@ -300,6 +306,7 @@ export const products: Product[] = [
     }),
     notes: [
       "Made to order in all sizes. No stock is held — each piece is produced after purchase.",
+      "Pattern is cut to a size M block. For custom sizing enquiries contact support@aryo.london.",
       "Current lead time is approximately 3 weeks before dispatch.",
     ],
   },

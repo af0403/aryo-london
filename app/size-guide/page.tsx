@@ -22,10 +22,11 @@ export default function SizeGuidePage() {
         <p>
           Measurements refer to the garment, not body measurements. If you are between sizes, size up.
         </p>
-        <p style={{ fontStyle: "italic", opacity: 0.7 }}>
-          Measurements will be updated with precise specifications from our tech pack. For immediate sizing
-          assistance, please contact{" "}
-          <a href="mailto:support@aryo.london">support@aryo.london</a>
+        <p>
+          The Structure Jacket is cut to a size M pattern block. All sizes are produced to the same
+          construction spec — the measurements below reflect finished garment dimensions across the run.
+          For custom sizing or fit enquiries, contact{" "}
+          <a href="mailto:support@aryo.london">support@aryo.london</a>.
         </p>
       </div>
 

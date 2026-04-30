@@ -50,19 +50,21 @@ export default async function ProductPage({
               </div>
             </details>
 
-            <details className="product-accordion">
-              <summary>Size and fit</summary>
-              <div className="product-accordion-content">
-                <ul>
-                  {product.details.map((detail) => (
-                    <li key={detail.label}>
-                      <span>{detail.label}</span>
-                      <strong>{detail.value}</strong>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </details>
+            {product.details.length > 0 && (
+              <details className="product-accordion">
+                <summary>Construction &amp; details</summary>
+                <div className="product-accordion-content">
+                  <ul>
+                    {product.details.map((detail) => (
+                      <li key={detail.label}>
+                        <span>{detail.label}</span>
+                        <strong>{detail.value}</strong>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </details>
+            )}
 
             <details className="product-accordion">
               <summary>Care</summary>
