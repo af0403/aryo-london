@@ -48,25 +48,31 @@ export function CryptoPaymentSection({
 
   const [ethPriceGbp, setEthPriceGbp] = useState<number | null>(null);
   const [priceLoading, setPriceLoading] = useState(false);
+  const [priceFailed, setPriceFailed] = useState(false);
   const [redirecting, setRedirecting] = useState(false);
 
   const aryoWallet = process.env.NEXT_PUBLIC_ARYO_WALLET_ADDRESS;
 
-  // Fetch ETH/GBP price when wallet connects
-  useEffect(() => {
-    if (!isConnected) return;
+  const fetchEthPrice = () => {
     setPriceLoading(true);
-    fetch(
-      "https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=gbp"
-    )
+    setPriceFailed(false);
+    fetch("https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=gbp")
       .then((r) => r.json())
       .then((data) => {
         const rate = (data as { ethereum?: { gbp?: number } })?.ethereum?.gbp;
-        if (rate) setEthPriceGbp(rate);
+        if (rate) {
+          setEthPriceGbp(rate);
+        } else {
+          setPriceFailed(true);
+        }
       })
-      .catch(() => null)
+      .catch(() => setPriceFailed(true))
       .finally(() => setPriceLoading(false));
-  }, [isConnected]);
+  };
+
+  // Fetch price immediately on mount and again whenever wallet connects
+  useEffect(() => { fetchEthPrice(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { if (isConnected && !ethPriceGbp) fetchEthPrice(); }, [isConnected]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // On transaction hash received, save order and redirect
   useEffect(() => {
@@ -151,6 +157,22 @@ export function CryptoPaymentSection({
   if (!isConnected) {
     return (
       <>
+        {priceLoading && (
+          <p className="crypto-price-loading">Fetching live ETH price…</p>
+        )}
+        {ethPriceGbp && !priceLoading && (
+          <div className="crypto-amount-display">
+            <span className="crypto-amount-gbp">£{orderTotal.toFixed(2)}</span>
+            <span className="crypto-amount-sep"> ≈ </span>
+            <span className="crypto-amount-eth">{(orderTotal / ethPriceGbp).toFixed(6)} ETH</span>
+          </div>
+        )}
+        {priceFailed && !priceLoading && (
+          <p className="crypto-price-error">
+            Could not fetch ETH price.{" "}
+            <button type="button" className="crypto-retry-btn" onClick={fetchEthPrice}>Retry</button>
+          </p>
+        )}
         <p className="crypto-connect-hint">
           Connect your wallet to pay in ETH. MetaMask, Coinbase Wallet,
           Rainbow, and 300+ wallets supported.
@@ -198,7 +220,9 @@ export function CryptoPaymentSection({
 
       {!priceLoading && !ethAmount && (
         <p className="crypto-price-error">
-          Could not fetch ETH price — try again or use card payment.
+          Could not fetch ETH price.{" "}
+          <button type="button" className="crypto-retry-btn" onClick={fetchEthPrice}>Retry</button>
+          {" "}or use card payment.
         </p>
       )}
 

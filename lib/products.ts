@@ -43,6 +43,7 @@ export type Product = {
   details: Array<{ label: string; value: string }>;
   variants: ProductVariant[];
   notes: string[];
+  hidden?: boolean;
 };
 
 const createVariants = (
@@ -301,6 +302,39 @@ export const products: Product[] = [
       "Made to order in all sizes. No stock is held — each piece is produced after purchase.",
       "Current lead time is approximately 3 weeks before dispatch.",
     ],
+  },
+  {
+    slug: "test-product",
+    name: "Test Item",
+    line: "Pennicella | AF by ARYO",
+    color: "Noir",
+    category: "Test",
+    price: 1,
+    launchState: "live",
+    fulfillment: "stocked",
+    summary: "Test product for checkout testing only.",
+    shortDescription: "Test product — do not purchase.",
+    longDescription: "Test product for internal checkout and crypto payment testing. Not for sale.",
+    leadImage: "/assets/generated/luma-pack/product-noir-jacket.png",
+    leadImagePosition: "center top",
+    leadImageFit: "cover",
+    cardImage: "/assets/generated/luma-pack/product-noir-jacket.png",
+    cardImagePosition: "center top",
+    cardImageFit: "cover",
+    gallery: [
+      {
+        src: "/assets/generated/luma-pack/product-noir-jacket.png",
+        alt: "Test product",
+        fit: "cover",
+        position: "center top",
+      },
+    ],
+    details: [],
+    variants: createVariants("test-product", "noir", {
+      XS: 99, S: 99, M: 99, L: 99, XL: 99,
+    }),
+    notes: ["Test product for checkout testing. Not visible on the collection page."],
+    hidden: true,
   },
 ];
 
