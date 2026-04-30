@@ -1456,6 +1456,12 @@ body:has(.home-main) .site-footer {
   color: var(--text-inverse);
 }
 
+.product-inline-cart {
+  display: grid;
+  gap: 0.9rem;
+  margin: 1.5rem 0;
+}
+
 .product-page-layout {
   width: var(--page-width);
   margin: 0 auto;

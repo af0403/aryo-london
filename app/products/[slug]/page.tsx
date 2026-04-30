@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 
 import { ProductPurchasePanel } from "../../../components/product-purchase-panel";
 import { ProductShowcase } from "../../../components/product-showcase";
+import { ProductInlineCart } from "../../../components/product-inline-cart";
 import { formatPrice } from "../../../lib/format";
 import { getProduct, getProductStatusLabel, products } from "../../../lib/products";
 
@@ -38,6 +39,8 @@ export default async function ProductPage({
             <p className="product-page-edition">{product.editionNote}</p>
           ) : null}
           <p className="product-page-summary">{product.shortDescription}</p>
+
+          <ProductInlineCart product={product} />
 
           <div className="product-accordion-stack">
             <details className="product-accordion">
