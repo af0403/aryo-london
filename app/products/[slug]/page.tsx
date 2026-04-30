@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 
+import Link from "next/link";
 import { ProductPurchasePanel } from "../../../components/product-purchase-panel";
 import { ProductShowcase } from "../../../components/product-showcase";
 import { ProductInlineCart } from "../../../components/product-inline-cart";
@@ -42,6 +43,12 @@ export default async function ProductPage({
 
           <ProductInlineCart product={product} />
 
+          {product.category === "Outerwear" && (
+            <Link href="/size-guide" className="product-size-guide-link">
+              View Size Guide →
+            </Link>
+          )}
+
           <div className="product-accordion-stack">
             <details className="product-accordion">
               <summary>Description</summary>
@@ -49,6 +56,23 @@ export default async function ProductPage({
                 <p>{product.longDescription}</p>
               </div>
             </details>
+
+            {product.category === "Outerwear" && (
+              <details className="product-accordion">
+                <summary>Sizing</summary>
+                <div className="product-accordion-content">
+                  <p>
+                    The Structure Jacket is cut to a size M block pattern. We recommend checking our
+                    size guide before ordering. If you fall between sizes, size up for a more relaxed
+                    fit. For bespoke sizing or fit queries, contact{" "}
+                    <a href="mailto:support@aryo.london">support@aryo.london</a> — we are happy to advise.
+                  </p>
+                  <p>
+                    <Link href="/size-guide" className="inline-link">View Size Guide →</Link>
+                  </p>
+                </div>
+              </details>
+            )}
 
             {product.details.length > 0 && (
               <details className="product-accordion">

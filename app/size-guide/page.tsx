@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Size Guide",
-  description: "Size guide for the Pennicella | AF by ARYO collection.",
+  description: "Size guide for the Pennicella Structure Jacket — AF by ARYO.",
 };
 
 const rows = [
@@ -18,19 +18,22 @@ export default function SizeGuidePage() {
     <main className="section info-page">
       <div className="page-intro">
         <p className="eyebrow">Pennicella | AF by ARYO</p>
-        <h1 className="page-title">Size Guide</h1>
+        <h1 className="page-title">Size Guide — Structure Jacket</h1>
         <p>
           Measurements refer to the garment, not body measurements. If you are between sizes, size up.
         </p>
         <p>
-          The Structure Jacket is cut to a size M pattern block. All sizes are produced to the same
-          construction spec — the measurements below reflect finished garment dimensions across the run.
-          For custom sizing or fit enquiries, contact{" "}
-          <a href="mailto:support@aryo.london">support@aryo.london</a>.
+          All measurements are approximate and taken from the size M pattern block. Final garment
+          measurements may vary slightly.
         </p>
       </div>
 
       <div className="size-guide-wrap">
+        <p className="size-guide-intro-note">
+          The following measurements are for the Pennicella Structure Jacket, cut to a size M block
+          pattern by Fashion Enter, London.
+        </p>
+
         <div className="size-guide-table-wrap">
           <table className="size-guide-table">
             <thead>
@@ -61,8 +64,8 @@ export default function SizeGuidePage() {
         </div>
 
         <p className="size-guide-note">
-          Measurements are approximate and may vary by up to 1–2 cm. If you are between sizes, we recommend sizing
-          up. For further guidance email{" "}
+          Trouser sizing will be added when the trouser tech pack is available. For immediate sizing
+          assistance on any garment, contact{" "}
           <a href="mailto:support@aryo.london">support@aryo.london</a>.
         </p>
       </div>

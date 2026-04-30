@@ -1462,6 +1462,16 @@ body:has(.home-main) .site-footer {
   margin: 1.5rem 0;
 }
 
+.product-size-guide-link {
+  display: inline-block;
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  margin-bottom: 1.5rem;
+  color: var(--text-muted);
+}
+
 .product-page-layout {
   width: var(--page-width);
   margin: 0 auto;
@@ -2957,6 +2967,13 @@ body:has(.home-main) .site-footer {
   max-width: var(--page-width);
   margin-inline: auto;
   padding: 2rem 0 4rem;
+}
+
+.size-guide-intro-note {
+  font-size: 0.8rem;
+  letter-spacing: 0.03em;
+  color: var(--text-muted);
+  margin-bottom: 1.25rem;
 }
 
 .size-guide-table-wrap {

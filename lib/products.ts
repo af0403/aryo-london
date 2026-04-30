@@ -103,7 +103,7 @@ export const products: Product[] = [
     details: [
       { label: "Fabric", value: "Black Fleck Pennicella" },
       { label: "Lining", value: "Black cotton, fully lined" },
-      { label: "Fit", value: "Size M pattern — see size guide" },
+      { label: "Fit", value: "Cut to a size M block — see our Size Guide for measurements" },
       { label: "Closure", value: "59cm open-ended front metal zip with concealed zip placket" },
       { label: "Fastening", value: "4 concealed poppers on front placket" },
       { label: "Pockets", value: "2 outer welt pockets (5cm × 19cm), 1 inner left chest welt pocket (2cm × 14cm), 1 inner right zip pocket (14cm)" },
@@ -288,7 +288,7 @@ export const products: Product[] = [
     details: [
       { label: "Fabric", value: "Ivory Pennicella" },
       { label: "Lining", value: "Black cotton, fully lined" },
-      { label: "Fit", value: "Size M pattern — see size guide" },
+      { label: "Fit", value: "Cut to a size M block — see our Size Guide for measurements" },
       { label: "Closure", value: "59cm open-ended front metal zip with concealed zip placket" },
       { label: "Fastening", value: "4 concealed poppers on front placket" },
       { label: "Pockets", value: "2 outer welt pockets (5cm × 19cm), 1 inner left chest welt pocket (2cm × 14cm), 1 inner right zip pocket (14cm)" },
