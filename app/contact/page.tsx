@@ -39,17 +39,17 @@ export default function ContactPage() {
 
       <div className="info-layout">
         <article className="info-card">
-          <p className="eyebrow">Email</p>
+          <p className="eyebrow">Direct support</p>
           <h2>Get in touch.</h2>
           <p>
-            <a href="mailto:support@aryo.london">support@aryo.london</a>
-          </p>
-          <p>
-            For fastest response, Instagram DM is also available at{" "}
+            For fastest response, message us on Instagram{" "}
             <a href="https://instagram.com/aryolondon" target="_blank" rel="noreferrer">
               @aryolondon
             </a>
             .
+          </p>
+          <p>
+            The contact form below can also be used for order questions, returns, and sizing guidance.
           </p>
         </article>
 
@@ -111,8 +111,11 @@ export default function ContactPage() {
 
             {status === "error" && (
               <p className="checkout-error">
-                Something went wrong — please email{" "}
-                <a href="mailto:support@aryo.london">support@aryo.london</a> directly.
+                Something went wrong — please message us on Instagram{" "}
+                <a href="https://instagram.com/aryolondon" target="_blank" rel="noreferrer">
+                  @aryolondon
+                </a>
+                .
               </p>
             )}
 

@@ -25,7 +25,7 @@ export default function ShippingPage() {
           <h2>Dispatch timing.</h2>
           <ul className="info-list">
             <li>Stocked pieces dispatch within 3 to 5 business days.</li>
-            <li>The ivory Structure Jacket is made to order and carries an estimated 3 week lead time before dispatch.</li>
+            <li>The Ivory Pennicella Jacket is made to order and carries an estimated 3 week lead time before dispatch.</li>
             <li>You will receive tracking information by email once your order has been dispatched.</li>
           </ul>
         </article>

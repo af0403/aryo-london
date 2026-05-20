@@ -5,7 +5,7 @@ const houseSections = [
     title: "ARYO begins with a controlled first point of view.",
     text: "The house is being built through a smaller and more disciplined release structure. Pennicella opens with fewer pieces and more focus, so the product can carry the language before the catalogue grows.",
     image: "/assets/generated/luma-pack/homepage-hero-noir-desktop.png",
-    alt: "Pennicella noir full look — Structure Jacket and Essential Trouser",
+    alt: "Pennicella noir full look — Pennicella Jacket and Essential Trouser",
   },
   {
     id: "heritage",

@@ -2,6 +2,12 @@ export const runtime = "edge";
 
 import { NextResponse } from "next/server";
 
+const contactFallbackEmail = process.env.ARYO_CONTACT_FALLBACK_EMAIL?.trim() || "";
+const contactInbox = contactFallbackEmail || "orders@aryo.london";
+const publicSupportHtml = contactFallbackEmail
+  ? `For any questions, contact us at <a href="mailto:${contactFallbackEmail}" style="color: #111; text-decoration: underline;">${contactFallbackEmail}</a>`
+  : `For any questions, message us on Instagram <a href="https://instagram.com/aryolondon" style="color: #111; text-decoration: underline;">@aryolondon</a>`;
+
 type OrderItem = {
   name: string;
   color: string;
@@ -60,7 +66,7 @@ function buildOrderEmailHtml(req: EmailRequest): string {
   if (hasJacket && hasTrouser) {
     dispatchNote = `
       <p style="margin: 0 0 12px; font-family: Arial, Helvetica, sans-serif; font-size: 13px; color: #555; line-height: 1.75;">
-        Your Structure Jacket is crafted individually after each order is placed. Current lead time is approximately 3 weeks. You will receive a shipping confirmation with tracking details once your piece is on its way.
+        Your Pennicella Jacket is crafted individually after each order is placed. Current lead time is approximately 3 weeks. You will receive a shipping confirmation with tracking details once your piece is on its way.
       </p>
       <p style="margin: 0 0 0; font-family: Arial, Helvetica, sans-serif; font-size: 13px; color: #555; line-height: 1.75;">
         Your trouser will be dispatched separately within 3–5 working days.
@@ -68,7 +74,7 @@ function buildOrderEmailHtml(req: EmailRequest): string {
   } else if (hasJacket) {
     dispatchNote = `
       <p style="margin: 0; font-family: Arial, Helvetica, sans-serif; font-size: 13px; color: #555; line-height: 1.75;">
-        Your Structure Jacket is crafted individually after each order is placed. Current lead time is approximately 3 weeks. You will receive a shipping confirmation with tracking details once your piece is on its way.
+        Your Pennicella Jacket is crafted individually after each order is placed. Current lead time is approximately 3 weeks. You will receive a shipping confirmation with tracking details once your piece is on its way.
       </p>`;
   } else {
     dispatchNote = `
@@ -157,7 +163,7 @@ function buildOrderEmailHtml(req: EmailRequest): string {
           <tr>
             <td style="padding: 36px 48px 0;">
               <p style="margin: 0 0 4px; font-family: Arial, Helvetica, sans-serif; font-size: 13px; color: #555; line-height: 1.75;">
-                For any questions, contact us at <a href="mailto:support@aryo.london" style="color: #111; text-decoration: underline;">support@aryo.london</a>
+                ${publicSupportHtml}
               </p>
               <p style="margin: 20px 0 4px; font-family: Georgia, 'Times New Roman', serif; font-size: 14px; color: #111;">The ARYO Team</p>
               <p style="margin: 0; font-family: Arial, Helvetica, sans-serif; font-size: 12px; color: #888;">
@@ -229,7 +235,7 @@ export async function POST(request: Request) {
     }
     const { error } = await resend.emails.send({
       from: "ARYO <orders@aryo.london>",
-      to: "support@aryo.london",
+      to: contactInbox,
       replyTo: body.email,
       subject: `Contact: ${body.name}`,
       html: buildContactEmailHtml(body),
@@ -246,7 +252,7 @@ export async function POST(request: Request) {
   const { error } = await resend.emails.send({
     from: "ARYO <orders@aryo.london>",
     to: orderReq.to,
-    replyTo: "support@aryo.london",
+    replyTo: contactInbox,
     subject: "Your ARYO order is confirmed — Pennicella | AF by ARYO",
     html: buildOrderEmailHtml(orderReq),
   });

@@ -64,7 +64,7 @@ export const SiteChatButton = () => {
     } catch {
       setMessages((prev) => [
         ...prev,
-        { role: "assistant", content: "Sorry, client services is unavailable right now. Please email support@aryo.london." },
+        { role: "assistant", content: "Sorry, client services is unavailable right now. Please message us on Instagram @aryolondon." },
       ]);
     } finally {
       setStreaming(false);

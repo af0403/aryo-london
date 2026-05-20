@@ -279,7 +279,7 @@ export default function CheckoutPage() {
     setError(null);
 
     if (!stripeRef.current || !cardRef.current) {
-      setError("To place your order, please contact us at support@aryo.london and we will process it directly.");
+      setError("To place your order, please message us on Instagram @aryolondon and we will process it directly.");
       return;
     }
 
@@ -655,8 +655,11 @@ export default function CheckoutPage() {
               {!stripeEnabled ? (
                 <div className="checkout-notice">
                   <p>
-                    Online payment is coming soon. To place your order now, email us at{" "}
-                    <a href="mailto:support@aryo.london">support@aryo.london</a> and we will process it directly.
+                    Online payment is coming soon. To place your order now, message us on Instagram{" "}
+                    <a href="https://instagram.com/aryolondon" target="_blank" rel="noreferrer">
+                      @aryolondon
+                    </a>{" "}
+                    and we will process it directly.
                   </p>
                 </div>
               ) : (

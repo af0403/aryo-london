@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Size Guide",
-  description: "Size guide for the Pennicella Structure Jacket — AF by ARYO.",
+  description: "Size guide for the Pennicella Jacket — AF by ARYO.",
 };
 
 const rows = [
@@ -18,7 +18,7 @@ export default function SizeGuidePage() {
     <main className="section info-page">
       <div className="page-intro">
         <p className="eyebrow">Pennicella | AF by ARYO</p>
-        <h1 className="page-title">Size Guide — Structure Jacket</h1>
+        <h1 className="page-title">Size Guide — Pennicella Jacket</h1>
         <p>
           Measurements refer to the garment, not body measurements. If you are between sizes, size up.
         </p>
@@ -30,7 +30,7 @@ export default function SizeGuidePage() {
 
       <div className="size-guide-wrap">
         <p className="size-guide-intro-note">
-          The following measurements are for the Pennicella Structure Jacket, cut to a size M block
+          The following measurements are for the Pennicella Jacket, cut to a size M block
           pattern by Fashion Enter, London.
         </p>
 
@@ -65,8 +65,10 @@ export default function SizeGuidePage() {
 
         <p className="size-guide-note">
           Trouser sizing will be added when the trouser tech pack is available. For immediate sizing
-          assistance on any garment, contact{" "}
-          <a href="mailto:support@aryo.london">support@aryo.london</a>.
+          assistance on any garment, message us on Instagram{" "}
+          <a href="https://instagram.com/aryolondon" target="_blank" rel="noreferrer">
+            @aryolondon
+          </a>.
         </p>
       </div>
     </main>

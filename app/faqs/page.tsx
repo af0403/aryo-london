@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 const FAQS = [
   {
     q: "How do I find my size?",
-    a: "A full size guide with measurements is available on our Size Guide page. If you are between sizes, we recommend sizing up. You can also email us at support@aryo.london.",
+    a: "A full size guide with measurements is available on our Size Guide page. If you are between sizes, we recommend sizing up. For direct sizing help, message us on Instagram @aryolondon.",
   },
   {
     q: "What is made-to-order?",
@@ -24,7 +24,7 @@ const FAQS = [
   },
   {
     q: "How can I contact client services?",
-    a: "Email us directly at support@aryo.london. We aim to respond within one business day.",
+    a: "Message us directly on Instagram @aryolondon. We aim to respond as quickly as possible.",
   },
 ];
 

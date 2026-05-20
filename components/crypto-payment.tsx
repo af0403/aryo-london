@@ -159,8 +159,11 @@ export function CryptoPaymentSection({
     return (
       <div className="checkout-notice">
         <p>
-          Crypto payments are not configured. Please pay by card or email{" "}
-          <a href="mailto:support@aryo.london">support@aryo.london</a>.
+          Crypto payments are not configured. Please pay by card or message us on Instagram{" "}
+          <a href="https://instagram.com/aryolondon" target="_blank" rel="noreferrer">
+            @aryolondon
+          </a>
+          .
         </p>
       </div>
     );

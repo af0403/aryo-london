@@ -1,14 +1,14 @@
 const campaignFrames = [
   {
     image: "/assets/generated/luma-pack/homepage-hero-noir-desktop.png",
-    alt: "Full noir Pennicella look — Structure Jacket and Essential Trouser",
+    alt: "Full noir Pennicella look — Pennicella Jacket and Essential Trouser",
     eyebrow: "Noir look",
     title: "The collection opens through silhouette.",
     text: "Pennicella is introduced through the full noir look. The jacket and trouser are designed as one piece of language — structure and ease held in the same quiet register.",
   },
   {
     image: "/assets/generated/luma-pack/detail-noir-hardware.png",
-    alt: "Silver hardware and collar detail on the Structure Jacket",
+    alt: "Silver hardware and collar detail on the Pennicella Jacket",
     eyebrow: "Detail",
     title: "Hardware and collar are kept precise.",
     text: "The strength of the jacket sits in the collar line, the zip, and the way the surface texture holds them together.",
