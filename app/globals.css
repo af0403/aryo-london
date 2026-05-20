@@ -961,6 +961,7 @@ body:has(.home-main) .cart-icon-button {
   border-color: rgba(17, 17, 17, 0.36);
   background: rgba(248, 244, 238, 0.9);
   box-shadow: 0 12px 32px rgba(10, 10, 10, 0.12);
+  font-weight: 500;
   backdrop-filter: none;
 }
 
