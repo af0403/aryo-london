@@ -272,7 +272,7 @@ li {
 }
 
 body:has(.home-main) .site-header {
-  background: linear-gradient(180deg, rgba(244, 240, 234, 0.78) 0%, rgba(244, 240, 234, 0.48) 42%, rgba(244, 240, 234, 0.14) 74%, rgba(244, 240, 234, 0) 100%);
+  background: transparent;
   backdrop-filter: none;
   border-bottom: 0;
   color: var(--text);
@@ -311,12 +311,13 @@ body:has(.home-main) {
 }
 
 body:has(.home-main) .brand {
-  text-shadow: 0 1px 0 rgba(248, 244, 238, 0.82), 0 0 18px rgba(248, 244, 238, 0.42);
+  text-shadow: 0 1px 0 rgba(248, 244, 238, 0.58), 0 0 9px rgba(248, 244, 238, 0.16);
+  -webkit-text-stroke: 0.35px rgba(248, 244, 238, 0.24);
 }
 
 body:has(.home-main) .icon-button,
 body:has(.home-main) .cart-icon-button {
-  text-shadow: 0 1px 0 rgba(248, 244, 238, 0.82), 0 0 14px rgba(248, 244, 238, 0.38);
+  text-shadow: 0 1px 0 rgba(248, 244, 238, 0.48), 0 0 7px rgba(248, 244, 238, 0.14);
 }
 
 .icon-button,
