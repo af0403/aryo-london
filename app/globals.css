@@ -886,12 +886,15 @@ body:has(.home-main) {
 
 .hero-watermark {
   position: absolute;
-  inset: 54% auto auto 73%;
+  inset: 54% auto auto 64%;
   transform: translate(-50%, -50%);
   font-family: var(--font-display), serif;
   font-size: clamp(12rem, 28vw, 32rem);
   letter-spacing: 0.12em;
-  color: rgba(247, 242, 235, 0.85);
+  z-index: 1;
+  color: rgba(247, 242, 235, 0.78);
+  text-shadow: 0 1px 1px rgba(16, 14, 12, 0.32), 0 0 26px rgba(16, 14, 12, 0.28);
+  -webkit-text-stroke: 1px rgba(20, 18, 16, 0.24);
   pointer-events: none;
   user-select: none;
   white-space: nowrap;
@@ -1920,7 +1923,7 @@ body:has(.home-main) .site-footer {
   }
 
   .hero-watermark {
-    left: 70%;
+    left: 62%;
     font-size: clamp(7rem, 28vw, 11rem);
   }
 

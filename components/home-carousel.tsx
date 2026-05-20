@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef } from "react";
 import Splide from "@splidejs/splide";
@@ -90,13 +89,13 @@ export const HomeCarousel = () => {
               <div className="hero-carousel-stack">
                 <article className="hero-slide is-active">
                   <Link className="hero-slide-frame" href="/collections/pennicella">
-                    <Image
+                    <img
                       className="hero-slide-image"
-                      src="/assets/generated/aryo-campaign-noir.jpg"
+                      src="/assets/generated/aryo-campaign-noir.png?v=hd-homepage-live-1"
                       alt="Pennicella | AF by ARYO"
-                      fill
-                      priority
-                      sizes="100vw"
+                      loading="eager"
+                      fetchPriority="high"
+                      decoding="async"
                     />
                   </Link>
                 </article>
@@ -126,12 +125,12 @@ export const HomeCarousel = () => {
           <li className="splide__slide home-entry-slide">
             <section className="home-entry-editorial">
               <div className="home-entry-image-wrap">
-                <Image
-                  src="/assets/generated/luma-pack/homepage-editorial-detail.png"
+                <img
+                  src="/assets/generated/luma-pack/homepage-editorial-detail.png?v=hd-homepage-live-1"
                   alt="Pennicella | AF by ARYO"
-                  fill
-                  sizes="(max-width: 768px) 100vw, 50vw"
-                  style={{ objectFit: "cover", objectPosition: "center" }}
+                  loading="eager"
+                  fetchPriority="high"
+                  decoding="async"
                 />
               </div>
               <div className="home-entry-editorial-copy">
