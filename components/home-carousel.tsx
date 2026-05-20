@@ -84,8 +84,6 @@ export const HomeCarousel = () => {
           {/* Slide 1: Hero */}
           <li className="splide__slide">
             <section className="hero-carousel" aria-label="Pennicella hero">
-              <div className="hero-watermark" aria-hidden="true">ARYO</div>
-
               <div className="hero-carousel-stack">
                 <article className="hero-slide is-active">
                   <Link className="hero-slide-frame" href="/collections/pennicella">
