@@ -5,12 +5,10 @@ import { useEffect, useRef } from "react";
 import Splide from "@splidejs/splide";
 import "@splidejs/splide/css/core";
 
-import { ChevronDownIcon } from "./site-icons";
 import { FooterSignupForm } from "./footer-signup-form";
 
 export const HomeCarousel = () => {
   const rootRef = useRef<HTMLDivElement>(null);
-  const splideInstance = useRef<Splide | null>(null);
 
   useEffect(() => {
     const el = rootRef.current;
@@ -44,7 +42,6 @@ export const HomeCarousel = () => {
     });
 
     splide.mount();
-    splideInstance.current = splide;
 
     const onWheel = (e: WheelEvent) => {
       if (locked) {
@@ -71,7 +68,6 @@ export const HomeCarousel = () => {
       el.removeEventListener("wheel", onWheel);
       if (unlockTimer) clearTimeout(unlockTimer);
       splide.destroy();
-      splideInstance.current = null;
       document.body.classList.remove("hero-past");
     };
   }, []);
@@ -81,45 +77,7 @@ export const HomeCarousel = () => {
       <div className="splide__track">
         <ul className="splide__list">
 
-          {/* Slide 1: Hero */}
-          <li className="splide__slide">
-            <section className="hero-carousel" aria-label="Pennicella hero">
-              <div className="hero-carousel-stack">
-                <article className="hero-slide is-active">
-                  <Link className="hero-slide-frame" href="/collections/pennicella">
-                    <img
-                      className="hero-slide-image"
-                      src="/assets/generated/aryo-campaign-noir.png?v=hd-homepage-live-1"
-                      alt="Pennicella | AF by ARYO"
-                      loading="eager"
-                      fetchPriority="high"
-                      decoding="async"
-                    />
-                  </Link>
-                </article>
-              </div>
-
-              <div className="hero-slide-meta">
-                <span className="hero-meta-label">Pennicella | AF by ARYO</span>
-              </div>
-
-              <div className="hero-actions">
-                <Link className="hero-primary-link" href="/collections/pennicella">
-                  Explore Pennicella
-                </Link>
-                <button
-                  className="hero-scroll-link"
-                  type="button"
-                  aria-label="Scroll to next section"
-                  onClick={() => splideInstance.current?.go("+1")}
-                >
-                  <ChevronDownIcon className="site-icon" />
-                </button>
-              </div>
-            </section>
-          </li>
-
-          {/* Slide 2: Editorial collection entry */}
+          {/* Slide 1: Editorial collection entry */}
           <li className="splide__slide home-entry-slide">
             <section className="home-entry-editorial">
               <div className="home-entry-image-wrap">
@@ -140,7 +98,7 @@ export const HomeCarousel = () => {
             </section>
           </li>
 
-          {/* Slide 3: Footer */}
+          {/* Slide 2: Footer */}
           <li className="splide__slide home-footer-slide">
             <footer className="home-slide-footer" aria-label="Site footer">
               <div className="home-slide-footer-inner">
