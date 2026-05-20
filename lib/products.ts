@@ -153,7 +153,7 @@ export const products: Product[] = [
     shortDescription:
       "Relaxed straight-leg trouser in our signature Pennicella fabric. Elasticated waistband. ARYO signature embroidery on the back pocket. Only 100 made.",
     longDescription:
-      "The Noir Essential Trouser balances the Structure Jacket with a softer, longer line. Crafted in our signature Pennicella fabric — named after the Italian word for brushstroke — the fit stays calm and fluid while the ARYO signature embroidery on the back pocket keeps it anchored inside the Pennicella language. Only 100 pieces were made.",
+      "The Noir Essential Trouser balances the Pennicella Jacket with a softer, longer line. Crafted in our signature Pennicella fabric — named after the Italian word for brushstroke — the fit stays calm and fluid while the ARYO signature embroidery on the back pocket keeps it anchored inside the Pennicella language. Only 100 pieces were made.",
     leadImage: `${refreshedStillPath}/noir-trouser-front.png`,
     leadImagePosition: "center top",
     leadImageFit: "cover",
@@ -174,7 +174,7 @@ export const products: Product[] = [
         position: "center center",
       },
       {
-        src: "/assets/reference/black-signature-closeup.jpeg",
+        src: "/assets/processed/noir-embroidery-closeup-clean.jpg",
         alt: "Close detail of the ARYO signature embroidery on the Noir Essential Trouser",
         fit: "contain",
         position: "center center",
@@ -310,6 +310,12 @@ export const products: Product[] = [
         alt: "Back view of the Ivory Pennicella Jacket",
         fit: "cover",
         position: "center top",
+      },
+      {
+        src: `${refreshedStillPath}/ivory-jacket-detail.png`,
+        alt: "Detail of the Ivory Pennicella Jacket showing the ARYO neck label, concealed placket, and metal zip",
+        fit: "contain",
+        position: "center center",
       },
     ],
     details: [
