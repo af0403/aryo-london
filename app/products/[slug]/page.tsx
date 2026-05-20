@@ -62,10 +62,13 @@ export default async function ProductPage({
                 <summary>Sizing</summary>
                 <div className="product-accordion-content">
                   <p>
-                    The Structure Jacket is cut to a size M block pattern. We recommend checking our
+                    The Pennicella Jacket is cut to a size M block pattern. We recommend checking our
                     size guide before ordering. If you fall between sizes, size up for a more relaxed
-                    fit. For bespoke sizing or fit queries, contact{" "}
-                    <a href="mailto:support@aryo.london">support@aryo.london</a> — we are happy to advise.
+                    fit. For sizing or fit queries, message us on Instagram{" "}
+                    <a href="https://instagram.com/aryolondon" target="_blank" rel="noreferrer">
+                      @aryolondon
+                    </a>{" "}
+                    and we will advise.
                   </p>
                   <p>
                     <Link href="/size-guide" className="inline-link">View Size Guide →</Link>

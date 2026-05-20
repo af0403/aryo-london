@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 import { formatPrice } from "../lib/format";
 import { getProduct, type Size } from "../lib/products";
@@ -13,6 +13,8 @@ export type Colorway = {
   slug: string;
   image: string;
   hoverImage?: string;
+  hoverVideo?: string;
+  hoverVideoPoster?: string;
   status: string;
 };
 
@@ -31,11 +33,23 @@ export const GroupedProductCard = ({ group }: { group: ProductGroup }) => {
   const [confirmation, setConfirmation] = useState<string | null>(null);
   const [imgIdx, setImgIdx] = useState(0);
   const [hovering, setHovering] = useState(false);
+  const hoverVideoRef = useRef<HTMLVideoElement | null>(null);
   const { addItem } = useCart();
 
   const active = group.colorways[activeIndex];
   const product = getProduct(active.slug);
-  const gallery = product?.gallery ?? [{ src: active.image, alt: `${group.name} in ${active.color}` }];
+  const imageGallery = product?.gallery.filter((item) => item.type !== "video") ?? [];
+  const gallery = imageGallery.length
+    ? imageGallery
+    : [{ src: active.image, alt: `${group.name} in ${active.color}` }];
+  const previewVideo =
+    (active.hoverVideo
+      ? {
+          src: active.hoverVideo,
+          poster: active.hoverVideoPoster ?? active.image,
+          alt: `${group.name} in ${active.color} in motion`,
+        }
+      : undefined) ?? product?.gallery.find((item) => item.type === "video");
   const isSoldOut = active.status === "Sold out";
   const isMadeToOrder = product?.fulfillment === "made-to-order";
 
@@ -46,9 +60,14 @@ export const GroupedProductCard = ({ group }: { group: ProductGroup }) => {
     setConfirmation(null);
     setImgIdx(0);
     setHovering(false);
+    if (hoverVideoRef.current) {
+      hoverVideoRef.current.pause();
+      hoverVideoRef.current.currentTime = 0;
+    }
   };
 
   const handleMouseMove = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (previewVideo) return;
     if (gallery.length <= 1) return;
     const rect = e.currentTarget.getBoundingClientRect();
     const x = e.clientX - rect.left;
@@ -57,12 +76,22 @@ export const GroupedProductCard = ({ group }: { group: ProductGroup }) => {
   };
 
   const handleMouseEnter = () => {
+    setHovering(true);
+    if (previewVideo && hoverVideoRef.current) {
+      hoverVideoRef.current.currentTime = 0;
+      hoverVideoRef.current.play().catch(() => {});
+      return;
+    }
     if (gallery.length > 1) setHovering(true);
   };
 
   const handleMouseLeave = () => {
     setHovering(false);
     setImgIdx(0);
+    if (hoverVideoRef.current) {
+      hoverVideoRef.current.pause();
+      hoverVideoRef.current.currentTime = 0;
+    }
   };
 
   const handleAddClick = () => {
@@ -110,9 +139,27 @@ export const GroupedProductCard = ({ group }: { group: ProductGroup }) => {
             aria-hidden={i !== 0 || undefined}
             fill
             sizes="(max-width: 768px) 100vw, 50vw"
-            style={{ opacity: i === imgIdx ? 1 : 0 }}
+            style={{
+              opacity: previewVideo ? (i === 0 ? 1 : 0) : i === imgIdx ? 1 : 0,
+              objectFit: img.fit ?? "cover",
+              objectPosition: img.position ?? "top center",
+            }}
           />
         ))}
+        {previewVideo ? (
+          <video
+            ref={hoverVideoRef}
+            className={`collection-card-hover-video ${hovering ? "is-visible" : ""}`}
+            poster={previewVideo.poster ?? active.image}
+            aria-label={previewVideo.alt}
+            muted
+            loop
+            playsInline
+            preload="metadata"
+          >
+            <source src={previewVideo.src} type="video/mp4" />
+          </video>
+        ) : null}
       </Link>
 
       <div className="collection-card-copy">

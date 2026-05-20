@@ -2,21 +2,24 @@ import { GroupedProductCard, type ProductGroup } from "../../../components/group
 
 const productGroups: ProductGroup[] = [
   {
-    name: "Structure Jacket",
+    name: "Pennicella Jacket",
     category: "Outerwear",
-    price: 200,
+    price: 250,
     colorways: [
       {
         color: "Noir",
         slug: "structure-jacket-noir",
-        image: "/assets/generated/luma-pack/product-noir-jacket.png",
-        hoverImage: "/assets/generated/luma-pack/product-noir-jacket-open.png",
+        image: "/assets/generated/product-refresh/stills/noir-jacket-front.png",
+        hoverVideo: "/assets/generated/product-refresh/motion/noir-jacket-hover.mp4",
+        hoverVideoPoster: "/assets/generated/product-refresh/stills/noir-jacket-front.png",
         status: "Made to order",
       },
       {
         color: "Ivory",
         slug: "structure-jacket-ivory",
-        image: "/assets/generated/luma-pack/product-ivory-jacket.png",
+        image: "/assets/generated/product-refresh/stills/ivory-jacket-front.png",
+        hoverVideo: "/assets/generated/product-refresh/motion/ivory-jacket-hover.mp4",
+        hoverVideoPoster: "/assets/generated/product-refresh/stills/ivory-jacket-front.png",
         status: "Made to order",
       },
     ],
@@ -30,13 +33,17 @@ const productGroups: ProductGroup[] = [
       {
         color: "Noir",
         slug: "essential-trouser-noir",
-        image: "/assets/generated/luma-pack/product-noir-trouser-front.jpg",
+        image: "/assets/generated/product-refresh/stills/noir-trouser-front.png",
+        hoverVideo: "/assets/generated/product-refresh/motion/noir-trouser-hover.mp4",
+        hoverVideoPoster: "/assets/generated/product-refresh/stills/noir-trouser-front.png",
         status: "Sold out",
       },
       {
         color: "Ivory",
         slug: "essential-trouser-ivory",
-        image: "/assets/generated/luma-pack/product-ivory-trouser-front.jpg",
+        image: "/assets/generated/product-refresh/stills/ivory-trouser-front.png",
+        hoverVideo: "/assets/generated/product-refresh/motion/ivory-trouser-hover.mp4",
+        hoverVideoPoster: "/assets/generated/product-refresh/stills/ivory-trouser-front.png",
         status: "Available",
       },
     ],
