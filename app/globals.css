@@ -272,8 +272,8 @@ li {
 }
 
 body:has(.home-main) .site-header {
-  background: linear-gradient(180deg, rgba(244, 240, 234, 0.78) 0%, rgba(244, 240, 234, 0.34) 58%, rgba(244, 240, 234, 0) 100%);
-  backdrop-filter: blur(8px);
+  background: linear-gradient(180deg, rgba(244, 240, 234, 0.78) 0%, rgba(244, 240, 234, 0.48) 42%, rgba(244, 240, 234, 0.14) 74%, rgba(244, 240, 234, 0) 100%);
+  backdrop-filter: none;
   border-bottom: 0;
   color: var(--text);
 }
@@ -957,15 +957,15 @@ body:has(.home-main) .cart-icon-button {
 
 .hero-primary-link {
   min-width: 16rem;
-  color: rgba(248, 244, 238, 0.98);
-  border-color: rgba(248, 244, 238, 0.94);
-  background: rgba(19, 18, 17, 0.44);
-  box-shadow: 0 10px 30px rgba(10, 10, 10, 0.14);
-  backdrop-filter: blur(14px);
+  color: rgba(17, 17, 17, 0.96);
+  border-color: rgba(17, 17, 17, 0.36);
+  background: rgba(248, 244, 238, 0.9);
+  box-shadow: 0 12px 32px rgba(10, 10, 10, 0.12);
+  backdrop-filter: none;
 }
 
 .hero-primary-link:hover {
-  background: rgba(19, 18, 17, 0.58);
+  background: rgba(248, 244, 238, 0.98);
 }
 
 .hero-scroll-link {
