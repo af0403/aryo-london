@@ -107,8 +107,8 @@ export const products: Product[] = [
         position: "center top",
       },
       {
-        src: `${refreshedStillPath}/noir-jacket-detail-ref.jpg`,
-        alt: "Collar, label, concealed placket, and metal hardware detail on the Noir Pennicella Jacket",
+        src: "/assets/reference/black-jacket-open.jpeg",
+        alt: "Open view of the Noir Pennicella Jacket showing the lining, concealed placket, and ARYO neck label",
         fit: "contain",
         position: "center center",
       },
@@ -167,6 +167,18 @@ export const products: Product[] = [
         fit: "cover",
         position: "center top",
       },
+      {
+        src: "/assets/processed/noir-trouser-back-legs-clean.png",
+        alt: "Back view of the Noir Essential Trouser",
+        fit: "contain",
+        position: "center center",
+      },
+      {
+        src: "/assets/reference/black-signature-closeup.jpeg",
+        alt: "Close detail of the ARYO signature embroidery on the Noir Essential Trouser",
+        fit: "contain",
+        position: "center center",
+      },
     ],
     details: [
       { label: "Colour", value: "Noir" },
@@ -219,6 +231,18 @@ export const products: Product[] = [
         alt: "Front view of the Ivory Essential Trouser",
         fit: "cover",
         position: "center top",
+      },
+      {
+        src: "/assets/reference/ivory-trouser-back.jpeg",
+        alt: "Back view of the Ivory Essential Trouser",
+        fit: "contain",
+        position: "center center",
+      },
+      {
+        src: "/assets/reference/ivory-fabric-texture-clean.png",
+        alt: "Fabric detail of the Ivory Essential Trouser",
+        fit: "contain",
+        position: "center center",
       },
     ],
     details: [
