@@ -167,26 +167,6 @@ export const products: Product[] = [
         fit: "cover",
         position: "center top",
       },
-      {
-        type: "video",
-        src: `${refreshedMotionPath}/noir-trouser-hover.mp4`,
-        poster: `${refreshedStillPath}/noir-trouser-front.png`,
-        alt: "Motion preview of the Noir Essential Trouser showing the front, the back, and the back-pocket signature detail",
-        fit: "cover",
-        position: "center top",
-      },
-      {
-        src: "/assets/processed/noir-trouser-back-rotated.jpg",
-        alt: "Back view of the Noir Essential Trouser showing ARYO signature embroidery on the back pocket",
-        fit: "cover",
-        position: "center top",
-      },
-      {
-        src: "/assets/reference/black-signature-closeup.jpeg",
-        alt: "ARYO signature embroidery close-up detail on the Noir Essential Trouser",
-        fit: "contain",
-        position: "center center",
-      },
     ],
     details: [
       { label: "Colour", value: "Noir" },
@@ -237,20 +217,6 @@ export const products: Product[] = [
       {
         src: `${refreshedStillPath}/ivory-trouser-front.png`,
         alt: "Front view of the Ivory Essential Trouser",
-        fit: "cover",
-        position: "center top",
-      },
-      {
-        type: "video",
-        src: `${refreshedMotionPath}/ivory-trouser-hover.mp4`,
-        poster: `${refreshedStillPath}/ivory-trouser-front.png`,
-        alt: "Motion preview of the Ivory Essential Trouser showing the front and the back",
-        fit: "cover",
-        position: "center top",
-      },
-      {
-        src: "/assets/processed/ivory-trouser-back-rotated.jpg",
-        alt: "Back view of the Ivory Essential Trouser showing ARYO signature embroidery on the back pocket",
         fit: "cover",
         position: "center top",
       },
