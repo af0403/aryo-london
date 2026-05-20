@@ -61,8 +61,6 @@ const createVariants = (
   }));
 
 const refreshedStillPath = "/assets/generated/product-refresh/stills";
-const refreshedMotionPath = "/assets/generated/product-refresh/motion";
-
 export const products: Product[] = [
   {
     slug: "structure-jacket-noir",
@@ -89,14 +87,6 @@ export const products: Product[] = [
       {
         src: `${refreshedStillPath}/noir-jacket-front.png`,
         alt: "Front view of the Noir Pennicella Jacket",
-        fit: "cover",
-        position: "center top",
-      },
-      {
-        type: "video",
-        src: `${refreshedMotionPath}/noir-jacket-hover.mp4`,
-        poster: `${refreshedStillPath}/noir-jacket-front.png`,
-        alt: "Motion preview of the Noir Pennicella Jacket showing the front, the back, and the construction detail",
         fit: "cover",
         position: "center top",
       },
@@ -169,7 +159,7 @@ export const products: Product[] = [
       },
       {
         src: "/assets/processed/noir-trouser-back-legs-clean.png",
-        alt: "Back view of the Noir Essential Trouser",
+        alt: "Back leg view of the Noir Essential Trouser",
         fit: "contain",
         position: "center center",
       },
@@ -185,6 +175,7 @@ export const products: Product[] = [
       { label: "Fabric", value: "Pennicella — signature ARYO fabric" },
       { label: "Silhouette", value: "Relaxed straight leg" },
       { label: "Waistband", value: "Elasticated" },
+      { label: "Front", value: "Clean front finish with no belt loops or centre crease" },
       { label: "Signature", value: "ARYO embroidery on the back pocket" },
       { label: "Edition", value: "Only 100 made" },
       { label: "Status", value: "Sold out" },
@@ -250,6 +241,7 @@ export const products: Product[] = [
       { label: "Fabric", value: "Pennicella — signature ARYO fabric" },
       { label: "Silhouette", value: "Relaxed straight leg" },
       { label: "Waistband", value: "Elasticated" },
+      { label: "Front", value: "Clean front finish with no belt loops or centre crease" },
       { label: "Signature", value: "ARYO embroidery on the back pocket" },
       { label: "Edition", value: "Only 100 made" },
       { label: "Availability", value: "XS unavailable / S to XL in stock" },
@@ -294,14 +286,6 @@ export const products: Product[] = [
       {
         src: `${refreshedStillPath}/ivory-jacket-front.png`,
         alt: "Front view of the Ivory Pennicella Jacket",
-        fit: "cover",
-        position: "center top",
-      },
-      {
-        type: "video",
-        src: `${refreshedMotionPath}/ivory-jacket-hover.mp4`,
-        poster: `${refreshedStillPath}/ivory-jacket-front.png`,
-        alt: "Motion preview of the Ivory Pennicella Jacket showing the front and the back",
         fit: "cover",
         position: "center top",
       },
