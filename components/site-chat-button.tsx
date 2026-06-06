@@ -7,6 +7,7 @@ import { CloseIcon } from "./site-icons";
 type Message = {
   role: "user" | "assistant";
   content: string;
+  pending?: boolean;
 };
 
 export const SiteChatButton = () => {
@@ -19,7 +20,7 @@ export const SiteChatButton = () => {
 
   useEffect(() => {
     if (open) {
-      setTimeout(() => inputRef.current?.focus(), 80);
+      setTimeout(() => inputRef.current?.focus({ preventScroll: true }), 80);
     }
   }, [open]);
 
@@ -27,12 +28,15 @@ export const SiteChatButton = () => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, streaming]);
 
+  const fallbackReply =
+    "Sorry, client services is unavailable right now. The fastest route for now is Instagram DM @aryolondon.";
+
   const send = async () => {
     const text = input.trim();
     if (!text || streaming) return;
 
-    const updated: Message[] = [...messages, { role: "user", content: text }];
-    setMessages(updated);
+    const conversation: Message[] = [...messages, { role: "user", content: text }];
+    setMessages([...conversation, { role: "assistant", content: "", pending: true }]);
     setInput("");
     setStreaming(true);
 
@@ -40,7 +44,9 @@ export const SiteChatButton = () => {
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: updated }),
+        body: JSON.stringify({
+          messages: conversation.map(({ role, content }) => ({ role, content })),
+        }),
       });
 
       if (!res.ok || !res.body) throw new Error("Chat unavailable right now.");
@@ -49,22 +55,34 @@ export const SiteChatButton = () => {
       const decoder = new TextDecoder();
       let reply = "";
 
-      setMessages((prev) => [...prev, { role: "assistant", content: "" }]);
-
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
         reply += decoder.decode(value, { stream: true });
         setMessages((prev) => {
           const next = [...prev];
-          next[next.length - 1] = { role: "assistant", content: reply };
+          next[next.length - 1] = { role: "assistant", content: reply, pending: false };
           return next;
         });
       }
+
+      setMessages((prev) => {
+        const next = [...prev];
+        next[next.length - 1] = {
+          role: "assistant",
+          content: reply.trim() ? reply : fallbackReply,
+          pending: false,
+        };
+        return next;
+      });
     } catch {
       setMessages((prev) => [
-        ...prev,
-        { role: "assistant", content: "Sorry, client services is unavailable right now. Please message us on Instagram @aryolondon." },
+        ...prev.slice(0, -1),
+        {
+          role: "assistant",
+          content: fallbackReply,
+          pending: false,
+        },
       ]);
     } finally {
       setStreaming(false);
@@ -99,8 +117,19 @@ export const SiteChatButton = () => {
               </p>
             ) : (
               messages.map((msg, i) => (
-                <div key={i} className={`chat-bubble ${msg.role === "user" ? "chat-bubble-user" : "chat-bubble-assistant"}`}>
-                  {msg.content || <span className="chat-typing">…</span>}
+                <div
+                  key={i}
+                  className={`chat-bubble ${msg.role === "user" ? "chat-bubble-user" : "chat-bubble-assistant"} ${msg.pending ? "is-thinking" : ""}`}
+                >
+                  {msg.pending ? (
+                    <span className="chat-typing-dots" role="status" aria-label="Assistant is thinking">
+                      <span className="chat-typing-dot" />
+                      <span className="chat-typing-dot" />
+                      <span className="chat-typing-dot" />
+                    </span>
+                  ) : (
+                    msg.content
+                  )}
                 </div>
               ))
             )}

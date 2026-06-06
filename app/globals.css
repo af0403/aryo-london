@@ -1,4 +1,6 @@
 :root {
+  --safe-area-top: env(safe-area-inset-top, 0px);
+  --safe-area-bottom: env(safe-area-inset-bottom, 0px);
   --background: #f2efe8;
   --surface: #f8f5f0;
   --surface-strong: #ebe6dc;
@@ -14,7 +16,9 @@
   --shadow: 0 24px 70px rgba(17, 17, 17, 0.08);
   --announcement-height: 2rem;
   --header-height: 5.25rem;
-  --chrome-offset: calc(var(--announcement-height) + var(--header-height));
+  --chrome-offset: calc(
+    var(--safe-area-top) + var(--announcement-height) + var(--header-height)
+  );
   --page-width: min(1450px, calc(100vw - 2.75rem));
 }
 
@@ -57,11 +61,13 @@ html {
 body {
   margin: 0;
   min-height: 100vh;
+  min-height: 100dvh;
   overflow-x: hidden;
   background: var(--background);
   color: var(--text);
   font-family: var(--font-body), sans-serif;
   padding-top: var(--chrome-offset);
+  padding-bottom: var(--safe-area-bottom);
   -webkit-font-smoothing: antialiased;
 }
 
@@ -250,10 +256,10 @@ li {
   position: fixed;
   inset: 0 0 auto;
   z-index: 90;
-  min-height: var(--announcement-height);
+  min-height: calc(var(--announcement-height) + var(--safe-area-top));
   display: grid;
   place-items: center;
-  padding: 0 1rem;
+  padding: var(--safe-area-top) 1rem 0;
   background: #1a1a1a;
   color: #ffffff;
   text-align: center;
@@ -262,7 +268,7 @@ li {
 
 .site-header {
   position: fixed;
-  inset: var(--announcement-height) 0 auto;
+  inset: calc(var(--safe-area-top) + var(--announcement-height)) 0 auto;
   z-index: 85;
   border-bottom: 1px solid rgba(17, 17, 17, 0.08);
   background: rgba(242, 239, 232, 0.9);
@@ -282,6 +288,7 @@ body:has(.home-main) .site-header {
 body:has(.home-main) {
   overflow: auto;
   padding-top: 0;
+  padding-bottom: 0;
 }
 
 
@@ -715,7 +722,7 @@ body:has(.home-main) {
 .client-services-widget {
   position: fixed;
   right: 1.4rem;
-  bottom: 1.35rem;
+  bottom: calc(1.35rem + var(--safe-area-bottom));
   z-index: 95;
   display: flex;
   flex-direction: column;
@@ -762,6 +769,10 @@ body:has(.home-main) {
   gap: 0;
   padding: 0;
   overflow: hidden;
+  max-height: min(
+    34rem,
+    calc(100dvh - var(--chrome-offset) - 2.4rem - var(--safe-area-bottom))
+  );
 }
 
 .chat-panel .client-services-head {
@@ -809,9 +820,8 @@ body:has(.home-main) {
   align-self: start;
 }
 
-.chat-typing {
-  opacity: 0.5;
-  letter-spacing: 0.3em;
+.chat-bubble.is-thinking {
+  width: fit-content;
 }
 
 .chat-input-row {
@@ -826,7 +836,7 @@ body:has(.home-main) {
   border: 0;
   padding: 0.7rem 0.85rem;
   background: transparent;
-  font-size: 0.8rem;
+  font-size: 1rem;
   line-height: 1.5;
   letter-spacing: 0.02em;
   color: var(--text);
@@ -857,14 +867,54 @@ body:has(.home-main) {
   cursor: not-allowed;
 }
 
+.chat-typing-dots {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.28rem;
+  min-height: 1rem;
+}
+
+.chat-typing-dot {
+  width: 0.34rem;
+  height: 0.34rem;
+  border-radius: 999px;
+  background: currentColor;
+  opacity: 0.42;
+  animation: chat-dot-bounce 1s infinite ease-in-out;
+}
+
+.chat-typing-dot:nth-child(2) {
+  animation-delay: 120ms;
+}
+
+.chat-typing-dot:nth-child(3) {
+  animation-delay: 240ms;
+}
+
+@keyframes chat-dot-bounce {
+  0%,
+  80%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.35;
+  }
+
+  40% {
+    transform: translateY(-0.22rem);
+    opacity: 0.9;
+  }
+}
+
 .home-main {
   background: var(--background);
   height: 100svh;
+  height: 100dvh;
   overflow: hidden;
 }
 
 .home-carousel {
   height: 100svh;
+  height: 100dvh;
   overflow: hidden;
 }
 
@@ -880,6 +930,7 @@ body:has(.home-main) {
 .hero-carousel {
   position: relative;
   height: 100svh;
+  height: 100dvh;
   overflow: hidden;
   background: #1a1a1a;
 }
@@ -972,6 +1023,7 @@ body:has(.home-main) {
 
 .home-entry-slide {
   height: 100svh;
+  height: 100dvh;
   background: #f0eeeb;
 }
 
@@ -1038,6 +1090,7 @@ body:has(.home-main) .site-footer {
 
 .home-footer-slide {
   height: 100svh;
+  height: 100dvh;
   background: #f0eeeb;
   display: flex;
   flex-direction: column;
@@ -1062,7 +1115,7 @@ body:has(.home-main) .site-footer {
 .home-slide-footer-base {
   width: var(--page-width);
   margin: 2.5rem auto 0;
-  padding: 1.4rem 0 2rem;
+  padding: 1.4rem 0 calc(2rem + var(--safe-area-bottom));
   border-top: 1px solid var(--line);
   font-size: 0.58rem;
   letter-spacing: 0.18em;
@@ -1074,6 +1127,7 @@ body:has(.home-main) .site-footer {
 
 .success-page {
   min-height: 100vh;
+  min-height: 100dvh;
   background: #f0eeeb;
   display: flex;
   align-items: center;
@@ -1153,6 +1207,7 @@ body:has(.home-main) .site-footer {
   padding: 1.1rem 0 4.5rem;
   background: #f0eeeb;
   min-height: 100vh;
+  min-height: 100dvh;
 }
 
 .collection-page-head {
@@ -1512,6 +1567,17 @@ body:has(.home-main) .site-footer {
   overflow: hidden;
 }
 
+.product-showcase-frame-button {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: zoom-in;
+}
+
 .product-showcase-frame img {
   width: 100%;
   height: 100%;
@@ -1566,6 +1632,84 @@ body:has(.home-main) .site-footer {
 
 .product-showcase-thumb.is-active {
   border-color: var(--text);
+}
+
+.product-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 140;
+  overscroll-behavior: contain;
+}
+
+.product-lightbox-backdrop {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  background: rgba(10, 10, 10, 0.94);
+}
+
+.product-lightbox-shell {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  padding: calc(1rem + var(--safe-area-top)) 1rem
+    calc(1rem + var(--safe-area-bottom));
+  color: var(--text-inverse);
+}
+
+.product-lightbox-head,
+.product-lightbox-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.product-lightbox-meta,
+.product-lightbox-foot p {
+  font-size: 0.68rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(247, 243, 237, 0.72);
+}
+
+.product-lightbox-close {
+  width: 2.8rem;
+  height: 2.8rem;
+  margin-left: auto;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(247, 243, 237, 0.18);
+  background: rgba(248, 245, 240, 0.06);
+  color: var(--text-inverse);
+}
+
+.product-lightbox-stage {
+  position: relative;
+  min-height: 0;
+  overflow: hidden;
+  touch-action: none;
+}
+
+.product-lightbox-stage.is-video {
+  touch-action: auto;
+}
+
+.product-lightbox-media {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  will-change: transform;
+}
+
+.product-lightbox-video {
+  width: 100%;
+  height: 100%;
+  background: rgba(248, 245, 240, 0.06);
 }
 
 .product-page-copy {
@@ -1906,6 +2050,13 @@ body:has(.home-main) .site-footer {
   color: var(--text-soft);
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .chat-typing-dot {
+    animation: none;
+    opacity: 0.65;
+  }
+}
+
 @media (max-width: 1100px) {
   .product-page-layout,
   .campaign-frame,
@@ -1918,7 +2069,7 @@ body:has(.home-main) .site-footer {
 
 @media (max-width: 820px) {
   body {
-    padding-top: calc(var(--announcement-height) + 4.6rem);
+    padding-top: var(--chrome-offset);
   }
 
   :root {
@@ -1967,7 +2118,7 @@ body:has(.home-main) .site-footer {
 
   /* Slide 2 editorial: cap image so copy is always visible below */
   .home-entry-image-wrap {
-    max-height: 62svh;
+    max-height: 62dvh;
   }
 
   /* Thumbnail strip: horizontal row below main image on mobile */
@@ -1997,6 +2148,11 @@ body:has(.home-main) .site-footer {
     flex-shrink: 0;
   }
 
+  .chat-messages {
+    min-height: 0;
+    max-height: none;
+  }
+
   .product-accordion-content li {
     flex-direction: column;
   }
@@ -2019,6 +2175,18 @@ body:has(.home-main) .site-footer {
 
   .site-footer {
     padding-bottom: 0;
+  }
+
+  .client-services-widget {
+    right: 0.85rem;
+    bottom: calc(0.9rem + var(--safe-area-bottom));
+  }
+
+  .chat-panel {
+    width: min(100vw - 1.7rem, 22rem);
+    max-height: calc(
+      100dvh - var(--chrome-offset) - 1.3rem - var(--safe-area-bottom)
+    );
   }
 
   .product-purchase-bar {
@@ -2098,7 +2266,15 @@ body:has(.home-main) .site-footer {
   .site-announcement-bar {
     font-size: 0.65rem;
     letter-spacing: 0.1em;
-    padding: 0 0.75rem;
+    padding: var(--safe-area-top) 0.75rem 0;
+  }
+
+  .product-lightbox-shell {
+    padding-inline: 0.75rem;
+  }
+
+  .product-lightbox-foot p {
+    max-width: 18rem;
   }
 }
 
@@ -2106,6 +2282,7 @@ body:has(.home-main) .site-footer {
 
 .account-page {
   min-height: 100vh;
+  min-height: 100dvh;
   background: #f0eeeb;
   display: flex;
   align-items: flex-start;
@@ -2332,8 +2509,9 @@ body:has(.home-main) .site-footer {
 
 .checkout-page {
   min-height: 100vh;
+  min-height: 100dvh;
   background: #f0eeeb;
-  padding-bottom: 5rem;
+  padding-bottom: calc(5rem + var(--safe-area-bottom));
 }
 
 .checkout-inner {

@@ -17,7 +17,7 @@ export const HomeCarousel = () => {
     const splide = new Splide(el, {
       type: "slide",
       direction: "ttb",
-      height: "100svh",
+      height: "100dvh",
       wheel: false,
       wheelSleep: 1500,
       pagination: false,
