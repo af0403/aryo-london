@@ -32,6 +32,14 @@ type GetAddressResult = {
   town_or_city: string;
   county: string;
   country: string;
+  building_number?: string;
+  building_name?: string;
+  building_name_or_number?: string;
+  sub_building_number?: string;
+  sub_building_name?: string;
+  sub_building_name_or_number?: string;
+  thoroughfare?: string;
+  formatted_address?: string[];
 };
 
 type PostcodeLookupResponse =
@@ -40,10 +48,54 @@ type PostcodeLookupResponse =
   | { source: "not-found" }
   | { source: "error" };
 
-function formatAddressOption(a: GetAddressResult): string {
-  return [a.line_1, a.line_2, a.town_or_city || a.locality]
-    .filter(Boolean)
-    .join(", ");
+function compactAddressParts(parts: Array<string | null | undefined>): string[] {
+  return parts
+    .map((part) => part?.trim())
+    .filter((part): part is string => Boolean(part));
+}
+
+function getFallbackLine1(a: GetAddressResult): string {
+  const streetLine = compactAddressParts([a.building_number, a.thoroughfare]).join(" ");
+
+  return compactAddressParts([
+    a.sub_building_name_or_number || a.sub_building_name || a.sub_building_number,
+    a.building_name_or_number || a.building_name,
+    streetLine,
+  ]).join(", ");
+}
+
+function getResolvedAddress(a: GetAddressResult): {
+  line1: string;
+  line2: string;
+  city: string;
+  title: string;
+  summary: string;
+} {
+  const formatted = a.formatted_address ?? [];
+  const formattedTitle = compactAddressParts([formatted[0]]).join("");
+  const formattedSecondary = compactAddressParts(formatted.slice(1, 3)).join(", ");
+  const fallbackLine1 = getFallbackLine1(a);
+  const line1 = a.line_1?.trim() || formattedTitle || fallbackLine1;
+  const line2 = compactAddressParts([
+    a.line_2,
+    a.line_3,
+    a.line_4,
+    a.locality,
+  ]).join(", ");
+  const city = a.town_or_city || a.locality || "";
+  const summary = compactAddressParts([
+    formattedSecondary || line2,
+    city,
+    a.county,
+  ]).join(", ");
+
+  return {
+    line1,
+    line2,
+    city,
+    title: line1,
+    summary,
+  };
 }
 
 export default function CheckoutPage() {
@@ -144,9 +196,10 @@ export default function CheckoutPage() {
   }, []);
 
   const applyAddress = useCallback((a: GetAddressResult) => {
-    setAddress1(a.line_1);
-    setAddress2(a.line_2 || "");
-    setCity(a.town_or_city || a.locality || "");
+    const resolved = getResolvedAddress(a);
+    setAddress1(resolved.line1);
+    setAddress2(resolved.line2);
+    setCity(resolved.city);
     setCountry("United Kingdom");
   }, []);
 
@@ -573,7 +626,7 @@ export default function CheckoutPage() {
               )}
               {postcodeStatus === "found" && lookupSource === "getaddress" && (
                 <p className="postcode-lookup-message postcode-lookup-found">
-                  Address filled automatically.
+                  Address filled automatically, including address line 2 when available.
                 </p>
               )}
               {postcodeStatus === "found" && lookupSource === "postcodes.io" && (
@@ -583,7 +636,7 @@ export default function CheckoutPage() {
               )}
               {postcodeStatus === "select" && (
                 <p className="postcode-lookup-message postcode-lookup-found">
-                  {addressResults.length} addresses found — select below.
+                  {addressResults.length} addresses found — choose your exact building, flat, or door number below.
                 </p>
               )}
             </div>
@@ -594,19 +647,24 @@ export default function CheckoutPage() {
             <div className="checkout-field">
               <label className="checkout-label">Select your address</label>
               <ul className="address-results-list" role="listbox" aria-label="Address results">
-                {addressResults.map((a, i) => (
-                  <li
-                    key={i}
-                    className="address-result-item"
-                    role="option"
-                    onMouseDown={(e) => {
-                      e.preventDefault(); // prevent postcode input blur before selection fires
-                      selectAddress(a);
-                    }}
-                  >
-                    {formatAddressOption(a)}
-                  </li>
-                ))}
+                {addressResults.map((a, i) => {
+                  const resolved = getResolvedAddress(a);
+
+                  return (
+                    <li
+                      key={i}
+                      className="address-result-item"
+                      role="option"
+                      onMouseDown={(e) => {
+                        e.preventDefault(); // prevent postcode input blur before selection fires
+                        selectAddress(a);
+                      }}
+                    >
+                      <strong>{resolved.title}</strong>
+                      {resolved.summary ? <span>{resolved.summary}</span> : null}
+                    </li>
+                  );
+                })}
               </ul>
             </div>
           )}

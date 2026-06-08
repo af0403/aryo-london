@@ -3159,6 +3159,22 @@ body:has(.home-main) .site-footer {
   transition: background 120ms ease;
 }
 
+.address-result-item strong,
+.address-result-item span {
+  display: block;
+}
+
+.address-result-item strong {
+  font-size: 0.76rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.address-result-item span {
+  margin-top: 0.2rem;
+  color: var(--text-soft);
+}
+
 .address-result-item:last-child {
   border-bottom: none;
 }

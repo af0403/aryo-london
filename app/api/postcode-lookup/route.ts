@@ -11,6 +11,14 @@ type GetAddressResult = {
   town_or_city: string;
   county: string;
   country: string;
+  building_number?: string;
+  building_name?: string;
+  building_name_or_number?: string;
+  sub_building_number?: string;
+  sub_building_name?: string;
+  sub_building_name_or_number?: string;
+  thoroughfare?: string;
+  formatted_address?: string[];
 };
 
 type LookupResponse =
