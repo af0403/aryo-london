@@ -30,6 +30,7 @@ type LookupResponse =
 export async function GET(request: Request): Promise<NextResponse<LookupResponse>> {
   const { searchParams } = new URL(request.url);
   const raw = searchParams.get("postcode") ?? "";
+  const mode = searchParams.get("mode") === "full" ? "full" : "city";
   const postcode = raw.trim().replace(/\s+/g, " ").toUpperCase();
 
   if (!postcode) {
@@ -38,8 +39,8 @@ export async function GET(request: Request): Promise<NextResponse<LookupResponse
 
   const apiKey = process.env.GETADDRESS_API_KEY;
 
-  // Primary: getAddress.io (server-side key — no NEXT_PUBLIC_ needed)
-  if (apiKey) {
+  // Full property-level lookup is only attempted when explicitly requested.
+  if (mode === "full" && apiKey) {
     try {
       const res = await fetch(
         `https://api.getaddress.io/find/${encodeURIComponent(postcode)}?api-key=${apiKey}&expand=true`,

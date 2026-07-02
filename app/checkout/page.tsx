@@ -48,6 +48,8 @@ type PostcodeLookupResponse =
   | { source: "not-found" }
   | { source: "error" };
 
+type LookupIntent = "city" | "full";
+
 function compactAddressParts(parts: Array<string | null | undefined>): string[] {
   return parts
     .map((part) => part?.trim())
@@ -129,6 +131,7 @@ export default function CheckoutPage() {
   const [addressResults, setAddressResults] = useState<GetAddressResult[]>([]);
   const [showAddressSelect, setShowAddressSelect] = useState(false);
   const [lookupSource, setLookupSource] = useState<"getaddress" | "postcodes.io" | null>(null);
+  const [lastLookupIntent, setLastLookupIntent] = useState<LookupIntent>("city");
   const postcodeDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const postcodeLookupWrapRef = useRef<HTMLDivElement>(null);
 
@@ -210,19 +213,23 @@ export default function CheckoutPage() {
     setPostcodeStatus("found");
   }, [applyAddress]);
 
-  const doFullLookup = useCallback(async (raw: string) => {
+  const lookupAddress = useCallback(async (raw: string, intent: LookupIntent) => {
     const v = raw.trim().replace(/\s+/g, " ").toUpperCase();
     if (!FULL_POSTCODE_RE.test(v)) {
       setPostcodeStatus("not-found");
       return;
     }
+
+    setLastLookupIntent(intent);
     setPostcodeStatus("loading");
     setShowSuggestions(false);
     setShowAddressSelect(false);
     setAddressResults([]);
 
     try {
-      const res = await fetch(`/api/postcode-lookup?postcode=${encodeURIComponent(v)}`);
+      const res = await fetch(
+        `/api/postcode-lookup?postcode=${encodeURIComponent(v)}&mode=${intent}`
+      );
       const data = (await res.json()) as PostcodeLookupResponse;
 
       if (data.source === "getaddress") {
@@ -253,6 +260,14 @@ export default function CheckoutPage() {
     }
   }, [applyAddress]);
 
+  const doCityLookup = useCallback(async (raw: string) => {
+    await lookupAddress(raw, "city");
+  }, [lookupAddress]);
+
+  const doFullLookup = useCallback(async (raw: string) => {
+    await lookupAddress(raw, "full");
+  }, [lookupAddress]);
+
   const lookupPostcode = useCallback(async (value: string) => {
     const v = value.trim();
     if (v.length < 3) {
@@ -263,7 +278,7 @@ export default function CheckoutPage() {
     }
 
     if (FULL_POSTCODE_RE.test(v)) {
-      await doFullLookup(v);
+      await doCityLookup(v);
     } else {
       // Partial autocomplete via postcodes.io
       try {
@@ -283,7 +298,7 @@ export default function CheckoutPage() {
         setShowSuggestions(false);
       }
     }
-  }, [doFullLookup]);
+  }, [doCityLookup]);
 
   const handlePostcodeChange = (value: string) => {
     const normalised = value.toUpperCase();
@@ -301,7 +316,7 @@ export default function CheckoutPage() {
     // Don't re-trigger lookup if the address picker is already showing
     if (showAddressSelect) return;
     if (postcode.trim().length >= 5) {
-      void doFullLookup(postcode);
+      void doCityLookup(postcode);
     }
   };
 
@@ -592,9 +607,15 @@ export default function CheckoutPage() {
                   onClick={handleFindAddress}
                   disabled={postcodeStatus === "loading"}
                 >
-                  {postcodeStatus === "loading" ? "Searching…" : "Find"}
+                  {postcodeStatus === "loading" ? "Searching…" : "Find address"}
                 </button>
               </div>
+
+              {postcodeStatus === "idle" && (
+                <p className="postcode-lookup-message">
+                  We&apos;ll fill the city automatically. Use Find address only when you want full street lookup.
+                </p>
+              )}
 
               {showSuggestions && postcodeSuggestions.length > 0 && (
                 <ul className="postcode-suggestions" role="listbox" aria-label="Postcode suggestions">
@@ -631,7 +652,9 @@ export default function CheckoutPage() {
               )}
               {postcodeStatus === "found" && lookupSource === "postcodes.io" && (
                 <p className="postcode-lookup-message postcode-lookup-found">
-                  City filled — please enter your street address above.
+                  {lastLookupIntent === "full"
+                    ? "City filled. Full street lookup isn't active right now, so please enter the street address manually."
+                    : "Postcode confirmed and city filled — please enter the street address manually."}
                 </p>
               )}
               {postcodeStatus === "select" && (
