@@ -21,84 +21,11 @@ const COUNTRIES = [
 
 const FULL_POSTCODE_RE = /^[A-Z]{1,2}\d[A-Z\d]?\s*\d[A-Z]{2}$/i;
 
-type PostcodeLookupStatus = "idle" | "loading" | "found" | "not-found" | "select" | "rate-limited";
-
-type GetAddressResult = {
-  line_1: string;
-  line_2: string;
-  line_3: string;
-  line_4: string;
-  locality: string;
-  town_or_city: string;
-  county: string;
-  country: string;
-  building_number?: string;
-  building_name?: string;
-  building_name_or_number?: string;
-  sub_building_number?: string;
-  sub_building_name?: string;
-  sub_building_name_or_number?: string;
-  thoroughfare?: string;
-  formatted_address?: string[];
-};
+type PostcodeLookupStatus = "idle" | "loading" | "found" | "not-found";
 
 type PostcodeLookupResponse =
-  | { source: "getaddress"; postcode: string; addresses: GetAddressResult[] }
   | { source: "postcodes.io"; postcode: string; city: string }
-  | { source: "not-found" }
-  | { source: "error" };
-
-type LookupIntent = "city" | "full";
-
-function compactAddressParts(parts: Array<string | null | undefined>): string[] {
-  return parts
-    .map((part) => part?.trim())
-    .filter((part): part is string => Boolean(part));
-}
-
-function getFallbackLine1(a: GetAddressResult): string {
-  const streetLine = compactAddressParts([a.building_number, a.thoroughfare]).join(" ");
-
-  return compactAddressParts([
-    a.sub_building_name_or_number || a.sub_building_name || a.sub_building_number,
-    a.building_name_or_number || a.building_name,
-    streetLine,
-  ]).join(", ");
-}
-
-function getResolvedAddress(a: GetAddressResult): {
-  line1: string;
-  line2: string;
-  city: string;
-  title: string;
-  summary: string;
-} {
-  const formatted = a.formatted_address ?? [];
-  const formattedTitle = compactAddressParts([formatted[0]]).join("");
-  const formattedSecondary = compactAddressParts(formatted.slice(1, 3)).join(", ");
-  const fallbackLine1 = getFallbackLine1(a);
-  const line1 = a.line_1?.trim() || formattedTitle || fallbackLine1;
-  const line2 = compactAddressParts([
-    a.line_2,
-    a.line_3,
-    a.line_4,
-    a.locality,
-  ]).join(", ");
-  const city = a.town_or_city || a.locality || "";
-  const summary = compactAddressParts([
-    formattedSecondary || line2,
-    city,
-    a.county,
-  ]).join(", ");
-
-  return {
-    line1,
-    line2,
-    city,
-    title: line1,
-    summary,
-  };
-}
+  | { source: "not-found" };
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -128,10 +55,6 @@ export default function CheckoutPage() {
   const [postcodeSuggestions, setPostcodeSuggestions] = useState<string[]>([]);
   const [postcodeStatus, setPostcodeStatus] = useState<PostcodeLookupStatus>("idle");
   const [showSuggestions, setShowSuggestions] = useState(false);
-  const [addressResults, setAddressResults] = useState<GetAddressResult[]>([]);
-  const [showAddressSelect, setShowAddressSelect] = useState(false);
-  const [lookupSource, setLookupSource] = useState<"getaddress" | "postcodes.io" | null>(null);
-  const [lastLookupIntent, setLastLookupIntent] = useState<LookupIntent>("city");
   const postcodeDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const postcodeLookupWrapRef = useRef<HTMLDivElement>(null);
 
@@ -198,75 +121,32 @@ export default function CheckoutPage() {
     return () => document.removeEventListener("mousedown", handleOutside);
   }, []);
 
-  const applyAddress = useCallback((a: GetAddressResult) => {
-    const resolved = getResolvedAddress(a);
-    setAddress1(resolved.line1);
-    setAddress2(resolved.line2);
-    setCity(resolved.city);
-    setCountry("United Kingdom");
-  }, []);
-
-  const selectAddress = useCallback((a: GetAddressResult) => {
-    applyAddress(a);
-    setShowAddressSelect(false);
-    setAddressResults([]);
-    setPostcodeStatus("found");
-  }, [applyAddress]);
-
-  const lookupAddress = useCallback(async (raw: string, intent: LookupIntent) => {
+  const lookupAddress = useCallback(async (raw: string) => {
     const v = raw.trim().replace(/\s+/g, " ").toUpperCase();
     if (!FULL_POSTCODE_RE.test(v)) {
       setPostcodeStatus("not-found");
       return;
     }
 
-    setLastLookupIntent(intent);
     setPostcodeStatus("loading");
     setShowSuggestions(false);
-    setShowAddressSelect(false);
-    setAddressResults([]);
 
     try {
-      const res = await fetch(
-        `/api/postcode-lookup?postcode=${encodeURIComponent(v)}&mode=${intent}`
-      );
+      const res = await fetch(`/api/postcode-lookup?postcode=${encodeURIComponent(v)}`);
       const data = (await res.json()) as PostcodeLookupResponse;
 
-      if (data.source === "getaddress") {
-        setLookupSource("getaddress");
-        setPostcode(data.postcode);
-        setCountry("United Kingdom");
-        if (data.addresses.length === 1) {
-          applyAddress(data.addresses[0]);
-          setPostcodeStatus("found");
-        } else {
-          setAddressResults(data.addresses);
-          setShowAddressSelect(true);
-          setPostcodeStatus("select");
-        }
-      } else if (data.source === "postcodes.io") {
-        setLookupSource("postcodes.io");
+      if (data.source === "postcodes.io") {
         setPostcode(data.postcode);
         if (data.city) setCity(data.city);
         setCountry("United Kingdom");
         setPostcodeStatus("found");
-      } else if (data.source === "error") {
-        setPostcodeStatus("rate-limited");
       } else {
         setPostcodeStatus("not-found");
       }
     } catch {
       setPostcodeStatus("idle");
     }
-  }, [applyAddress]);
-
-  const doCityLookup = useCallback(async (raw: string) => {
-    await lookupAddress(raw, "city");
-  }, [lookupAddress]);
-
-  const doFullLookup = useCallback(async (raw: string) => {
-    await lookupAddress(raw, "full");
-  }, [lookupAddress]);
+  }, []);
 
   const lookupPostcode = useCallback(async (value: string) => {
     const v = value.trim();
@@ -278,7 +158,7 @@ export default function CheckoutPage() {
     }
 
     if (FULL_POSTCODE_RE.test(v)) {
-      await doCityLookup(v);
+      await lookupAddress(v);
     } else {
       // Partial autocomplete via postcodes.io
       try {
@@ -298,13 +178,12 @@ export default function CheckoutPage() {
         setShowSuggestions(false);
       }
     }
-  }, [doCityLookup]);
+  }, [lookupAddress]);
 
   const handlePostcodeChange = (value: string) => {
     const normalised = value.toUpperCase();
     setPostcode(normalised);
     setPostcodeStatus("idle");
-    setShowAddressSelect(false);
     if (postcodeDebounceRef.current) clearTimeout(postcodeDebounceRef.current);
     postcodeDebounceRef.current = setTimeout(() => {
       void lookupPostcode(normalised);
@@ -313,23 +192,16 @@ export default function CheckoutPage() {
 
   const handlePostcodeBlur = () => {
     if (postcodeDebounceRef.current) clearTimeout(postcodeDebounceRef.current);
-    // Don't re-trigger lookup if the address picker is already showing
-    if (showAddressSelect) return;
     if (postcode.trim().length >= 5) {
-      void doCityLookup(postcode);
+      void lookupAddress(postcode);
     }
-  };
-
-  const handleFindAddress = () => {
-    if (postcodeDebounceRef.current) clearTimeout(postcodeDebounceRef.current);
-    void doFullLookup(postcode);
   };
 
   const selectSuggestion = async (suggestion: string) => {
     setPostcode(suggestion);
     setShowSuggestions(false);
     setPostcodeSuggestions([]);
-    await doFullLookup(suggestion);
+    await lookupAddress(suggestion);
   };
 
   const lineItems = items
@@ -601,19 +473,11 @@ export default function CheckoutPage() {
                   onBlur={handlePostcodeBlur}
                   onFocus={() => postcodeSuggestions.length > 0 && setShowSuggestions(true)}
                 />
-                <button
-                  type="button"
-                  className="postcode-find-btn"
-                  onClick={handleFindAddress}
-                  disabled={postcodeStatus === "loading"}
-                >
-                  {postcodeStatus === "loading" ? "Searching…" : "Find address"}
-                </button>
               </div>
 
               {postcodeStatus === "idle" && (
                 <p className="postcode-lookup-message">
-                  We&apos;ll fill the city automatically. Use Find address only when you want full street lookup.
+                  We&apos;ll fill the city automatically for UK postcodes. Please enter the street address and exact door or flat number manually.
                 </p>
               )}
 
@@ -637,60 +501,16 @@ export default function CheckoutPage() {
 
               {postcodeStatus === "not-found" && (
                 <p className="postcode-lookup-message">
-                  No addresses found — please enter manually.
+                  We couldn&apos;t match that postcode. Please check it or enter the address manually.
                 </p>
               )}
-              {postcodeStatus === "rate-limited" && (
-                <p className="postcode-lookup-message">
-                  Address lookup unavailable — please enter manually.
-                </p>
-              )}
-              {postcodeStatus === "found" && lookupSource === "getaddress" && (
+              {postcodeStatus === "found" && (
                 <p className="postcode-lookup-message postcode-lookup-found">
-                  Address filled automatically, including address line 2 when available.
-                </p>
-              )}
-              {postcodeStatus === "found" && lookupSource === "postcodes.io" && (
-                <p className="postcode-lookup-message postcode-lookup-found">
-                  {lastLookupIntent === "full"
-                    ? "City filled. Full street lookup isn't active right now, so please enter the street address manually."
-                    : "Postcode confirmed and city filled — please enter the street address manually."}
-                </p>
-              )}
-              {postcodeStatus === "select" && (
-                <p className="postcode-lookup-message postcode-lookup-found">
-                  {addressResults.length} addresses found — choose your exact building, flat, or door number below.
+                  Postcode confirmed and city filled. Please enter the street address and exact door or flat number manually.
                 </p>
               )}
             </div>
           </div>
-
-          {/* Address picker — shown when getAddress.io returns multiple results */}
-          {showAddressSelect && addressResults.length > 0 && (
-            <div className="checkout-field">
-              <label className="checkout-label">Select your address</label>
-              <ul className="address-results-list" role="listbox" aria-label="Address results">
-                {addressResults.map((a, i) => {
-                  const resolved = getResolvedAddress(a);
-
-                  return (
-                    <li
-                      key={i}
-                      className="address-result-item"
-                      role="option"
-                      onMouseDown={(e) => {
-                        e.preventDefault(); // prevent postcode input blur before selection fires
-                        selectAddress(a);
-                      }}
-                    >
-                      <strong>{resolved.title}</strong>
-                      {resolved.summary ? <span>{resolved.summary}</span> : null}
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
-          )}
 
           <div className="checkout-field">
             <label className="checkout-label" htmlFor="co-country">Country</label>

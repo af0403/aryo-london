@@ -11,7 +11,6 @@ const pkStatus = pk.startsWith("pk_live_")
 
 console.log(`[ARYO build] NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: ${pkStatus}`);
 console.log(`[ARYO build] STRIPE KEY SET: ${!!process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY}`);
-console.log(`[ARYO build] GETADDRESS KEY SET: ${!!process.env.NEXT_PUBLIC_GETADDRESS_API_KEY}`);
 
 const nextConfig: NextConfig = {
   webpack(config) {
