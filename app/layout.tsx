@@ -43,6 +43,9 @@ export const metadata: Metadata = {
   creator: "ARYO",
   publisher: "ARYO",
   category: "fashion",
+  verification: {
+    google: "R2CpRSDBOzTn4DZ5tJNDe2cl-OKXjrIMm8jjzt1wbMM",
+  },
   icons: {
     icon: [
       { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
