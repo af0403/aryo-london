@@ -11,6 +11,13 @@ import { HeaderAccountButton } from "../components/header-account-button";
 import { SiteChatButton } from "../components/site-chat-button";
 import { SiteMenu } from "../components/site-menu";
 import { SiteSearch } from "../components/site-search";
+import {
+  DEFAULT_SITE_DESCRIPTION,
+  INSTAGRAM_URL,
+  SITE_NAME,
+  SITE_URL,
+  absoluteUrl,
+} from "../lib/seo";
 
 const cormorant = Cormorant_Garamond({
   subsets: ["latin"],
@@ -25,16 +32,17 @@ const instrument = Instrument_Sans({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://aryo.london"),
+  metadataBase: new URL(SITE_URL),
   title: {
     default: "ARYO | Pennicella | AF by ARYO",
     template: "%s | ARYO",
   },
-  description:
-    "ARYO London. Discover the Pennicella | AF by ARYO collection.",
-  alternates: {
-    canonical: "/",
-  },
+  description: DEFAULT_SITE_DESCRIPTION,
+  applicationName: SITE_NAME,
+  authors: [{ name: "ARYO" }],
+  creator: "ARYO",
+  publisher: "ARYO",
+  category: "fashion",
   icons: {
     icon: [
       { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
@@ -43,13 +51,6 @@ export const metadata: Metadata = {
     ],
     apple: "/apple-touch-icon.png",
     shortcut: "/favicon.svg",
-  },
-  openGraph: {
-    title: "ARYO | Pennicella | AF by ARYO",
-    description: "ARYO London. Discover the Pennicella | AF by ARYO collection.",
-    url: "https://aryo.london",
-    siteName: "ARYO",
-    type: "website",
   },
 };
 
@@ -61,6 +62,29 @@ export const viewport: Viewport = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const structuredData = [
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      name: SITE_NAME,
+      url: SITE_URL,
+      logo: absoluteUrl("/apple-touch-icon.png"),
+      sameAs: [INSTAGRAM_URL],
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      name: SITE_NAME,
+      url: SITE_URL,
+      description: DEFAULT_SITE_DESCRIPTION,
+      inLanguage: "en-GB",
+      publisher: {
+        "@type": "Organization",
+        name: SITE_NAME,
+      },
+    },
+  ];
+
   return (
     <html lang="en">
       <head>
@@ -69,6 +93,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
         <link rel="shortcut icon" href="/favicon-32x32.png" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+        />
       </head>
       <body className={`${cormorant.variable} ${instrument.variable}`}>
         <Web3Providers>

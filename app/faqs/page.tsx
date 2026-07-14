@@ -1,9 +1,11 @@
-import type { Metadata } from "next";
+import { createPageMetadata } from "../../lib/seo";
 
-export const metadata: Metadata = {
+export const metadata = createPageMetadata({
   title: "FAQs",
-  description: "Frequently asked questions about ARYO London.",
-};
+  description:
+    "Read frequently asked questions about ARYO sizing, made-to-order pieces, returns, and international shipping.",
+  path: "/faqs",
+});
 
 const FAQS = [
   {
@@ -29,8 +31,25 @@ const FAQS = [
 ];
 
 export default function FAQsPage() {
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: FAQS.map(({ q, a }) => ({
+      "@type": "Question",
+      name: q,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: a,
+      },
+    })),
+  };
+
   return (
     <main className="section">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
       <div className="page-intro">
         <p className="eyebrow">Client Services</p>
         <h1 className="page-title">FAQs</h1>

@@ -1,9 +1,11 @@
-import type { Metadata } from "next";
+import { createPageMetadata } from "../../lib/seo";
 
-export const metadata: Metadata = {
+export const metadata = createPageMetadata({
   title: "Story",
-  description: "The story of ARYO London.",
-};
+  description:
+    "Read the story of ARYO London and the Pennicella collection, from house principles to limited-edition production.",
+  path: "/story",
+});
 
 export default function StoryPage() {
   return (

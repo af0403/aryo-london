@@ -1,9 +1,10 @@
-import type { Metadata } from "next";
+import { createPageMetadata } from "../../lib/seo";
 
-export const metadata: Metadata = {
+export const metadata = createPageMetadata({
   title: "Privacy Policy",
-  description: "Privacy policy for ARYO London.",
-};
+  description: "Read the ARYO London privacy policy covering data collection, use, and cookies.",
+  path: "/privacy",
+});
 
 export default function PrivacyPage() {
   return (

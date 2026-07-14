@@ -1,3 +1,14 @@
+import { createPageMetadata } from "../../lib/seo";
+
+export const metadata = createPageMetadata({
+  title: "House",
+  description:
+    "Discover the ARYO house: a London-based label built through structure, material, and restraint.",
+  path: "/about",
+  image: "/assets/generated/luma-pack/wide-collection-still-life.png",
+  imageAlt: "Pennicella collection still life",
+});
+
 const houseSections = [
   {
     id: "founder",

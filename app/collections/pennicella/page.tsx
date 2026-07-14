@@ -1,4 +1,14 @@
 import { GroupedProductCard, type ProductGroup } from "../../../components/grouped-product-card";
+import { createPageMetadata } from "../../../lib/seo";
+
+export const metadata = createPageMetadata({
+  title: "Pennicella Collection",
+  description:
+    "Shop the Pennicella collection by ARYO, including made-to-order jackets and limited-edition trousers.",
+  path: "/collections/pennicella",
+  image: "/assets/generated/product-refresh/stills/noir-jacket-front.png",
+  imageAlt: "Pennicella Jacket in Noir",
+});
 
 const productGroups: ProductGroup[] = [
   {

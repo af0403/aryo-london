@@ -1,3 +1,14 @@
+import { createPageMetadata } from "../../lib/seo";
+
+export const metadata = createPageMetadata({
+  title: "Campaign",
+  description:
+    "Explore the Pennicella campaign by ARYO through silhouette, hardware, texture, and editorial imagery.",
+  path: "/campaign",
+  image: "/assets/generated/luma-pack/homepage-hero-noir-desktop.png",
+  imageAlt: "Pennicella noir campaign look",
+});
+
 const campaignFrames = [
   {
     image: "/assets/generated/luma-pack/homepage-hero-noir-desktop.png",

@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import Link from "next/link";
@@ -5,10 +6,56 @@ import { ProductPurchasePanel } from "../../../components/product-purchase-panel
 import { ProductShowcase } from "../../../components/product-showcase";
 import { ProductInlineCart } from "../../../components/product-inline-cart";
 import { formatPrice } from "../../../lib/format";
-import { getProduct, getProductStatusLabel, products } from "../../../lib/products";
+import { type Product, getProduct, getProductStatusLabel, products } from "../../../lib/products";
+import { SITE_NAME, absoluteUrl, createNoIndexMetadata, createPageMetadata } from "../../../lib/seo";
 
 export function generateStaticParams() {
-  return products.map((product) => ({ slug: product.slug }));
+  return products.filter((product) => !product.hidden).map((product) => ({ slug: product.slug }));
+}
+
+function getAvailability(product: Product): string {
+  if (product.fulfillment === "made-to-order") {
+    return "https://schema.org/InStock";
+  }
+
+  const isSoldOut = product.variants.every(
+    (variant) => typeof variant.stock === "number" && variant.stock <= 0
+  );
+
+  return isSoldOut ? "https://schema.org/SoldOut" : "https://schema.org/InStock";
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const product = getProduct(slug);
+
+  if (!product || product.hidden) {
+    return createNoIndexMetadata({
+      title: "Product",
+      description: "This product is unavailable.",
+      path: `/products/${slug}`,
+    });
+  }
+
+  return createPageMetadata({
+    title: `${product.name} ${product.color}`,
+    description: product.summary,
+    path: `/products/${product.slug}`,
+    image: product.leadImage,
+    imageAlt: product.gallery[0]?.alt ?? `${product.name} in ${product.color}`,
+    keywords: [
+      SITE_NAME,
+      product.name,
+      product.color,
+      product.category,
+      "Pennicella",
+      "London fashion",
+    ],
+  });
 }
 
 export default async function ProductPage({
@@ -19,14 +66,41 @@ export default async function ProductPage({
   const { slug } = await params;
   const product = getProduct(slug);
 
-  if (!product) {
+  if (!product || product.hidden) {
     notFound();
   }
 
   const statusLabel = getProductStatusLabel(product);
+  const productSchema = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: `${product.name} ${product.color}`,
+    description: product.shortDescription,
+    image: product.gallery.map((media) => absoluteUrl(media.src)),
+    sku: product.variants[0]?.sku ?? product.slug,
+    brand: {
+      "@type": "Brand",
+      name: SITE_NAME,
+    },
+    category: product.category,
+    color: product.color,
+    url: absoluteUrl(`/products/${product.slug}`),
+    offers: {
+      "@type": "Offer",
+      url: absoluteUrl(`/products/${product.slug}`),
+      priceCurrency: "GBP",
+      price: product.price.toFixed(2),
+      availability: getAvailability(product),
+      itemCondition: "https://schema.org/NewCondition",
+    },
+  };
 
   return (
     <main className="product-page">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }}
+      />
       <ProductPurchasePanel product={product} statusLabel={statusLabel} />
 
       <div className="product-page-layout">

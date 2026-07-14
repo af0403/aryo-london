@@ -1,9 +1,10 @@
-import type { Metadata } from "next";
+import { createPageMetadata } from "../../lib/seo";
 
-export const metadata: Metadata = {
+export const metadata = createPageMetadata({
   title: "Terms of Use",
-  description: "Terms of use for ARYO London.",
-};
+  description: "Read the ARYO London terms of use for website access, intellectual property, and liability.",
+  path: "/terms",
+});
 
 export default function TermsPage() {
   return (

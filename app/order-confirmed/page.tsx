@@ -1,5 +1,12 @@
 import Link from "next/link";
 import { formatPrice } from "../../lib/format";
+import { createNoIndexMetadata } from "../../lib/seo";
+
+export const metadata = createNoIndexMetadata({
+  title: "Order Confirmed",
+  description: "Private ARYO order confirmation page.",
+  path: "/order-confirmed",
+});
 
 export default async function OrderConfirmedPage({
   searchParams,

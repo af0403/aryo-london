@@ -1,9 +1,11 @@
-import type { Metadata } from "next";
+import { createPageMetadata } from "../../lib/seo";
 
-export const metadata: Metadata = {
+export const metadata = createPageMetadata({
   title: "Size Guide",
-  description: "Size guide for the Pennicella Jacket — AF by ARYO.",
-};
+  description:
+    "View the ARYO Pennicella Jacket size guide, including garment measurements and fit guidance.",
+  path: "/size-guide",
+});
 
 const rows = [
   { size: "XS", chestCm: 86, chestIn: 34, waistCm: 76, waistIn: 30, lengthCm: 68, lengthIn: 27 },

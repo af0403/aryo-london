@@ -1,3 +1,12 @@
+import { createPageMetadata } from "../../lib/seo";
+
+export const metadata = createPageMetadata({
+  title: "Shipping",
+  description:
+    "Read ARYO shipping information, including worldwide delivery coverage and dispatch timing for Pennicella orders.",
+  path: "/shipping",
+});
+
 export default function ShippingPage() {
   return (
     <main className="section info-page">

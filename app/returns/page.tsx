@@ -1,3 +1,12 @@
+import { createPageMetadata } from "../../lib/seo";
+
+export const metadata = createPageMetadata({
+  title: "Returns",
+  description:
+    "Read the ARYO returns policy for Pennicella pieces, including return windows, condition requirements, and process.",
+  path: "/returns",
+});
+
 export default function ReturnsPage() {
   return (
     <main className="section info-page">
