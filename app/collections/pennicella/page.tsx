@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 import { GroupedProductCard, type ProductGroup } from "../../../components/grouped-product-card";
 import { createPageMetadata } from "../../../lib/seo";
 
@@ -52,6 +54,30 @@ const productGroups: ProductGroup[] = [
   },
 ];
 
+const accessoryPieces = [
+  {
+    name: "Nūr Signature Beanie",
+    colour: "Noir",
+    image: "/assets/beanies/nur-signature-noir/front-three-quarter.png",
+    href: "/beanies/index.html?product=nur-noir",
+    alt: "Nūr Signature Beanie in Noir",
+  },
+  {
+    name: "Nūr Signature Beanie",
+    colour: "Bone",
+    image: "/assets/beanies/nur-signature-bone/front-three-quarter.png",
+    href: "/beanies/index.html?product=nur-bone",
+    alt: "Nūr Signature Beanie in Bone",
+  },
+  {
+    name: "Gozar ARYO Beanie",
+    colour: "Noir",
+    image: "/assets/beanies/gozar-aryo-noir/front-three-quarter.png",
+    href: "/beanies/index.html?product=gozar-noir",
+    alt: "Gozar ARYO Beanie in Noir",
+  },
+];
+
 export default function PennicellaCollectionPage() {
   return (
     <main className="collection-page">
@@ -64,6 +90,31 @@ export default function PennicellaCollectionPage() {
         <div className="collection-grid-layout">
           {productGroups.map((group) => (
             <GroupedProductCard key={group.name} group={group} />
+          ))}
+        </div>
+      </section>
+
+      <section className="collection-accessories" aria-labelledby="collection-accessories-title">
+        <div className="collection-accessories-head">
+          <div>
+            <p className="eyebrow">Accessories</p>
+            <h2 id="collection-accessories-title">Beanie capsule</h2>
+          </div>
+          <span className="collection-accessories-count">01 / 03</span>
+        </div>
+
+        <div className="collection-accessories-grid">
+          {accessoryPieces.map((piece) => (
+            <a className="collection-accessory-card" href={piece.href} key={`${piece.name}-${piece.colour}`}>
+              <div className="collection-accessory-media">
+                <Image src={piece.image} alt={piece.alt} fill sizes="(max-width: 768px) 100vw, 33vw" />
+              </div>
+              <div className="collection-accessory-copy">
+                <strong>{piece.name}</strong>
+                <span>{piece.colour}</span>
+                <em>View piece <span aria-hidden="true">↗</span></em>
+              </div>
+            </a>
           ))}
         </div>
       </section>
