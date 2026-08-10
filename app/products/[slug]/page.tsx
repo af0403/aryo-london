@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
+import Image from "next/image";
 import Link from "next/link";
 import { ProductPurchasePanel } from "../../../components/product-purchase-panel";
 import { ProductShowcase } from "../../../components/product-showcase";
@@ -188,6 +189,18 @@ export default async function ProductPage({
           </div>
         </aside>
       </div>
+
+      {product.editorialImage ? (
+        <section className="product-page-editorial" aria-label="Editorial campaign image">
+          <Image
+            src={product.editorialImage.src}
+            alt={product.editorialImage.alt}
+            width={1402}
+            height={1122}
+            sizes="(max-width: 900px) 100vw, var(--page-width)"
+          />
+        </section>
+      ) : null}
     </main>
   );
 }

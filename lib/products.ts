@@ -44,6 +44,7 @@ export type Product = {
   cardImagePosition?: string;
   cardImageFit?: ProductImageFit;
   gallery: ProductMedia[];
+  editorialImage?: ProductMedia;
   details: Array<{ label: string; value: string }>;
   variants: ProductVariant[];
   notes: string[];
@@ -93,11 +94,11 @@ export const products: Product[] = [
     cardImageFit: "contain",
     gallery: [
       { src: "/assets/beanies/nur-signature-noir/skully-front-three-quarter.png", alt: "Nūr Signature Beanie in Noir, skully front three-quarter view", fit: "contain" },
-      { src: "/assets/beanies/nur-signature-noir/rear-three-quarter.png", alt: "Nūr Signature Beanie in Noir, rear three-quarter view", fit: "contain" },
-      { src: "/assets/beanies/nur-signature-noir/macro-signature-af.png", alt: "Nūr Signature Beanie in Noir, warm-bone signature AF and rib detail", fit: "contain" },
-      { src: "/assets/beanies/nur-signature-noir/inside-construction.png", alt: "Nūr Signature Beanie in Noir, inside construction detail", fit: "contain" },
-      { src: "/assets/beanies/nur-signature-noir/editorial-approved-model.png", alt: "Nūr Signature Beanie in Noir, approved editorial model image", fit: "contain" },
+      { src: "/assets/beanies/nur-signature-noir/skully-rear-three-quarter.png", alt: "Nūr Signature Beanie in Noir, skully rear three-quarter view", fit: "contain" },
+      { src: "/assets/beanies/nur-signature-noir/skully-macro-signature-af.png", alt: "Nūr Signature Beanie in Noir, warm-bone signature AF and rib detail", fit: "contain" },
+      { src: "/assets/beanies/nur-signature-noir/skully-inside-construction.png", alt: "Nūr Signature Beanie in Noir, skully inside construction detail", fit: "contain" },
     ],
+    editorialImage: { src: "/assets/beanies/nur-signature-noir/editorial-approved-model.png", alt: "Nūr Signature Beanie in Noir, ARYO editorial campaign image" },
     details: [
       { label: "Material target", value: "Premium 100% cashmere lead yarn, subject to fibre and hand-feel approval" },
       { label: "Knit", value: "Dense fine-gauge vertical rib, target 7-gauge or supplier-equivalent density" },
@@ -136,11 +137,11 @@ export const products: Product[] = [
     cardImageFit: "contain",
     gallery: [
       { src: "/assets/beanies/nur-signature-bone/skully-front-three-quarter.png", alt: "Nūr Signature Beanie in Bone, skully front three-quarter view", fit: "contain" },
-      { src: "/assets/beanies/nur-signature-bone/rear-three-quarter.png", alt: "Nūr Signature Beanie in Bone, rear three-quarter view", fit: "contain" },
-      { src: "/assets/beanies/nur-signature-bone/macro-signature-af.png", alt: "Nūr Signature Beanie in Bone, tonal almond-bone signature AF and rib detail", fit: "contain" },
-      { src: "/assets/beanies/nur-signature-bone/inside-construction.png", alt: "Nūr Signature Beanie in Bone, inside construction detail", fit: "contain" },
-      { src: "/assets/beanies/nur-signature-bone/model-portrait-approved.png", alt: "Nūr Signature Beanie in Bone, approved model portrait", fit: "contain" },
+      { src: "/assets/beanies/nur-signature-bone/skully-rear-three-quarter.png", alt: "Nūr Signature Beanie in Bone, skully rear three-quarter view", fit: "contain" },
+      { src: "/assets/beanies/nur-signature-bone/skully-macro-signature-af.png", alt: "Nūr Signature Beanie in Bone, tonal almond-bone signature AF and rib detail", fit: "contain" },
+      { src: "/assets/beanies/nur-signature-bone/skully-inside-construction.png", alt: "Nūr Signature Beanie in Bone, skully inside construction detail", fit: "contain" },
     ],
+    editorialImage: { src: "/assets/beanies/nur-signature-bone/editorial-approved-model.png", alt: "Nūr Signature Beanie in Bone, ARYO editorial campaign image" },
     details: [
       { label: "Material target", value: "Premium 100% cashmere lead yarn, subject to fibre and hand-feel approval" },
       { label: "Knit", value: "Dense fine-gauge vertical rib, target 7-gauge or supplier-equivalent density" },

@@ -1642,6 +1642,17 @@ body:has(.home-main) .site-footer {
   align-items: start;
 }
 
+.product-page-editorial {
+  width: var(--page-width);
+  margin: 4.5rem auto 0;
+}
+
+.product-page-editorial img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
 .product-showcase {
   display: grid;
   grid-template-columns: 68px 1fr;
