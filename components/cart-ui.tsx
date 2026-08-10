@@ -13,7 +13,7 @@ type LineItem = {
   slug: string;
   size: Size;
   quantity: number;
-  product: NonNullable<ReturnType<typeof getProduct>>;
+  product: NonNullable<ReturnType<typeof getProduct>> & { price: number };
   lineTotal: number;
 };
 
@@ -28,8 +28,9 @@ export const CartUI = () => {
     return items
       .map((item): LineItem | null => {
         const product = getProduct(item.slug);
-        if (!product) return null;
-        return { ...item, product, lineTotal: product.price * item.quantity };
+        const price = product?.price;
+        if (!product || price === null || price === undefined) return null;
+        return { ...item, product: { ...product, price }, lineTotal: price * item.quantity };
       })
       .filter((item): item is LineItem => item !== null);
   }, [items]);

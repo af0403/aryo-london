@@ -14,6 +14,7 @@ Folder: `nur-signature-noir/`
 - `rear-three-quarter.png` - rear and silhouette view
 - `macro-signature-af.png` - signature, rib and yarn detail
 - `inside-construction.png` - interior construction reference
+- `editorial-approved-model.png` - approved editorial model image
 
 ## 02. Nūr Signature Beanie - Bone
 
@@ -27,6 +28,7 @@ Folder: `nur-signature-bone/`
 - `rear-three-quarter.png` - rear and silhouette view
 - `macro-signature-af.png` - signature, rib and yarn detail
 - `inside-construction.png` - interior construction reference
+- `model-portrait-approved.png` - approved direct model portrait with the final mark
 
 ## 03. Gozar ARYO Beanie - Noir
 
@@ -40,6 +42,7 @@ Folder: `gozar-aryo-noir/`
 - `rear-three-quarter.png` - rear and silhouette view
 - `macro-aryo-motion.png` - motion wordmark and rib detail
 - `inside-construction.png` - interior construction reference
+- `editorial-approved-model.png` - approved editorial model image
 
 ## Usage note
 

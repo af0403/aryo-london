@@ -207,10 +207,16 @@ export default function CheckoutPage() {
   const lineItems = items
     .map((item) => {
       const product = getProduct(item.slug);
-      if (!product) return null;
+      if (!product || product.price === null) return null;
       return { ...item, product, lineTotal: product.price * item.quantity };
     })
-    .filter(Boolean) as Array<{ slug: string; size: string; quantity: number; product: NonNullable<ReturnType<typeof getProduct>>; lineTotal: number }>;
+    .filter(Boolean) as Array<{
+      slug: string;
+      size: string;
+      quantity: number;
+      product: NonNullable<ReturnType<typeof getProduct>> & { price: number };
+      lineTotal: number;
+    }>;
 
   const subtotal = lineItems.reduce((sum, i) => sum + i.lineTotal, 0);
 

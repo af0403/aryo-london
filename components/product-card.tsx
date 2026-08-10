@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { formatPrice } from "../lib/format";
+import { formatProductPrice } from "../lib/format";
 import { getProductStatusLabel, type Product } from "../lib/products";
 
 export const ProductCard = ({ product }: { product: Product }) => {
@@ -30,7 +30,7 @@ export const ProductCard = ({ product }: { product: Product }) => {
         <strong>
           <Link href={`/products/${product.slug}`}>{displayTitle}</Link>
         </strong>
-        <span className="collection-card-price">{formatPrice(product.price)} GBP</span>
+        <span className="collection-card-price">{formatProductPrice(product.price)}{product.price === null ? "" : " GBP"}</span>
         {statusLabel !== "Available" ? <em className="collection-card-status">{statusLabel}</em> : null}
       </div>
     </article>

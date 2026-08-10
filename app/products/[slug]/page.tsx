@@ -5,7 +5,7 @@ import Link from "next/link";
 import { ProductPurchasePanel } from "../../../components/product-purchase-panel";
 import { ProductShowcase } from "../../../components/product-showcase";
 import { ProductInlineCart } from "../../../components/product-inline-cart";
-import { formatPrice } from "../../../lib/format";
+import { formatProductPrice } from "../../../lib/format";
 import { type Product, getProduct, getProductStatusLabel, products } from "../../../lib/products";
 import { SITE_NAME, absoluteUrl, createNoIndexMetadata, createPageMetadata } from "../../../lib/seo";
 
@@ -89,7 +89,7 @@ export default async function ProductPage({
       "@type": "Offer",
       url: absoluteUrl(`/products/${product.slug}`),
       priceCurrency: "GBP",
-      price: product.price.toFixed(2),
+      ...(product.price === null ? {} : { price: product.price.toFixed(2) }),
       availability: getAvailability(product),
       itemCondition: "https://schema.org/NewCondition",
     },
@@ -108,7 +108,7 @@ export default async function ProductPage({
 
         <aside className="product-page-copy reveal-block" data-purchase-sentinel>
           <h1>{product.name}</h1>
-          <p className="product-page-price">{formatPrice(product.price)} GBP</p>
+          <p className="product-page-price">{formatProductPrice(product.price)}{product.price === null ? "" : " GBP"}</p>
           <p className="product-page-colour">{product.color}</p>
           {product.editionNote ? (
             <p className="product-page-edition">{product.editionNote}</p>

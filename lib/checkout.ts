@@ -2,7 +2,7 @@ import { formatPrice } from "./format";
 import {
   getProduct,
   getSelectedVariant,
-  sizeRun,
+  sizeValues,
   type Product,
   type ProductVariant,
   type Size,
@@ -30,7 +30,7 @@ export type CheckoutValidationResult = {
 };
 
 const isSize = (value: string): value is Size =>
-  sizeRun.some((size) => size === value);
+  sizeValues.some((size) => size === value);
 
 export const validateCheckoutItems = (
   requestItems: CheckoutRequestItem[]
@@ -64,6 +64,11 @@ export const validateCheckoutItems = (
 
     if (product.launchState !== "live") {
       errors.push(`${product.name} / ${product.color} is not marked live yet.`);
+      continue;
+    }
+
+    if (product.price === null) {
+      errors.push(`${product.name} / ${product.color} does not have a retail price yet.`);
       continue;
     }
 

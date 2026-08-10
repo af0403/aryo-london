@@ -5,3 +5,6 @@ export const formatPrice = (price: number) =>
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
   }).format(price);
+
+export const formatProductPrice = (price: number | null, note = "Price to be confirmed") =>
+  price === null ? note : formatPrice(price);

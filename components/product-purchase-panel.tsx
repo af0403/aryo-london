@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 
 import type { Product, Size } from "../lib/products";
-import { formatPrice } from "../lib/format";
+import { formatProductPrice } from "../lib/format";
 import { useCart } from "./cart-provider";
 import { ChevronDownIcon } from "./site-icons";
 
@@ -41,6 +41,7 @@ export const ProductPurchasePanel = ({
 
   const stock = selectedVariant?.stock ?? null;
   const isLive = product.launchState === "live";
+  const isComingSoon = product.launchState === "coming-soon";
   const isMadeToOrder = product.fulfillment === "made-to-order";
   const isSoldOut = isLive && typeof stock === "number" && stock <= 0;
 
@@ -82,7 +83,7 @@ export const ProductPurchasePanel = ({
             <span>{product.name}</span>
             <span>{product.color}</span>
           </div>
-          <span className="product-purchase-price">{formatPrice(product.price)} GBP</span>
+          <span className="product-purchase-price">{formatProductPrice(product.price)}{product.price === null ? "" : " GBP"}</span>
         </div>
 
         <button className="product-size-trigger" type="button" onClick={() => setOpen((value) => !value)}>
@@ -94,7 +95,7 @@ export const ProductPurchasePanel = ({
       <div className="product-purchase-drawer">
         <div className="product-purchase-status">{statusLabel}</div>
 
-        <div className="product-size-grid" aria-label="Choose size">
+        {!isComingSoon ? <div className="product-size-grid" aria-label="Choose size">
           {product.variants.map((variant) => {
             const isUnavailable = typeof variant.stock === "number" && variant.stock <= 0;
             return (
@@ -109,12 +110,12 @@ export const ProductPurchasePanel = ({
               </button>
             );
           })}
-        </div>
+        </div> : null}
 
         {stockNote ? <p className="product-stock-note">{stockNote}</p> : null}
 
         <button className="product-add-button" type="button" onClick={handleAdd} disabled={!isLive || isSoldOut}>
-          {!isLive ? "Coming soon" : isSoldOut ? "Sold out" : isMadeToOrder ? "Order now" : "Add to bag"}
+          {!isLive ? "View release details" : isSoldOut ? "Sold out" : isMadeToOrder ? "Order now" : "Add to bag"}
         </button>
 
         {message ? <p className="product-add-message">{message}</p> : null}
