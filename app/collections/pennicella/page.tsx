@@ -58,14 +58,14 @@ const accessoryPieces = [
   {
     name: "Nūr Signature Beanie",
     colour: "Noir",
-    image: "/assets/beanies/nur-signature-noir/front-three-quarter.png",
+    image: "/assets/beanies/nur-signature-noir/skully-front-three-quarter.png",
     href: "/products/nur-signature-noir",
     alt: "Nūr Signature Beanie in Noir",
   },
   {
     name: "Nūr Signature Beanie",
     colour: "Bone",
-    image: "/assets/beanies/nur-signature-bone/front-three-quarter.png",
+    image: "/assets/beanies/nur-signature-bone/skully-front-three-quarter.png",
     href: "/products/nur-signature-bone",
     alt: "Nūr Signature Beanie in Bone",
   },

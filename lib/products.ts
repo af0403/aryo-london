@@ -84,15 +84,15 @@ export const products: Product[] = [
     editionNote: "Small-batch release",
     summary: "A rounded fine-rib beanie in ARYO Noir, finished with the continuous signature AF in warm bone.",
     shortDescription:
-      "A dense, fine-gauge rib knit with a medium folded cuff and one continuous warm-bone signature AF engineered across the crown-to-cuff fold.",
+      "A dense, fine-gauge rib knit skully with one continuous warm-bone signature AF embroidered across the front.",
     longDescription:
-      "Nūr is ARYO's first house beanie: a quiet, tactile object designed to feel permanent rather than seasonal. The approved silhouette uses a rounded crown, dense vertical rib, and medium folded cuff. The signature AF is treated as one connected gesture across the fold, so the mark belongs to the construction of the piece rather than sitting on top of it.",
-    leadImage: "/assets/beanies/nur-signature-noir/front-three-quarter.png",
+      "Nūr is ARYO's first house beanie: a quiet, tactile object designed to feel permanent rather than seasonal. The approved skully silhouette uses a rounded crown, thin stretchy body, and dense vertical rib. The signature AF is treated as one connected embroidered gesture on the front, so the mark belongs to the knit rather than sitting on top of it.",
+    leadImage: "/assets/beanies/nur-signature-noir/skully-front-three-quarter.png",
     leadImageFit: "contain",
-    cardImage: "/assets/beanies/nur-signature-noir/front-three-quarter.png",
+    cardImage: "/assets/beanies/nur-signature-noir/skully-front-three-quarter.png",
     cardImageFit: "contain",
     gallery: [
-      { src: "/assets/beanies/nur-signature-noir/front-three-quarter.png", alt: "Nūr Signature Beanie in Noir, front three-quarter view", fit: "contain" },
+      { src: "/assets/beanies/nur-signature-noir/skully-front-three-quarter.png", alt: "Nūr Signature Beanie in Noir, skully front three-quarter view", fit: "contain" },
       { src: "/assets/beanies/nur-signature-noir/rear-three-quarter.png", alt: "Nūr Signature Beanie in Noir, rear three-quarter view", fit: "contain" },
       { src: "/assets/beanies/nur-signature-noir/macro-signature-af.png", alt: "Nūr Signature Beanie in Noir, warm-bone signature AF and rib detail", fit: "contain" },
       { src: "/assets/beanies/nur-signature-noir/inside-construction.png", alt: "Nūr Signature Beanie in Noir, inside construction detail", fit: "contain" },
@@ -101,7 +101,7 @@ export const products: Product[] = [
     details: [
       { label: "Material target", value: "Premium 100% cashmere lead yarn, subject to fibre and hand-feel approval" },
       { label: "Knit", value: "Dense fine-gauge vertical rib, target 7-gauge or supplier-equivalent density" },
-      { label: "Cuff", value: "Double-layer medium folded cuff with stable recovery" },
+      { label: "Hem", value: "Single-layer tubular hem with soft stretch and clean recovery" },
       { label: "Mark", value: "Continuous signature AF in warm bone, engineered knit or approved knit/embroidery hybrid" },
       { label: "Fit", value: "Unisex, one size" },
       { label: "SKU", value: "ARY-NUR-001-BLK" },
@@ -127,15 +127,15 @@ export const products: Product[] = [
     editionNote: "Small-batch release",
     summary: "The Nūr silhouette in warm ARYO Bone, finished with a tonal almond-bone signature AF.",
     shortDescription:
-      "A dense, fine-gauge rib knit with a medium folded cuff and a tonal signature AF designed to read through raised stitch relief.",
+      "A dense, fine-gauge rib knit skully with a tonal bone signature AF embroidered into the front.",
     longDescription:
-      "Nūr Bone keeps the same rounded, structured silhouette as the Noir colourway while shifting the mark into a quieter almond-bone tone. The result is deliberately restrained: the signature remains legible at close range, but the knit, proportion, and hand feel carry the first impression.",
-    leadImage: "/assets/beanies/nur-signature-bone/front-three-quarter.png",
+      "Nūr Bone keeps the same rounded, stretchy skully silhouette as the Noir colourway while shifting the knit and mark into a quieter almond-bone tone. The result is deliberately restrained: the signature remains legible at close range, but the knit, proportion, and hand feel carry the first impression.",
+    leadImage: "/assets/beanies/nur-signature-bone/skully-front-three-quarter.png",
     leadImageFit: "contain",
-    cardImage: "/assets/beanies/nur-signature-bone/front-three-quarter.png",
+    cardImage: "/assets/beanies/nur-signature-bone/skully-front-three-quarter.png",
     cardImageFit: "contain",
     gallery: [
-      { src: "/assets/beanies/nur-signature-bone/front-three-quarter.png", alt: "Nūr Signature Beanie in Bone, front three-quarter view", fit: "contain" },
+      { src: "/assets/beanies/nur-signature-bone/skully-front-three-quarter.png", alt: "Nūr Signature Beanie in Bone, skully front three-quarter view", fit: "contain" },
       { src: "/assets/beanies/nur-signature-bone/rear-three-quarter.png", alt: "Nūr Signature Beanie in Bone, rear three-quarter view", fit: "contain" },
       { src: "/assets/beanies/nur-signature-bone/macro-signature-af.png", alt: "Nūr Signature Beanie in Bone, tonal almond-bone signature AF and rib detail", fit: "contain" },
       { src: "/assets/beanies/nur-signature-bone/inside-construction.png", alt: "Nūr Signature Beanie in Bone, inside construction detail", fit: "contain" },
@@ -144,7 +144,7 @@ export const products: Product[] = [
     details: [
       { label: "Material target", value: "Premium 100% cashmere lead yarn, subject to fibre and hand-feel approval" },
       { label: "Knit", value: "Dense fine-gauge vertical rib, target 7-gauge or supplier-equivalent density" },
-      { label: "Cuff", value: "Double-layer medium folded cuff with stable recovery" },
+      { label: "Hem", value: "Single-layer tubular hem with soft stretch and clean recovery" },
       { label: "Mark", value: "Continuous signature AF in almond bone, engineered knit or approved knit/embroidery hybrid" },
       { label: "Fit", value: "Unisex, one size" },
       { label: "SKU", value: "ARY-NUR-001-BNE" },
