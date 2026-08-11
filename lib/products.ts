@@ -5,6 +5,17 @@ export type Size = (typeof sizeValues)[number];
 export type LaunchState = "live" | "coming-soon";
 export type InventoryCount = number | null;
 export type ProductImageFit = "cover" | "contain";
+export type CatalogDepartment = "women" | "men" | "unisex" | "home";
+export type CatalogSubcategory =
+  | "ready-to-wear"
+  | "headwear"
+  | "scarves"
+  | "gloves"
+  | "eyewear"
+  | "tabletop"
+  | "textiles"
+  | "small-objects"
+  | "fragrance";
 
 export type ProductVariant = {
   id: string;
@@ -48,6 +59,8 @@ export type Product = {
   details: Array<{ label: string; value: string }>;
   variants: ProductVariant[];
   notes: string[];
+  department?: CatalogDepartment;
+  subcategory?: CatalogSubcategory;
   hidden?: boolean;
 };
 
@@ -71,6 +84,333 @@ const createOneSizeVariant = (prefix: string, color: string, stock: InventoryCou
 });
 
 const refreshedStillPath = "/assets/generated/product-refresh/stills";
+
+type ConceptProductInput = {
+  slug: string;
+  name: string;
+  color: string;
+  category: string;
+  department: CatalogDepartment;
+  subcategory: CatalogSubcategory;
+  image: string;
+  reference: string;
+  material: string;
+  construction: string;
+  finish: string;
+  summary: string;
+  description: string;
+};
+
+const conceptNote =
+  "Concept / development edit. Final materials, dimensions, price, care instructions, and availability will be confirmed after physical sampling.";
+
+const createConceptProduct = (input: ConceptProductInput): Product => {
+  const collectionLine =
+    input.department === "home"
+      ? "Home Objects / Development Edit"
+      : input.subcategory === "headwear"
+        ? "Headwear / Development Edit"
+        : "Accessories / Development Edit";
+
+  const imageAlt = `${input.name} in ${input.color}`;
+
+  return {
+    slug: input.slug,
+    name: input.name,
+    line: collectionLine,
+    color: input.color,
+    category: input.category,
+    price: null,
+    priceNote: "In development",
+    launchState: "coming-soon",
+    fulfillment: "stocked",
+    editionNote: "Concept / development edit",
+    summary: input.summary,
+    shortDescription: input.summary,
+    longDescription: `${input.description} ${conceptNote}`,
+    leadImage: input.image,
+    leadImageFit: "contain",
+    cardImage: input.image,
+    cardImageFit: "contain",
+    gallery: [{ src: input.image, alt: imageAlt, fit: "contain" }],
+    editorialImage: {
+      src: input.reference,
+      alt: `ARYO development reference board for ${input.name}`,
+      fit: "contain",
+    },
+    details: [
+      { label: "Material target", value: input.material },
+      { label: "Construction", value: input.construction },
+      { label: "Finish", value: input.finish },
+      { label: "Colourway", value: input.color },
+      { label: "Sizing", value: "To be confirmed after physical sampling" },
+      { label: "Status", value: "Concept / development edit" },
+    ],
+    variants: [createOneSizeVariant(input.slug, input.color.toLowerCase(), null)],
+    notes: [conceptNote, "The clean render is a direction reference, not a confirmation of final production details."],
+    department: input.department,
+    subcategory: input.subcategory,
+  };
+};
+
+const conceptProducts: Product[] = [
+  createConceptProduct({
+    slug: "craquele-lambskin-cap",
+    name: "Craquelé Lambskin Baseball Cap",
+    color: "Espresso",
+    category: "Headwear",
+    department: "unisex",
+    subcategory: "headwear",
+    image: "/assets/concepts/generated/headwear/lambskin-baseball-cap.png",
+    reference: "/assets/concepts/references/craquele-lambskin-baseball-cap.png",
+    material: "Lambskin with a hand-finished craquelé surface and natural shearling edge detail",
+    construction: "Five-panel baseball cap with shaped crown, curved peak, and adjustable leather strap",
+    finish: "Aged surface character with tonal edge binding and understated ARYO branding",
+    summary: "A character-rich lambskin cap with a worn-in surface, soft shearling edge, and refined ARYO proportion.",
+    description: "The Craquelé Lambskin Cap is designed as a future ARYO headwear signature: tactile, slightly irregular, and more considered than a standard sports cap.",
+  }),
+  createConceptProduct({
+    slug: "cashmere-cap",
+    name: "Cashmere Baseball Cap",
+    color: "Charcoal",
+    category: "Headwear",
+    department: "unisex",
+    subcategory: "headwear",
+    image: "/assets/concepts/generated/headwear/cashmere-cap.png",
+    reference: "/assets/concepts/references/cashmere-cap-board.png",
+    material: "100% cashmere target with a soft, brushed hand",
+    construction: "Refined six-panel construction with a softly structured crown and curved peak",
+    finish: "Tonally stitched panels, leather adjuster, and discreet debossed ARYO branding",
+    summary: "A quiet, lightweight cashmere cap with a clean silhouette and an unusually soft hand.",
+    description: "The Cashmere Cap brings the softness of ARYO knitwear into a more structured everyday form, balancing ease with a precise six-panel shape.",
+  }),
+  createConceptProduct({
+    slug: "linen-cap",
+    name: "Linen Baseball Cap",
+    color: "Natural",
+    category: "Headwear",
+    department: "unisex",
+    subcategory: "headwear",
+    image: "/assets/concepts/generated/headwear/linen-cap.png",
+    reference: "/assets/concepts/references/linen-cap-board.png",
+    material: "100% linen target with a breathable, naturally textured surface",
+    construction: "Unstructured six-panel crown with curved peak and adjustable leather strap",
+    finish: "Washed natural tone with tonal stitching and a soft, lived-in drape",
+    summary: "A breathable linen cap with a relaxed crown and the calm, tactile character of summer ARYO cloth.",
+    description: "The Linen Cap is a warm-weather foundation for the house: deliberately light, unforced, and designed to gain character through wear.",
+  }),
+  createConceptProduct({
+    slug: "cashmere-flat-cap",
+    name: "Cashmere Flat Cap",
+    color: "Charcoal",
+    category: "Headwear",
+    department: "unisex",
+    subcategory: "headwear",
+    image: "/assets/concepts/generated/headwear/cashmere-flat-cap.png",
+    reference: "/assets/concepts/references/cashmere-flat-cap-board.png",
+    material: "90% cashmere / 10% wool target blend",
+    construction: "Low-profile flat-cap silhouette with softly structured crown and integrated peak",
+    finish: "Subtle tonal herringbone texture with discreet debossed ARYO detail",
+    summary: "A low-profile cashmere-wool flat cap with a soft structure and quietly architectural texture.",
+    description: "The Cashmere Flat Cap translates ARYO's restrained luxury into a more tailored headwear silhouette, intended to sit between formal and everyday dressing.",
+  }),
+  createConceptProduct({
+    slug: "shearling-winter-hat",
+    name: "Shearling Winter Hat",
+    color: "Chocolate",
+    category: "Headwear",
+    department: "unisex",
+    subcategory: "headwear",
+    image: "/assets/concepts/generated/personal-accessories/shearling-winter-hat.png",
+    reference: "/assets/concepts/references/shearling-winter-hat-board.png",
+    material: "Lambskin exterior with curly shearling lining and trim target",
+    construction: "Panelled winter hat with ear flaps, structured crown, and adjustable chin strap",
+    finish: "Natural insulating pile, curved leather binding, and a softly aged surface",
+    summary: "A cold-weather ARYO hat built around lambskin, curly shearling, and an expressive ear-flap silhouette.",
+    description: "The Shearling Winter Hat is a more sculptural cold-weather object, bringing warmth and material contrast into the ARYO accessories language.",
+  }),
+  createConceptProduct({
+    slug: "persian-silk-headscarf",
+    name: "Persian Silk Headscarf",
+    color: "Noir",
+    category: "Accessories",
+    department: "unisex",
+    subcategory: "scarves",
+    image: "/assets/concepts/generated/personal-accessories/silk-headscarf.png",
+    reference: "/assets/concepts/references/silk-headscarf-board.png",
+    material: "100% silk twill target with a smooth, lustrous hand",
+    construction: "Square scarf with hand-rolled edges and a considered Persian-inspired border",
+    finish: "Noir ground with antique-gold pattern and a signature ARYO corner detail",
+    summary: "A Persian-inspired silk twill scarf with a smooth drape, hand-finished edge, and quiet house identity.",
+    description: "The Persian Silk Headscarf is a house accessory with a clear cultural point of view, designed to be worn, tied, or displayed as an object.",
+  }),
+  createConceptProduct({
+    slug: "reversible-linen-bucket-hat",
+    name: "Reversible Linen Bucket Hat",
+    color: "Chocolate / Beige",
+    category: "Headwear",
+    department: "unisex",
+    subcategory: "headwear",
+    image: "/assets/concepts/generated/personal-accessories/reversible-linen-bucket-hat.png",
+    reference: "/assets/concepts/references/reversible-linen-bucket-hat-board.png",
+    material: "Lightweight reversible linen target",
+    construction: "Structured bucket crown with shaped brim, reversible construction, and tonal topstitching",
+    finish: "Chocolate outer face reversing to a warm beige, with a discreet ARYO label detail",
+    summary: "A reversible linen bucket hat that moves between a rich chocolate face and a quiet beige reverse.",
+    description: "The Reversible Linen Bucket Hat gives the ARYO summer edit a more relaxed gesture without losing the precision of the house's material language.",
+  }),
+  createConceptProduct({
+    slug: "nappa-leather-gloves",
+    name: "Nappa Leather Gloves",
+    color: "Espresso",
+    category: "Accessories",
+    department: "unisex",
+    subcategory: "gloves",
+    image: "/assets/concepts/generated/personal-accessories/nappa-leather-gloves.png",
+    reference: "/assets/concepts/references/nappa-leather-gloves-board.png",
+    material: "Supple nappa leather with cashmere lining target",
+    construction: "Five-finger glove with hand-finished seams, shaped thumb, and refined cuff slit",
+    finish: "Espresso leather with tonal stitching and debossed ARYO signature at the cuff",
+    summary: "Supple nappa gloves lined in cashmere, finished with hand-sewn precision and a quiet cuff mark.",
+    description: "The Nappa Leather Gloves are intended as an everyday luxury object: tactile, warm, and finished with the kind of detail that only reveals itself in use.",
+  }),
+  createConceptProduct({
+    slug: "cashmere-scarf",
+    name: "Cashmere Scarf",
+    color: "Noir",
+    category: "Accessories",
+    department: "unisex",
+    subcategory: "scarves",
+    image: "/assets/concepts/generated/personal-accessories/cashmere-scarf.png",
+    reference: "/assets/concepts/references/cashmere-scarf-board.png",
+    material: "100% cashmere target with a soft, warm hand",
+    construction: "Oversized rectangular scarf with clean finished edges and generous natural drape",
+    finish: "Noir surface with restrained ARYO detail and a softly brushed handle",
+    summary: "An oversized pure-cashmere scarf designed for warmth, drape, and understated daily wear.",
+    description: "The Cashmere Scarf is a foundational ARYO object: simple in silhouette, exact in proportion, and built around the quality of the fibre.",
+  }),
+  createConceptProduct({
+    slug: "aryo-acetate-sunglasses",
+    name: "Acetate Sunglasses",
+    color: "Black / Smoke",
+    category: "Accessories",
+    department: "unisex",
+    subcategory: "eyewear",
+    image: "/assets/concepts/generated/personal-accessories/acetate-sunglasses.png",
+    reference: "/assets/concepts/references/acetate-sunglasses-board.png",
+    material: "Premium acetate with CR-39 lens target and full UV protection",
+    construction: "Bold refined frame with precision hinge, shaped temple, and balanced square lens",
+    finish: "Gloss black acetate with subtle gold-toned ARYO hardware detail",
+    summary: "A bold acetate frame with a precise hinge, smoke lens, and a restrained house hardware language.",
+    description: "The ARYO Acetate Sunglasses are conceived as an everyday signature: recognisable in outline, but considered in the small details that reward a closer look.",
+  }),
+  createConceptProduct({
+    slug: "marble-chess-set",
+    name: "Marble Chess Set",
+    color: "Nero / Ivory",
+    category: "Home Accessories",
+    department: "home",
+    subcategory: "tabletop",
+    image: "/assets/concepts/generated/home/marble-chess-set.png",
+    reference: "/assets/concepts/references/marble-chess-set-board.png",
+    material: "Solid black and ivory stone target with polished and honed surfaces",
+    construction: "Weighted sculptural pieces on a precision-cut chequered board",
+    finish: "Contrasting stone surfaces with subtle ARYO inlay and presentation box direction",
+    summary: "A sculptural marble chess set designed as much for display as for play.",
+    description: "The Marble Chess Set extends ARYO into the home through contrast, balance, and weight: a tabletop object that holds its presence between games.",
+  }),
+  createConceptProduct({
+    slug: "marble-brass-ashtray",
+    name: "Marble & Brass Ashtray",
+    color: "Nero Marquina",
+    category: "Home Accessories",
+    department: "home",
+    subcategory: "tabletop",
+    image: "/assets/concepts/generated/home/marble-brass-ashtray.png",
+    reference: "/assets/concepts/references/marble-brass-ashtray-board.png",
+    material: "Solid Nero Marquina marble with brushed brass rests",
+    construction: "Weighted circular form with polished inner basin and four integrated rests",
+    finish: "Natural veining, polished rim, and warm brass hardware detail",
+    summary: "A weighted Nero Marquina ashtray with precise brass rests and a permanent, sculptural presence.",
+    description: "The Marble & Brass Ashtray is a small object built around material honesty: stone, metal, weight, and the calm ritual of use.",
+  }),
+  createConceptProduct({
+    slug: "cashmere-throw-noir",
+    name: "Cashmere Throw",
+    color: "Noir",
+    category: "Home Accessories",
+    department: "home",
+    subcategory: "textiles",
+    image: "/assets/concepts/generated/home/cashmere-throw-noir.png",
+    reference: "/assets/concepts/references/cashmere-throw-noir-board.png",
+    material: "100% cashmere target with a soft, warm hand",
+    construction: "Double-faced woven throw with hand-finished fringe",
+    finish: "Onyx surface with subtle ARYO leather label and generous natural drape",
+    summary: "An onyx cashmere throw with hand-finished fringe, designed to bring quiet warmth into the room.",
+    description: "The Noir Cashmere Throw is a study in softness and form, designed to sit across a chair or bed as an object with its own visual weight.",
+  }),
+  createConceptProduct({
+    slug: "sculptural-marble-candle",
+    name: "Sculptural Marble Candle",
+    color: "Nero Marquina",
+    category: "Home Accessories",
+    department: "home",
+    subcategory: "fragrance",
+    image: "/assets/concepts/generated/home/sculptural-marble-candle.png",
+    reference: "/assets/concepts/references/sculptural-candle-board.png",
+    material: "Dark marble vessel with natural soy wax and premium fragrance oil target",
+    construction: "Weighted cylindrical vessel with two-wick format and fitted brass lid",
+    finish: "Polished dark marble, brushed brass lid, and restrained ARYO marking",
+    summary: "A permanent dark-marble candle vessel with a two-wick flame and a warm brass lid.",
+    description: "The Sculptural Marble Candle is conceived as a fragrance object that remains useful after the final burn, with the vessel carrying the lasting presence.",
+  }),
+  createConceptProduct({
+    slug: "marble-leather-coaster-set",
+    name: "Marble & Leather Coaster Set",
+    color: "Nero / Espresso",
+    category: "Home Accessories",
+    department: "home",
+    subcategory: "tabletop",
+    image: "/assets/concepts/generated/home/marble-leather-coasters.png",
+    reference: "/assets/concepts/references/marble-leather-coasters-board.png",
+    material: "Solid marble, full-grain leather holder, and cork base target",
+    construction: "Set of four stacked stone coasters with a structured leather sleeve",
+    finish: "Black stone with fine brass edge detail and debossed ARYO holder",
+    summary: "A set of four marble coasters held in a full-grain leather sleeve with quiet brass detailing.",
+    description: "The Marble & Leather Coaster Set brings the ARYO material language to a smaller daily ritual: stone, leather, and a sense of order on the table.",
+  }),
+  createConceptProduct({
+    slug: "marble-brass-bookends",
+    name: "Sculptural Marble Bookends",
+    color: "Nero Marquina",
+    category: "Home Accessories",
+    department: "home",
+    subcategory: "small-objects",
+    image: "/assets/concepts/generated/home/marble-brass-bookends.png",
+    reference: "/assets/concepts/references/marble-brass-bookends-board.png",
+    material: "Solid Nero Marquina marble with brass inlay target",
+    construction: "Matched architectural pair with felt base protection and substantial weight",
+    finish: "Polished stone faces, honed edges, and a narrow brass line through the form",
+    summary: "Architectural marble bookends with a brass inlay, designed to give a shelf a quiet sense of structure.",
+    description: "The Sculptural Marble Bookends are functional architecture in miniature: heavy, balanced, and deliberately simple enough to live beside a collection of books.",
+  }),
+  createConceptProduct({
+    slug: "cashmere-throw-ivory",
+    name: "Cashmere Throw",
+    color: "Ivory",
+    category: "Home Accessories",
+    department: "home",
+    subcategory: "textiles",
+    image: "/assets/concepts/generated/home/cashmere-throw-ivory.png",
+    reference: "/assets/concepts/references/cashmere-throw-ivory-board.png",
+    material: "100% cashmere target with a soft, warm hand",
+    construction: "Double-faced woven throw with hand-finished fringe",
+    finish: "Warm ivory surface with subtle ARYO embroidery and generous natural drape",
+    summary: "An ivory cashmere throw with hand-finished fringe, bringing a lighter expression to the ARYO home edit.",
+    description: "The Ivory Cashmere Throw is the brighter counterpart to Noir: warm, tactile, and intended to soften the room without becoming decorative noise.",
+  }),
+];
+
 export const products: Product[] = [
   {
     slug: "nur-signature-noir",
@@ -267,6 +607,7 @@ export const products: Product[] = [
       "Current lead time is approximately 3 weeks before dispatch.",
     ],
   },
+  ...conceptProducts,
   {
     slug: "essential-trouser-noir",
     name: "Essential Trouser",

@@ -7,7 +7,7 @@ import { createPortal } from "react-dom";
 import { CloseIcon, MenuIcon } from "./site-icons";
 
 const primaryLinks = [
-  { href: "/collections/pennicella", label: "Collection" },
+  { href: "/collections", label: "Collections" },
   { href: "/story", label: "Story" },
   { href: "/shipping", label: "Shipping" },
   { href: "/returns", label: "Returns" },
