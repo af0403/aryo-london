@@ -60,7 +60,7 @@ export default function CollectionsPage() {
           </a>
         </div>
 
-        <Link className="collections-hero-media" href="/collections/men">
+        <Link className="collections-hero-media" href="/collections/pennicella">
           <Image
             src="/assets/generated/aryo-drop01-products.png"
             alt="ARYO Pennicella jacket and trousers arranged in an editorial still life"
