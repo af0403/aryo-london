@@ -449,6 +449,8 @@ export const products: Product[] = [
       { label: "Origin", value: "To be confirmed from final supplier documentation" },
     ],
     variants: [createOneSizeVariant("nur-signature-noir", "noir", null)],
+    department: "unisex",
+    subcategory: "headwear",
     notes: [
       "Final retail price and stock quantity will be confirmed before release.",
       "Do not treat the digital imagery as a substitute for the approved physical sample.",
@@ -492,6 +494,8 @@ export const products: Product[] = [
       { label: "Origin", value: "To be confirmed from final supplier documentation" },
     ],
     variants: [createOneSizeVariant("nur-signature-bone", "bone", null)],
+    department: "unisex",
+    subcategory: "headwear",
     notes: [
       "Final retail price and stock quantity will be confirmed before release.",
       "Do not treat the digital imagery as a substitute for the approved physical sample.",
@@ -535,6 +539,8 @@ export const products: Product[] = [
       { label: "Origin", value: "To be confirmed from final supplier documentation" },
     ],
     variants: [createOneSizeVariant("gozar-aryo-noir", "noir", null)],
+    department: "unisex",
+    subcategory: "headwear",
     notes: [
       "Final retail price and stock quantity will be confirmed before release.",
       "The motion treatment must be approved as a physical textile strike-off before production.",
@@ -601,6 +607,8 @@ export const products: Product[] = [
       L: null,
       XL: null,
     }),
+    department: "men",
+    subcategory: "ready-to-wear",
     notes: [
       "Made to order in all sizes. No stock is held — each piece is produced after purchase.",
       "Pattern is cut to a size M block. For sizing or fit guidance, message us on Instagram @aryolondon.",
@@ -668,6 +676,8 @@ export const products: Product[] = [
       L: 0,
       XL: 0,
     }),
+    department: "men",
+    subcategory: "ready-to-wear",
     notes: [
       "This colourway is now sold out. Only 100 pieces were produced.",
       "The piece remains visible to preserve the complete Pennicella launch edit.",
@@ -734,6 +744,8 @@ export const products: Product[] = [
       L: 10,
       XL: 5,
     }),
+    department: "men",
+    subcategory: "ready-to-wear",
     notes: [
       "Only 100 pieces were produced across both trouser colourways.",
       "Extra small is not currently available in this colourway.",

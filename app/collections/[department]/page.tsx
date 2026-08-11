@@ -2,94 +2,25 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { formatProductPrice } from "../../../lib/format";
 import {
-  getProductStatusLabel,
-  products,
-  type CatalogDepartment,
-  type CatalogSubcategory,
-  type Product,
-} from "../../../lib/products";
+  categoryHref,
+  departmentNavigation,
+  getDepartmentNavigation,
+  getProductSubcategory,
+  productsForDepartment,
+  type DepartmentKey,
+} from "../../../lib/catalog";
+import { formatProductPrice } from "../../../lib/format";
+import { getProductStatusLabel, type Product } from "../../../lib/products";
 import { createPageMetadata } from "../../../lib/seo";
-
-const departmentConfig = {
-  women: {
-    label: "Women",
-    eyebrow: "The wardrobe / Women",
-    description:
-      "A considered edit of ARYO clothing, headwear, and personal accessories.",
-    categories: [
-      ["ready-to-wear", "Ready-to-wear"],
-      ["headwear", "Headwear"],
-      ["scarves", "Scarves & wraps"],
-      ["gloves", "Gloves"],
-      ["eyewear", "Eyewear"],
-    ],
-  },
-  men: {
-    label: "Men",
-    eyebrow: "The wardrobe / Men",
-    description:
-      "Pennicella, headwear, and material-led accessories for the everyday.",
-    categories: [
-      ["ready-to-wear", "Ready-to-wear"],
-      ["headwear", "Headwear"],
-      ["scarves", "Scarves & wraps"],
-      ["gloves", "Gloves"],
-      ["eyewear", "Eyewear"],
-    ],
-  },
-  home: {
-    label: "Home",
-    eyebrow: "The house / Home",
-    description:
-      "Tabletop, textiles, fragrance, and sculptural objects with presence.",
-    categories: [
-      ["tabletop", "Tabletop"],
-      ["textiles", "Textiles"],
-      ["fragrance", "Fragrance"],
-      ["small-objects", "Small objects"],
-    ],
-  },
-} as const satisfies Record<"women" | "men" | "home", {
-  label: string;
-  eyebrow: string;
-  description: string;
-  categories: readonly (readonly [CatalogSubcategory, string])[];
-}>;
-
-type DepartmentKey = keyof typeof departmentConfig;
-
-const visibleProducts = products.filter((product) => !product.hidden);
-
-const getSubcategory = (product: Product): CatalogSubcategory => {
-  if (product.subcategory) return product.subcategory;
-  if (product.slug.includes("jacket") || product.slug.includes("trouser")) {
-    return "ready-to-wear";
-  }
-  if (product.slug.includes("beanie")) return "headwear";
-  return "ready-to-wear";
-};
-
-const getDepartment = (product: Product): CatalogDepartment => {
-  if (product.department) return product.department;
-  return "unisex";
-};
 
 const displayPrice = (product: Product) =>
   product.price === null
     ? product.priceNote ?? "Price to be confirmed"
     : `${formatProductPrice(product.price)} GBP`;
 
-const departmentProducts = (department: DepartmentKey) =>
-  visibleProducts.filter((product) => {
-    const productDepartment = getDepartment(product);
-    if (department === "home") return productDepartment === "home";
-    return productDepartment !== "home";
-  });
-
 export function generateStaticParams() {
-  return Object.keys(departmentConfig).map((department) => ({ department }));
+  return departmentNavigation.map(({ slug }) => ({ department: slug }));
 }
 
 export async function generateMetadata({
@@ -98,7 +29,7 @@ export async function generateMetadata({
   params: Promise<{ department: string }>;
 }) {
   const { department } = await params;
-  const config = departmentConfig[department as DepartmentKey];
+  const config = getDepartmentNavigation(department);
   if (!config) return {};
 
   return createPageMetadata({
@@ -142,20 +73,18 @@ export default async function DepartmentCollectionsPage({
   params: Promise<{ department: string }>;
 }) {
   const { department } = await params;
-  if (!(department in departmentConfig)) notFound();
+  const config = getDepartmentNavigation(department);
+  if (!config) notFound();
 
-  const key = department as DepartmentKey;
-  const config = departmentConfig[key];
-  const groupedProducts = departmentProducts(key);
-  const sections = config.categories
-    .map(([subcategory, label]) => ({
-      subcategory,
-      label,
-      products: groupedProducts.filter(
-        (product) => getSubcategory(product) === subcategory,
-      ),
-    }))
-    .filter((section) => section.products.length > 0);
+  const key = config.slug as DepartmentKey;
+  const groupedProducts = productsForDepartment(key);
+  const sections = config.categories.map((category) => ({
+    ...category,
+    products: groupedProducts.filter(
+      (product) => getProductSubcategory(product) === category.slug,
+    ),
+  }));
+  const populatedSections = sections.filter((section) => section.products.length > 0);
   const count = groupedProducts.length.toString().padStart(2, "0");
 
   return (
@@ -172,45 +101,67 @@ export default async function DepartmentCollectionsPage({
         <p className="collection-department-count">{count} pieces in the edit</p>
       </header>
 
-      {sections.length > 0 ? (
-        <>
-          <nav
-            className="collection-department-nav"
-            aria-label={`${config.label} categories`}
-          >
-            {sections.map((section, index) => (
-              <a href={`#${section.subcategory}`} key={section.subcategory}>
-                <span>{String(index + 1).padStart(2, "0")}</span>
-                {section.label}
-              </a>
-            ))}
-          </nav>
+      {key === "men" ? (
+        <Link className="collection-department-feature" href="/collections/pennicella">
+          <span>
+            <span className="collections-eyebrow">Opening collection / 01</span>
+            <strong>Pennicella | AF by ARYO</strong>
+            <span>Explore the first chapter of the house.</span>
+          </span>
+          <span aria-hidden="true">↗</span>
+        </Link>
+      ) : null}
 
-          {sections.map((section, index) => (
-            <section
-              className="collection-department-section"
-              id={section.subcategory}
-              key={section.subcategory}
-            >
-              <div className="collection-department-section-head">
-                <div>
-                  <p className="collections-eyebrow">
-                    {String(index + 1).padStart(2, "0")}
-                  </p>
-                  <h2>{section.label}</h2>
-                </div>
-                <p>{String(section.products.length).padStart(2, "0")} pieces</p>
+      <nav
+        className="collection-department-nav collection-department-nav--routes"
+        aria-label={`${config.label} categories`}
+      >
+        {sections.map((section, index) => (
+          <Link href={categoryHref(key, section.slug)} key={section.slug}>
+            <span>{String(index + 1).padStart(2, "0")}</span>
+            <span>{section.label}</span>
+            <small>
+              {section.products.length > 0
+                ? `${String(section.products.length).padStart(2, "0")} pieces`
+                : "Coming soon"}
+            </small>
+            <span aria-hidden="true">↗</span>
+          </Link>
+        ))}
+      </nav>
+
+      {populatedSections.length > 0 ? (
+        populatedSections.map((section, index) => (
+          <section className="collection-department-section" key={section.slug}>
+            <div className="collection-department-section-head">
+              <div>
+                <p className="collections-eyebrow">
+                  {String(index + 1).padStart(2, "0")}
+                </p>
+                <h2>{section.label}</h2>
               </div>
-              <div className="collection-product-grid">
-                {section.products.map((product) => (
-                  <ProductCard key={product.slug} product={product} />
-                ))}
-              </div>
-            </section>
-          ))}
-        </>
+              <p>{String(section.products.length).padStart(2, "0")} pieces</p>
+            </div>
+            <div className="collection-product-grid">
+              {section.products.map((product) => (
+                <ProductCard key={product.slug} product={product} />
+              ))}
+            </div>
+          </section>
+        ))
       ) : (
-        <p className="collection-empty-state">New pieces are being considered for this edit.</p>
+        <div className="collection-empty-state collection-empty-state--future">
+          <p className="collections-eyebrow">The next chapter</p>
+          <h2>
+            {key === "women"
+              ? "The women's edit is being developed."
+              : "New pieces are being considered for this edit."}
+          </h2>
+          <p>
+            This space is ready for the first ARYO release in this world. Nothing
+            has been added before it is ready.
+          </p>
+        </div>
       )}
 
       <footer className="collection-department-footer">

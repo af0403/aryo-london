@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next";
 
 import { liveProducts } from "../lib/products";
 import { absoluteUrl } from "../lib/seo";
+import { categoryHref, departmentNavigation } from "../lib/catalog";
 
 const now = new Date();
 
@@ -32,6 +33,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const publicProducts = liveProducts.filter((product) => !product.hidden);
 
   return [
+    ...departmentNavigation.flatMap((department) =>
+      department.categories.map((category) => ({
+        url: absoluteUrl(categoryHref(department.slug, category.slug)),
+        lastModified: now,
+        changeFrequency: "weekly" as const,
+        priority: 0.7,
+      })),
+    ),
     ...staticRoutes.map((route) => ({
       url: absoluteUrl(route.path),
       lastModified: now,
