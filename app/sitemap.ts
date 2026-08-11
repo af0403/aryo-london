@@ -12,6 +12,9 @@ const staticRoutes: Array<{
 }> = [
   { path: "/", changeFrequency: "weekly", priority: 1 },
   { path: "/collections", changeFrequency: "weekly", priority: 0.98 },
+  { path: "/collections/women", changeFrequency: "weekly", priority: 0.8 },
+  { path: "/collections/men", changeFrequency: "weekly", priority: 0.8 },
+  { path: "/collections/home", changeFrequency: "weekly", priority: 0.8 },
   { path: "/collections/pennicella", changeFrequency: "weekly", priority: 0.95 },
   { path: "/about", changeFrequency: "monthly", priority: 0.8 },
   { path: "/story", changeFrequency: "monthly", priority: 0.8 },
