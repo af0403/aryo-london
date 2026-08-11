@@ -128,7 +128,7 @@ function ProductCard({ product }: { product: Product }) {
         </span>
         <span className="collection-product-name">{product.name}</span>
         <span className="collection-product-meta">
-          <span>{product.colorway}</span>
+          <span>{product.color}</span>
           <span>{displayPrice(product)}</span>
         </span>
       </span>
