@@ -1663,10 +1663,11 @@ body:has(.home-main) .site-footer {
 .product-showcase-frame {
   position: relative;
   margin: 0;
-  aspect-ratio: 3 / 4;
+  /* Product imagery is delivered as a 5:4 editorial still; preserve that framing. */
+  aspect-ratio: 5 / 4;
   display: grid;
   place-items: center;
-  background: var(--surface);
+  background: var(--background);
   overflow: hidden;
 }
 
@@ -1704,7 +1705,8 @@ body:has(.home-main) .site-footer {
   position: relative;
   display: block;
   width: 68px;
-  height: 90px;
+  aspect-ratio: 5 / 4;
+  height: auto;
   padding: 0;
   border: 1.5px solid transparent;
   overflow: hidden;
@@ -2246,13 +2248,13 @@ body:has(.home-main) .site-footer {
   }
 
   .product-showcase-frame {
-    aspect-ratio: 3 / 4;
+    aspect-ratio: 5 / 4;
     order: 1;
   }
 
   .product-showcase-thumb {
     width: 52px;
-    height: 70px;
+    height: auto;
     flex-shrink: 0;
   }
 

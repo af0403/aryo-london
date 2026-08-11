@@ -183,8 +183,8 @@ export const products: Product[] = [
       { src: "/assets/beanies/gozar-aryo-noir/rear-three-quarter.png", alt: "Gozar ARYO Beanie in Noir, rear three-quarter view", fit: "contain" },
       { src: "/assets/beanies/gozar-aryo-noir/macro-aryo-motion.png", alt: "Gozar ARYO Beanie in Noir, directional silver-graphite wordmark and rib detail", fit: "contain" },
       { src: "/assets/beanies/gozar-aryo-noir/inside-construction.png", alt: "Gozar ARYO Beanie in Noir, inside construction detail", fit: "contain" },
-      { src: "/assets/beanies/gozar-aryo-noir/editorial-approved-model.png", alt: "Gozar ARYO Beanie in Noir, approved editorial model image", fit: "contain" },
     ],
+    editorialImage: { src: "/assets/beanies/gozar-aryo-noir/editorial-approved-model.png", alt: "Gozar ARYO Beanie in Noir, ARYO editorial campaign image" },
     details: [
       { label: "Material target", value: "Premium 100% cashmere lead yarn, subject to fibre and hand-feel approval" },
       { label: "Knit", value: "Dense fine-gauge vertical rib, target 7-gauge or supplier-equivalent density" },
