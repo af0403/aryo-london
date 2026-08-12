@@ -50,18 +50,19 @@ function ProductCard({ product }: { product: Product }) {
           alt={product.gallery[0]?.alt ?? product.name}
           fill
           sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+          style={{
+            objectFit: product.cardImageFit ?? "contain",
+            objectPosition: product.cardImagePosition ?? "center",
+          }}
         />
       </span>
       <span className="collection-product-copy">
         <span className="collection-product-meta">
-          <span>{product.category}</span>
           <span>{getProductStatusLabel(product)}</span>
+          <span>{product.color}</span>
         </span>
         <span className="collection-product-name">{product.name}</span>
-        <span className="collection-product-meta">
-          <span>{product.color}</span>
-          <span>{displayPrice(product)}</span>
-        </span>
+        <span className="collection-product-price">{displayPrice(product)}</span>
       </span>
     </Link>
   );
@@ -77,98 +78,70 @@ export default async function DepartmentCollectionsPage({
   if (!config) notFound();
 
   const key = config.slug as DepartmentKey;
-  const groupedProducts = productsForDepartment(key);
-  const sections = config.categories.map((category) => ({
-    ...category,
-    products: groupedProducts.filter(
-      (product) => getProductSubcategory(product) === category.slug,
-    ),
-  }));
-  const populatedSections = sections.filter((section) => section.products.length > 0);
-  const count = groupedProducts.length.toString().padStart(2, "0");
+  const departmentProducts = productsForDepartment(key);
+  const populatedCategories = config.categories.filter((category) =>
+    departmentProducts.some((product) => getProductSubcategory(product) === category.slug),
+  );
 
   return (
-    <main className="collection-department-page">
-      <header className="collection-department-header">
-        <div className="collection-department-header-copy">
-          <Link className="collection-department-back" href="/collections">
-            Collections <span aria-hidden="true">↗</span>
-          </Link>
-          <p className="collections-eyebrow">{config.eyebrow}</p>
-          <h1>{config.label}</h1>
-          <p>{config.description}</p>
+    <main className="catalog-page catalog-department-page">
+      <header className="catalog-page-header">
+        <div className="catalog-breadcrumbs">
+          <Link href="/collections">Collections</Link>
+          <span aria-hidden="true">/</span>
+          <span>{config.label}</span>
         </div>
-        <p className="collection-department-count">{count} pieces in the edit</p>
+        <div className="catalog-page-title-row">
+          <h1>{config.label}</h1>
+          <span>{String(departmentProducts.length).padStart(2, "0")} pieces</span>
+        </div>
       </header>
 
+      <nav className="catalog-category-nav" aria-label={`${config.label} categories`}>
+        <Link className="is-current" href={`/collections/${key}`}>View all</Link>
+        {config.categories.map((category) => (
+          <Link href={categoryHref(key, category.slug)} key={category.slug}>
+            {category.label}
+            {populatedCategories.some((entry) => entry.slug === category.slug) ? null : <small>Coming soon</small>}
+          </Link>
+        ))}
+      </nav>
+
       {key === "men" ? (
-        <Link className="collection-department-feature" href="/collections/pennicella">
+        <Link className="catalog-feature-banner" href="/collections/pennicella">
+          <Image
+            src="/assets/generated/aryo-campaign-noir.jpg"
+            alt="Pennicella | AF by ARYO"
+            fill
+            sizes="100vw"
+          />
           <span>
-            <span className="collections-eyebrow">Opening collection / 01</span>
+            <small>Opening collection / 01</small>
             <strong>Pennicella | AF by ARYO</strong>
-            <span>Explore the first chapter of the house.</span>
+            <em>Explore the first chapter</em>
           </span>
           <span aria-hidden="true">↗</span>
         </Link>
       ) : null}
 
-      <nav
-        className="collection-department-nav collection-department-nav--routes"
-        aria-label={`${config.label} categories`}
-      >
-        {sections.map((section, index) => (
-          <Link href={categoryHref(key, section.slug)} key={section.slug}>
-            <span>{String(index + 1).padStart(2, "0")}</span>
-            <span>{section.label}</span>
-            <small>
-              {section.products.length > 0
-                ? `${String(section.products.length).padStart(2, "0")} pieces`
-                : "Coming soon"}
-            </small>
-            <span aria-hidden="true">↗</span>
-          </Link>
-        ))}
-      </nav>
-
-      {populatedSections.length > 0 ? (
-        populatedSections.map((section, index) => (
-          <section className="collection-department-section" key={section.slug}>
-            <div className="collection-department-section-head">
-              <div>
-                <p className="collections-eyebrow">
-                  {String(index + 1).padStart(2, "0")}
-                </p>
-                <h2>{section.label}</h2>
-              </div>
-              <p>{String(section.products.length).padStart(2, "0")} pieces</p>
-            </div>
-            <div className="collection-product-grid">
-              {section.products.map((product) => (
-                <ProductCard key={product.slug} product={product} />
-              ))}
-            </div>
-          </section>
-        ))
+      {departmentProducts.length > 0 ? (
+        <section className="catalog-results" aria-labelledby="catalog-results-title">
+          <div className="catalog-results-head">
+            <h2 id="catalog-results-title">{config.label}</h2>
+            <span>{String(departmentProducts.length).padStart(2, "0")} pieces</span>
+          </div>
+          <div className="collection-product-grid">
+            {departmentProducts.map((product) => (
+              <ProductCard key={product.slug} product={product} />
+            ))}
+          </div>
+        </section>
       ) : (
-        <div className="collection-empty-state collection-empty-state--future">
-          <p className="collections-eyebrow">The next chapter</p>
-          <h2>
-            {key === "women"
-              ? "The women's edit is being developed."
-              : "New pieces are being considered for this edit."}
-          </h2>
-          <p>
-            This space is ready for the first ARYO release in this world. Nothing
-            has been added before it is ready.
-          </p>
-        </div>
+        <section className="catalog-empty-state">
+          <p>{config.label} is being developed.</p>
+          <span>New ARYO pieces will appear here once the edit is ready.</span>
+        </section>
       )}
-
-      <footer className="collection-department-footer">
-        <Link className="collections-text-link" href="/collections">
-          Back to the house <span aria-hidden="true">↗</span>
-        </Link>
-      </footer>
     </main>
   );
 }

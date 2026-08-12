@@ -215,82 +215,54 @@ export const ProductShowcase = ({ product }: { product: Product }) => {
 
   return (
     <section className="product-showcase reveal-block">
-      <div className="product-showcase-thumbs">
+      <div className="product-showcase-media-column">
         {product.gallery.map((item, index) => (
-          <button
-            key={`${item.src}-${index}`}
-            className={`product-showcase-thumb ${
-              index === activeIndex ? "is-active" : ""
-            }`}
-            type="button"
-            onClick={() => setActiveIndex(index)}
-            aria-label={`Show media ${index + 1}`}
-          >
-            <Image
-              src={item.type === "video" ? item.poster ?? product.leadImage : item.src}
-              alt=""
-              aria-hidden="true"
-              width={68}
-              height={90}
-              sizes="68px"
-              style={{
-                objectFit: item.fit ?? product.leadImageFit ?? "cover",
-                objectPosition:
-                  item.position ?? product.leadImagePosition ?? "top center",
-                width: "100%",
-                height: "100%",
+          <figure className="product-showcase-frame" key={`${item.src}-${index}`}>
+            <button
+              className="product-showcase-frame-button"
+              type="button"
+              onClick={() => {
+                setActiveIndex(index);
+                setLightboxOpen(true);
               }}
-            />
-            {item.type === "video" ? (
-              <span className="product-showcase-thumb-badge">Motion</span>
-            ) : null}
-          </button>
+              aria-label={`Open ${product.name} media ${index + 1} fullscreen`}
+            >
+              {item.type === "video" ? (
+                <video
+                  className="product-showcase-video"
+                  poster={item.poster ?? product.leadImage}
+                  aria-label={item.alt}
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  preload="metadata"
+                  style={{
+                    objectFit: item.fit ?? product.leadImageFit ?? "cover",
+                    objectPosition:
+                      item.position ?? product.leadImagePosition ?? "center center",
+                  }}
+                >
+                  <source src={item.src} type="video/mp4" />
+                </video>
+              ) : (
+                <Image
+                  src={item.src}
+                  alt={item.alt}
+                  fill
+                  priority={index === 0}
+                  sizes="(max-width: 820px) 100vw, 58vw"
+                  style={{
+                    objectFit: item.fit ?? product.leadImageFit ?? "cover",
+                    objectPosition:
+                      item.position ?? product.leadImagePosition ?? "center center",
+                  }}
+                />
+              )}
+            </button>
+          </figure>
         ))}
       </div>
-
-      <figure className="product-showcase-frame">
-        <button
-          className="product-showcase-frame-button"
-          type="button"
-          onClick={() => setLightboxOpen(true)}
-          aria-label={`Open ${product.name} fullscreen`}
-        >
-          {media.type === "video" ? (
-            <video
-              key={media.src}
-              className="product-showcase-video"
-              poster={media.poster ?? product.leadImage}
-              aria-label={media.alt}
-              autoPlay
-              muted
-              loop
-              playsInline
-              preload="metadata"
-              style={{
-                objectFit: media.fit ?? product.leadImageFit ?? "cover",
-                objectPosition:
-                  media.position ?? product.leadImagePosition ?? "center center",
-              }}
-            >
-              <source src={media.src} type="video/mp4" />
-            </video>
-          ) : (
-            <Image
-              key={media.src}
-              src={media.src}
-              alt={media.alt}
-              fill
-              priority
-              sizes="(max-width: 768px) 100vw, 60vw"
-              style={{
-                objectFit: media.fit ?? product.leadImageFit ?? "cover",
-                objectPosition:
-                  media.position ?? product.leadImagePosition ?? "center center",
-              }}
-            />
-          )}
-        </button>
-      </figure>
 
       {lightboxOpen ? (
         <div

@@ -58,18 +58,19 @@ function ProductCard({ product }: { product: Product }) {
           alt={product.gallery[0]?.alt ?? product.name}
           fill
           sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+          style={{
+            objectFit: product.cardImageFit ?? "contain",
+            objectPosition: product.cardImagePosition ?? "center",
+          }}
         />
       </span>
       <span className="collection-product-copy">
         <span className="collection-product-meta">
-          <span>{product.category}</span>
           <span>{getProductStatusLabel(product)}</span>
+          <span>{product.color}</span>
         </span>
         <span className="collection-product-name">{product.name}</span>
-        <span className="collection-product-meta">
-          <span>{product.color}</span>
-          <span>{displayPrice(product)}</span>
-        </span>
+        <span className="collection-product-price">{displayPrice(product)}</span>
       </span>
     </Link>
   );
@@ -91,41 +92,55 @@ export default async function CategoryCollectionsPage({
   const categoryProducts = productsForCategory(key, category.slug);
 
   return (
-    <main className="collection-category-page">
-      <header className="collection-category-header">
-        <div className="collection-category-breadcrumbs">
+    <main className="catalog-page catalog-category-page">
+      <header className="catalog-page-header">
+        <div className="catalog-breadcrumbs">
           <Link href="/collections">Collections</Link>
           <span aria-hidden="true">/</span>
           <Link href={`/collections/${key}`}>{departmentConfig.label}</Link>
           <span aria-hidden="true">/</span>
           <span>{category.label}</span>
         </div>
-        <div className="collection-category-heading">
-          <div>
-            <p className="collections-eyebrow">
-              {departmentConfig.eyebrow} / {String(categoryProducts.length).padStart(2, "0")} pieces
-            </p>
-            <h1>{category.label}</h1>
-          </div>
-          <p>{category.description}</p>
+        <div className="catalog-page-title-row">
+          <h1>{category.label}</h1>
+          <span>{String(categoryProducts.length).padStart(2, "0")} pieces</span>
         </div>
       </header>
 
+      <nav className="catalog-category-nav" aria-label={`${departmentConfig.label} categories`}>
+        <Link href={`/collections/${key}`}>View all</Link>
+        {departmentConfig.categories.map((entry) => (
+          <Link
+            className={entry.slug === category.slug ? "is-current" : ""}
+            href={categoryHref(key, entry.slug)}
+            key={entry.slug}
+          >
+            {entry.label}
+          </Link>
+        ))}
+      </nav>
+
       {key === "men" && category.slug === "ready-to-wear" ? (
-        <Link className="collection-category-feature" href="/collections/pennicella">
+        <Link className="catalog-feature-banner" href="/collections/pennicella">
+          <Image
+            src="/assets/generated/aryo-campaign-noir.jpg"
+            alt="Pennicella | AF by ARYO"
+            fill
+            sizes="100vw"
+          />
           <span>
-            <span className="collections-eyebrow">The opening chapter</span>
+            <small>Opening collection / 01</small>
             <strong>Pennicella | AF by ARYO</strong>
-            <span>Explore the jacket and trouser edit.</span>
+            <em>Explore the first chapter</em>
           </span>
           <span aria-hidden="true">↗</span>
         </Link>
       ) : null}
 
       {categoryProducts.length > 0 ? (
-        <section className="collection-category-results" aria-labelledby="category-results-title">
-          <div className="collection-category-results-head">
-            <h2 id="category-results-title">The edit</h2>
+        <section className="catalog-results" aria-labelledby="category-results-title">
+          <div className="catalog-results-head">
+            <h2 id="category-results-title">{category.label}</h2>
             <span>{String(categoryProducts.length).padStart(2, "0")} pieces</span>
           </div>
           <div className="collection-product-grid">
@@ -135,37 +150,11 @@ export default async function CategoryCollectionsPage({
           </div>
         </section>
       ) : (
-        <div className="collection-category-empty">
-          <p className="collections-eyebrow">A future chapter</p>
-          <h2>
-            {key === "women"
-              ? "The women's edit is being developed."
-              : "This edit is being considered."}
-          </h2>
-          <p>
-            We are building this category carefully. New ARYO pieces will appear
-            here once the product and imagery are ready.
-          </p>
-          <Link className="collections-text-link" href={`/collections/${key}`}>
-            Back to {departmentConfig.label} <span aria-hidden="true">↗</span>
-          </Link>
-        </div>
+        <section className="catalog-empty-state">
+          <p>This edit is being developed.</p>
+          <span>New ARYO pieces will appear here once the category is ready.</span>
+        </section>
       )}
-
-      <nav className="collection-category-next" aria-label="More categories">
-        <p className="collections-eyebrow">Continue through {departmentConfig.label}</p>
-        <div>
-          {departmentConfig.categories.map((entry) => (
-            <Link
-              className={entry.slug === category.slug ? "is-current" : ""}
-              href={categoryHref(key, entry.slug)}
-              key={entry.slug}
-            >
-              {entry.label} <span aria-hidden="true">↗</span>
-            </Link>
-          ))}
-        </div>
-      </nav>
     </main>
   );
 }

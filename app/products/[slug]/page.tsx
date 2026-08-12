@@ -105,9 +105,24 @@ export default async function ProductPage({
       <ProductPurchasePanel product={product} statusLabel={statusLabel} />
 
       <div className="product-page-layout">
-        <ProductShowcase product={product} />
+        <div className="product-page-media-column">
+          <ProductShowcase product={product} />
+
+          {product.editorialImage ? (
+            <section className="product-page-editorial" aria-label="Editorial campaign image">
+              <Image
+                src={product.editorialImage.src}
+                alt={product.editorialImage.alt}
+                width={1402}
+                height={1122}
+                sizes="(max-width: 820px) 100vw, 58vw"
+              />
+            </section>
+          ) : null}
+        </div>
 
         <aside className="product-page-copy reveal-block" data-purchase-sentinel>
+          <p className="product-page-kicker">{product.line}</p>
           <h1>{product.name}</h1>
           <p className="product-page-price">{formatProductPrice(product.price)}{product.price === null ? "" : " GBP"}</p>
           <p className="product-page-colour">{product.color}</p>
@@ -189,18 +204,6 @@ export default async function ProductPage({
           </div>
         </aside>
       </div>
-
-      {product.editorialImage ? (
-        <section className="product-page-editorial" aria-label="Editorial campaign image">
-          <Image
-            src={product.editorialImage.src}
-            alt={product.editorialImage.alt}
-            width={1402}
-            height={1122}
-            sizes="(max-width: 900px) 100vw, var(--page-width)"
-          />
-        </section>
-      ) : null}
     </main>
   );
 }
