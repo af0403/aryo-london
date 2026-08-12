@@ -12,7 +12,7 @@ export default function ShippingPage() {
     <main className="section info-page">
       <div className="page-intro">
         <p className="eyebrow">Shipping</p>
-        <h1 className="page-title">Worldwide shipping on every Pennicella order.</h1>
+        <h1 className="page-title">Worldwide shipping, everywhere.</h1>
         <p>
           ARYO ships internationally. Complimentary worldwide shipping is included on all Pennicella pieces.
         </p>

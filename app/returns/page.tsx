@@ -12,7 +12,7 @@ export default function ReturnsPage() {
     <main className="section info-page">
       <div className="page-intro">
         <p className="eyebrow">Returns</p>
-        <h1 className="page-title">Returns are accepted for pieces that come back clean.</h1>
+        <h1 className="page-title">Returns for pieces kept in original condition.</h1>
         <p>
           Returns are accepted within 14 days of delivery, provided the piece is returned in original unworn condition.
         </p>

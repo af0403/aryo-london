@@ -110,7 +110,7 @@ export default async function DepartmentCollectionsPage({
       {key === "men" ? (
         <Link className="catalog-feature-banner" href="/collections/pennicella">
           <Image
-            src="/assets/generated/aryo-campaign-noir.jpg"
+            src="/assets/generated/luma-pack/homepage-hero-noir-desktop.png"
             alt="Pennicella | AF by ARYO"
             fill
             sizes="100vw"

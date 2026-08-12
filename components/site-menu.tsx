@@ -58,25 +58,19 @@ export const SiteMenu = () => {
               onClick={() => setView("collections")}
             >
               <span>
-                <small>01</small>
                 <strong>Collections</strong>
               </span>
-              <span aria-hidden="true">→</span>
             </button>
             <Link className="site-menu-section-row" href="/collections/pennicella" onClick={close}>
               <span>
-                <small>Featured</small>
                 <strong>Pennicella</strong>
               </span>
-              <span aria-hidden="true">↗</span>
             </Link>
             {houseLinks.map((link) => (
               <Link className="site-menu-section-row" href={link.href} key={link.href} onClick={close}>
                 <span>
-                  <small>ARYO</small>
                   <strong>{link.label}</strong>
                 </span>
-                <span aria-hidden="true">↗</span>
               </Link>
             ))}
           </nav>
@@ -94,10 +88,8 @@ export const SiteMenu = () => {
           <nav className="site-menu-section-list" aria-label="Collections">
             <Link className="site-menu-section-row site-menu-feature-row" href="/collections/pennicella" onClick={close}>
               <span>
-                <small>Featured collection</small>
                 <strong>Pennicella / AF by ARYO</strong>
               </span>
-              <span aria-hidden="true">↗</span>
             </Link>
             {departmentNavigation.map((department) => (
               <button
@@ -107,10 +99,8 @@ export const SiteMenu = () => {
                 onClick={() => setView(department.slug)}
               >
                 <span>
-                  <small>{department.eyebrow}</small>
                   <strong>{department.label}</strong>
                 </span>
-                <span aria-hidden="true">→</span>
               </button>
             ))}
           </nav>
@@ -136,10 +126,8 @@ export const SiteMenu = () => {
               onClick={close}
             >
               <span>
-                <small>{department.eyebrow}</small>
                 <strong>{category.label}</strong>
               </span>
-              <span aria-hidden="true">↗</span>
             </Link>
           ))}
         </nav>
