@@ -178,18 +178,23 @@ export function SizeGuideTool() {
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const value = Number(measurements[primaryField.key]);
-    if (!Number.isFinite(value)) return;
+    const enteredMeasurements = active.fields.map((field) => ({
+      field,
+      value: Number(measurements[field.key]),
+    }));
+    if (enteredMeasurements.some(({ value }) => !Number.isFinite(value))) return;
 
     const fitAdjustment = category === "tops" || category === "bottoms"
       ? fit === "close" ? -2 : fit === "relaxed" ? 2 : 0
       : 0;
-    const target = value + fitAdjustment;
     let nearestIndex = 0;
     let nearestDistance = Number.POSITIVE_INFINITY;
 
     active.rows.forEach((row, index) => {
-      const distance = Math.abs(rangeMidpoint(row.values[primaryField.key]) - target);
+      const distance = enteredMeasurements.reduce((total, { field, value }) => {
+        const target = field.key === primaryField.key ? value + fitAdjustment : value;
+        return total + Math.abs(rangeMidpoint(row.values[field.key]) - target);
+      }, 0);
       if (distance < nearestDistance) {
         nearestIndex = index;
         nearestDistance = distance;
@@ -197,10 +202,11 @@ export function SizeGuideTool() {
     });
 
     const row = active.rows[nearestIndex];
+    const primaryValue = enteredMeasurements.find(({ field }) => field.key === primaryField.key)?.value ?? 0;
     const fitText = category === "tops" || category === "bottoms" ? ` and a ${fit} fit` : "";
     setRecommendation({
       size: row.size,
-      detail: `Based on a ${value} ${primaryField.unit} ${primaryField.label.toLowerCase()}${fitText}. Use the product-specific measurements below as the final reference.`,
+      detail: `Based on your measurements, including a ${primaryValue} ${primaryField.unit} ${primaryField.label.toLowerCase()}${fitText}. Use the product-specific measurements below as the final reference.`,
     });
   };
 
@@ -238,7 +244,7 @@ export function SizeGuideTool() {
                       inputMode="decimal"
                       min="1"
                       step="0.1"
-                      required={field.key === primaryField.key}
+                      required
                       placeholder={field.placeholder}
                       value={measurements[field.key] ?? ""}
                       onChange={(event) =>
