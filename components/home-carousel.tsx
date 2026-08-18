@@ -7,6 +7,8 @@ import Splide from "@splidejs/splide";
 import "@splidejs/splide/css/core";
 import { FooterSignupForm } from "./footer-signup-form";
 
+const heroBlurDataUrl = "data:image/jpeg;base64,/9j//gAQTGF2YzYyLjI4LjEwMQD/2wBDAAgyMjsyO0RERERERFFLUVRUVFFRUVFUVFRaWlpqampaWlpUVFpaZGRqanN2c21tam12dn19fZaWj4+vr7XX1///xABhAAEBAQEAAAAAAAAAAAAAAAAABwYFAQEBAQEAAAAAAAAAAAAAAAAAAQIDEAABAgUFAQEBAAAAAAAAAAABAAQCwREyciIDgTNRcaETEQEBAQAAAAAAAAAAAAAAAAAAAUH/wAARCAARABgDARIAAhIAAxIA/9oADAMBAAIRAxEAPwDNvBrr6AtK9h0wnhaGERMIoNCtMzqp7CfwrjNa/wBYfhryqiKpzmwZSRzYMpKCwiJbtwxmm7cMZrnCO1K1TTsCNOwLQzlMr//Z";
+
 const openingEdit = [
   {
     name: "Structure Jacket",
@@ -114,6 +116,8 @@ export const HomeCarousel = () => {
                   fill
                   priority
                   quality={82}
+                  placeholder="blur"
+                  blurDataURL={heroBlurDataUrl}
                   sizes="(max-width: 820px) 100vw, 55vw"
                 />
               </div>
