@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef } from "react";
 import Splide from "@splidejs/splide";
@@ -107,12 +108,13 @@ export const HomeCarousel = () => {
           <li className="splide__slide home-entry-slide">
             <section className="home-entry-editorial">
               <div className="home-entry-image-wrap">
-                <img
-                  src="/assets/generated/luma-pack/homepage-editorial-detail.png?v=hd-homepage-live-1"
+                <Image
+                  src="/assets/generated/luma-pack/homepage-editorial-detail.png"
                   alt="Pennicella | AF by ARYO"
-                  loading="eager"
-                  fetchPriority="high"
-                  decoding="async"
+                  fill
+                  priority
+                  quality={82}
+                  sizes="(max-width: 820px) 100vw, 55vw"
                 />
               </div>
               <div className="home-entry-editorial-copy">
@@ -139,11 +141,12 @@ export const HomeCarousel = () => {
                 {openingEdit.map((item) => (
                   <Link className="home-edit-card" href={item.href} key={item.href}>
                     <span className="home-edit-card-media">
-                      <img
+                      <Image
                         src={item.image}
                         alt={item.colour + " " + item.name}
-                        loading="lazy"
-                        decoding="async"
+                        fill
+                        quality={80}
+                        sizes="(max-width: 820px) 50vw, 25vw"
                       />
                     </span>
                     <span className="home-edit-card-copy">
@@ -159,11 +162,12 @@ export const HomeCarousel = () => {
           <li className="splide__slide home-craft-slide">
             <section className="home-craft-section" aria-labelledby="craft-heading">
               <div className="home-craft-image">
-                <img
+                <Image
                   src="/assets/reference/black-jacket-open.jpeg"
                   alt="Pennicella jacket construction"
-                  loading="lazy"
-                  decoding="async"
+                  fill
+                  quality={80}
+                  sizes="(max-width: 820px) 100vw, 58vw"
                 />
               </div>
               <div className="home-craft-copy">
