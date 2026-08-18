@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-
 import { HomeCarousel } from "../components/home-carousel";
 import {
   DEFAULT_OG_IMAGE,
@@ -10,13 +9,9 @@ import {
 } from "../lib/seo";
 
 export const metadata: Metadata = {
-  title: {
-    absolute: "ARYO | Pennicella | AF by ARYO",
-  },
+  title: { absolute: "ARYO | Pennicella | AF by ARYO" },
   description: DEFAULT_SITE_DESCRIPTION,
-  alternates: {
-    canonical: "/",
-  },
+  alternates: { canonical: "/" },
   openGraph: {
     title: "ARYO | Pennicella | AF by ARYO",
     description: DEFAULT_SITE_DESCRIPTION,
@@ -24,12 +19,7 @@ export const metadata: Metadata = {
     siteName: SITE_NAME,
     locale: "en_GB",
     type: "website",
-    images: [
-      {
-        url: absoluteUrl(DEFAULT_OG_IMAGE),
-        alt: "ARYO Pennicella campaign image",
-      },
-    ],
+    images: [{ url: absoluteUrl(DEFAULT_OG_IMAGE), alt: "ARYO Pennicella campaign image" }],
   },
   twitter: {
     card: "summary_large_image",
@@ -45,7 +35,7 @@ export default function HomePage() {
       <link
         rel="preload"
         as="image"
-        href="/assets/generated/aryo-campaign-noir.png"
+        href="/assets/generated/luma-pack/homepage-editorial-detail.png?v=hd-homepage-live-1"
       />
       <main className="home-main">
         <HomeCarousel />
