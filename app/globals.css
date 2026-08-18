@@ -5967,11 +5967,11 @@ body:has(.home-main) .site-header:focus-within {
 
 @media (min-width: 821px) and (max-width: 1080px) {
   .home-entry-editorial {
-    grid-template-columns: minmax(0, 1.1fr) minmax(19rem, 0.9fr);
+    grid-template-columns: minmax(0, 52%) minmax(0, 48%);
   }
 
   .home-entry-heading {
-    font-size: clamp(2.75rem, 5.25vw, 4.25rem);
+    font-size: clamp(2.4rem, 4.5vw, 3.25rem);
   }
 
   .home-entry-editorial-copy {
