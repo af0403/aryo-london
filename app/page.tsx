@@ -31,15 +31,8 @@ export const metadata: Metadata = {
 
 export default function HomePage() {
   return (
-    <>
-      <link
-        rel="preload"
-        as="image"
-        href="/assets/generated/luma-pack/homepage-editorial-detail.png?v=hd-homepage-live-1"
-      />
-      <main className="home-main">
-        <HomeCarousel />
-      </main>
-    </>
+    <main className="home-main">
+      <HomeCarousel />
+    </main>
   );
 }
