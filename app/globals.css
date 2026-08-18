@@ -5783,6 +5783,7 @@ body:has(.home-main) .site-header:focus-within {
 }
 
 .home-edit-card-media {
+  position: relative;
   display: grid;
   place-items: center;
   flex: 1;
@@ -5836,6 +5837,7 @@ body:has(.home-main) .site-header:focus-within {
 }
 
 .home-craft-image {
+  position: relative;
   min-width: 0;
   height: 100%;
   overflow: hidden;
