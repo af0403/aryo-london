@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 
 import Image from "next/image";
 import Link from "next/link";
+import { ProductCard } from "../../../components/product-card";
 import { ProductPurchasePanel } from "../../../components/product-purchase-panel";
 import { ProductShowcase } from "../../../components/product-showcase";
 import { ProductInlineCart } from "../../../components/product-inline-cart";
@@ -72,6 +73,14 @@ export default async function ProductPage({
   }
 
   const statusLabel = getProductStatusLabel(product);
+  const relatedProducts = products
+    .filter(
+      (candidate) =>
+        !candidate.hidden &&
+        candidate.slug !== product.slug &&
+        candidate.line === product.line
+    )
+    .slice(0, 3);
   const productSchema = {
     "@context": "https://schema.org",
     "@type": "Product",
@@ -139,6 +148,27 @@ export default async function ProductPage({
             </Link>
           )}
 
+          <div className="product-service-notes" aria-label="Order services">
+            <div className="product-service-note">
+              <span>Availability</span>
+              <strong>
+                {product.fulfillment === "made-to-order"
+                  ? "Made to order in a focused production run"
+                  : statusLabel}
+              </strong>
+            </div>
+            <div className="product-service-note">
+              <span>Delivery &amp; returns</span>
+              <strong>Worldwide shipping · returns accepted within 14 days</strong>
+            </div>
+            <div className="product-service-note">
+              <span>Client advisor</span>
+              <strong>
+                <Link href="/contact">Contact us for sizing and order assistance</Link>
+              </strong>
+            </div>
+          </div>
+
           <div className="product-accordion-stack">
             <details className="product-accordion">
               <summary>Description</summary>
@@ -204,6 +234,23 @@ export default async function ProductPage({
           </div>
         </aside>
       </div>
+
+      {relatedProducts.length > 0 ? (
+        <section className="product-related" aria-labelledby="product-related-heading">
+          <header className="product-related-header">
+            <div>
+              <p className="home-chapter-kicker">Continue the collection</p>
+              <h2 id="product-related-heading">Complete the Pennicella edit.</h2>
+            </div>
+            <Link href="/collections/pennicella">View all</Link>
+          </header>
+          <div className="product-related-grid">
+            {relatedProducts.map((relatedProduct) => (
+              <ProductCard product={relatedProduct} key={relatedProduct.slug} />
+            ))}
+          </div>
+        </section>
+      ) : null}
     </main>
   );
 }
