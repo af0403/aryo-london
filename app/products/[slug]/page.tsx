@@ -1,13 +1,11 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
-import Image from "next/image";
 import Link from "next/link";
-import { ProductPurchasePanel } from "../../../components/product-purchase-panel";
 import { ProductShowcase } from "../../../components/product-showcase";
 import { ProductInlineCart } from "../../../components/product-inline-cart";
 import { formatProductPrice } from "../../../lib/format";
-import { type Product, getProduct, getProductStatusLabel, products } from "../../../lib/products";
+import { type Product, getProduct, products } from "../../../lib/products";
 import { SITE_NAME, absoluteUrl, createNoIndexMetadata, createPageMetadata } from "../../../lib/seo";
 
 export function generateStaticParams() {
@@ -71,7 +69,6 @@ export default async function ProductPage({
     notFound();
   }
 
-  const statusLabel = getProductStatusLabel(product);
   const productSchema = {
     "@context": "https://schema.org",
     "@type": "Product",
@@ -102,24 +99,9 @@ export default async function ProductPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }}
       />
-      <ProductPurchasePanel product={product} statusLabel={statusLabel} />
 
       <div className="product-page-layout">
-        <div className="product-page-media-column">
-          <ProductShowcase product={product} />
-
-          {product.editorialImage ? (
-            <section className="product-page-editorial" aria-label="Editorial campaign image">
-              <Image
-                src={product.editorialImage.src}
-                alt={product.editorialImage.alt}
-                width={1402}
-                height={1122}
-                sizes="(max-width: 820px) 100vw, 58vw"
-              />
-            </section>
-          ) : null}
-        </div>
+        <ProductShowcase product={product} />
 
         <aside className="product-page-copy reveal-block" data-purchase-sentinel>
           <p className="product-page-kicker">{product.line}</p>

@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { createPortal } from "react-dom";
 import {
   useEffect,
   useRef,
@@ -44,6 +45,9 @@ const getTouchDistance = (
 };
 
 export const ProductShowcase = ({ product }: { product: Product }) => {
+  const gallery = product.editorialImage
+    ? [...product.gallery, { ...product.editorialImage, type: "image" as const }]
+    : product.gallery;
   const [activeIndex, setActiveIndex] = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxTransform, setLightboxTransform] = useState<LightboxTransform>({
@@ -54,7 +58,7 @@ export const ProductShowcase = ({ product }: { product: Product }) => {
   const lightboxStageRef = useRef<HTMLDivElement>(null);
   const panStartRef = useRef<PanStart | null>(null);
   const pinchStartRef = useRef<PinchStart | null>(null);
-  const media = product.gallery[activeIndex] ?? {
+  const media = gallery[activeIndex] ?? {
     type: "image" as const,
     src: product.leadImage,
     alt: `${product.name} in ${product.color}`,
@@ -214,57 +218,70 @@ export const ProductShowcase = ({ product }: { product: Product }) => {
   };
 
   return (
-    <section className="product-showcase reveal-block">
-      <div className="product-showcase-media-column">
-        {product.gallery.map((item, index) => (
-          <figure className="product-showcase-frame" key={`${item.src}-${index}`}>
-            <button
-              className="product-showcase-frame-button"
-              type="button"
-              onClick={() => {
-                setActiveIndex(index);
-                setLightboxOpen(true);
+    <section className="product-showcase" aria-label={`${product.name} gallery`}>
+      <figure className="product-showcase-frame">
+        <button
+          key={media.src}
+          className="product-showcase-frame-button"
+          type="button"
+          onClick={() => setLightboxOpen(true)}
+          aria-label={`Open ${product.name} fullscreen`}
+        >
+          {media.type === "video" ? (
+            <video
+              key={media.src}
+              className="product-showcase-video"
+              poster={media.poster ?? product.leadImage}
+              aria-label={media.alt}
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="metadata"
+              style={{
+                objectFit: "cover",
+                objectPosition:
+                  media.position ?? product.leadImagePosition ?? "center center",
               }}
-              aria-label={`Open ${product.name} media ${index + 1} fullscreen`}
             >
-              {item.type === "video" ? (
-                <video
-                  className="product-showcase-video"
-                  poster={item.poster ?? product.leadImage}
-                  aria-label={item.alt}
-                  autoPlay
-                  muted
-                  loop
-                  playsInline
-                  preload="metadata"
-                  style={{
-                    objectFit: item.fit ?? product.leadImageFit ?? "cover",
-                    objectPosition:
-                      item.position ?? product.leadImagePosition ?? "center center",
-                  }}
-                >
-                  <source src={item.src} type="video/mp4" />
-                </video>
-              ) : (
-                <Image
-                  src={item.src}
-                  alt={item.alt}
-                  fill
-                  priority={index === 0}
-                  sizes="(max-width: 820px) 100vw, 58vw"
-                  style={{
-                    objectFit: item.fit ?? product.leadImageFit ?? "cover",
-                    objectPosition:
-                      item.position ?? product.leadImagePosition ?? "center center",
-                  }}
-                />
-              )}
-            </button>
-          </figure>
-        ))}
-      </div>
+              <source src={media.src} type="video/mp4" />
+            </video>
+          ) : (
+            <Image
+              key={media.src}
+              src={media.src}
+              alt={media.alt}
+              fill
+              priority
+              sizes="(max-width: 768px) 100vw, 60vw"
+              style={{
+                objectFit: "cover",
+                objectPosition:
+                  media.position ?? product.leadImagePosition ?? "center center",
+              }}
+            />
+          )}
+        </button>
+        {gallery.length > 1 ? (
+          <>
+            <button
+              className="product-gallery-arrow product-gallery-arrow-prev"
+              type="button"
+              aria-label="Previous product image"
+              onClick={() => setActiveIndex((index) => (index - 1 + gallery.length) % gallery.length)}
+            ><span aria-hidden="true">‹</span></button>
+            <button
+              className="product-gallery-arrow product-gallery-arrow-next"
+              type="button"
+              aria-label="Next product image"
+              onClick={() => setActiveIndex((index) => (index + 1) % gallery.length)}
+            ><span aria-hidden="true">›</span></button>
+            <span className="sr-only" aria-live="polite">Image {activeIndex + 1} of {gallery.length}</span>
+          </>
+        ) : null}
+      </figure>
 
-      {lightboxOpen ? (
+      {lightboxOpen ? createPortal(
         <div
           className="product-lightbox"
           role="dialog"
@@ -281,7 +298,7 @@ export const ProductShowcase = ({ product }: { product: Product }) => {
           <div className="product-lightbox-shell">
             <div className="product-lightbox-head">
               <p className="product-lightbox-meta">
-                {activeIndex + 1} / {product.gallery.length}
+                {activeIndex + 1} / {gallery.length}
               </p>
               <button
                 className="product-lightbox-close"
@@ -355,7 +372,8 @@ export const ProductShowcase = ({ product }: { product: Product }) => {
               </p>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body,
       ) : null}
     </section>
   );

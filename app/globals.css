@@ -5679,3 +5679,101 @@ body:has(.home-main) .site-header:focus-within {
     transition: none;
   }
 }
+
+/* Clear house chrome and a single, pinned product gallery. */
+.site-announcement-bar,
+.site-announcement-bar:hover,
+.site-announcement-bar:focus-within,
+.site-header,
+.site-header:hover,
+.site-header:focus-within,
+body:has(.home-main) .site-header,
+body:has(.home-main) .site-header:hover,
+body:has(.home-main) .site-header:focus-within {
+  background: transparent;
+  border-bottom: 0;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.product-page {
+  margin-top: calc(-1 * var(--chrome-offset));
+  padding: 0;
+}
+
+.product-page-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 56%) minmax(0, 44%);
+  width: 100%;
+  margin: 0;
+  gap: 0;
+  padding: 0;
+  align-items: start;
+}
+
+.product-showcase {
+  position: sticky;
+  top: 0;
+  height: 100dvh;
+  min-width: 0;
+}
+
+.product-showcase-frame {
+  width: 100%;
+  height: 100%;
+  aspect-ratio: auto;
+  margin: 0;
+  border: 0;
+}
+
+.product-page-layout > .product-page-copy {
+  position: static;
+  min-width: 0;
+  min-height: 100dvh;
+  padding: calc(var(--chrome-offset) + 3rem) clamp(1.5rem, 5vw, 6rem) 4rem;
+  border: 0;
+}
+
+.product-showcase-frame-button {
+  animation: product-media-enter 350ms ease both;
+}
+
+@keyframes product-media-enter {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.product-gallery-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  font-size: 1.8rem;
+  font-weight: 300;
+  line-height: 1;
+}
+
+.product-gallery-arrow-prev { left: 0.5rem; }
+.product-gallery-arrow-next { right: 0.5rem; }
+.product-gallery-arrow:focus-visible { outline: 1px solid currentColor; outline-offset: -6px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .product-showcase-frame-button { animation: none; }
+}
+
+@media (max-width: 820px) {
+  .product-page-layout { grid-template-columns: minmax(0, 1fr); }
+  .product-showcase { position: relative; top: auto; height: 70svh; }
+  .product-page-layout > .product-page-copy {
+    min-height: 0;
+    padding: 2rem 1.25rem 3rem;
+  }
+}
