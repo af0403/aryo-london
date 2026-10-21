@@ -10,13 +10,25 @@ import { getProduct } from "../../lib/products";
 import { stripePromise, stripeEnabled } from "../../lib/stripe-client";
 import { createClient, isSupabaseConfigured } from "../../lib/supabase/client";
 import { useCart } from "../../components/cart-provider";
-import { CryptoPaymentSection } from "../../components/crypto-payment";
-import { isWalletConnectConfigured } from "../../lib/walletconnect";
+import { CryptoCheckout } from "../../components/crypto-checkout";
+import { isWalletConnectConfigured } from "../../lib/payment-config";
 
 const COUNTRIES = [
-  "United Kingdom", "United States", "Australia", "Canada", "France",
-  "Germany", "Ireland", "Italy", "Netherlands", "New Zealand",
-  "Spain", "Sweden", "Switzerland", "United Arab Emirates", "Other",
+  "United Kingdom",
+  "United States",
+  "Australia",
+  "Canada",
+  "France",
+  "Germany",
+  "Ireland",
+  "Italy",
+  "Netherlands",
+  "New Zealand",
+  "Spain",
+  "Sweden",
+  "Switzerland",
+  "United Arab Emirates",
+  "Other",
 ];
 
 const FULL_POSTCODE_RE = /^[A-Z]{1,2}\d[A-Z\d]?\s*\d[A-Z]{2}$/i;
@@ -31,6 +43,7 @@ export default function CheckoutPage() {
   const router = useRouter();
   const { items, clearCart } = useCart();
   const [mounted, setMounted] = useState(false);
+  const [summaryExpanded, setSummaryExpanded] = useState(false);
 
   const stripeRef = useRef<Stripe | null>(null);
   const cardRef = useRef<StripeCardElement | null>(null);
@@ -53,9 +66,12 @@ export default function CheckoutPage() {
 
   // Postcode lookup
   const [postcodeSuggestions, setPostcodeSuggestions] = useState<string[]>([]);
-  const [postcodeStatus, setPostcodeStatus] = useState<PostcodeLookupStatus>("idle");
+  const [postcodeStatus, setPostcodeStatus] =
+    useState<PostcodeLookupStatus>("idle");
   const [showSuggestions, setShowSuggestions] = useState(false);
-  const postcodeDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const postcodeDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(
+    null,
+  );
   const postcodeLookupWrapRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -66,13 +82,16 @@ export default function CheckoutPage() {
   useEffect(() => {
     if (!isSupabaseConfigured) return;
     const supabase = createClient();
-    supabase.auth.getSession().then(({ data }) => {
-      const u = data.session?.user;
-      if (!u) return;
-      setEmail(u.email ?? "");
-      const fn = u.user_metadata?.first_name as string | undefined;
-      if (fn) setFirstName(fn);
-    }).catch(() => null);
+    supabase.auth
+      .getSession()
+      .then(({ data }) => {
+        const u = data.session?.user;
+        if (!u) return;
+        setEmail(u.email ?? "");
+        const fn = u.user_metadata?.first_name as string | undefined;
+        if (fn) setFirstName(fn);
+      })
+      .catch(() => null);
   }, []);
 
   // Mount Stripe card element
@@ -132,7 +151,9 @@ export default function CheckoutPage() {
     setShowSuggestions(false);
 
     try {
-      const res = await fetch(`/api/postcode-lookup?postcode=${encodeURIComponent(v)}`);
+      const res = await fetch(
+        `/api/postcode-lookup?postcode=${encodeURIComponent(v)}`,
+      );
       const data = (await res.json()) as PostcodeLookupResponse;
 
       if (data.source === "postcodes.io") {
@@ -148,37 +169,40 @@ export default function CheckoutPage() {
     }
   }, []);
 
-  const lookupPostcode = useCallback(async (value: string) => {
-    const v = value.trim();
-    if (v.length < 3) {
-      setPostcodeSuggestions([]);
-      setShowSuggestions(false);
-      setPostcodeStatus("idle");
-      return;
-    }
-
-    if (FULL_POSTCODE_RE.test(v)) {
-      await lookupAddress(v);
-    } else {
-      // Partial autocomplete via postcodes.io
-      try {
-        const res = await fetch(
-          `https://api.postcodes.io/postcodes/${encodeURIComponent(v)}/autocomplete`
-        );
-        const data = (await res.json()) as {
-          status: number;
-          result: string[] | null;
-        };
-        const suggestions = (data.result ?? []).slice(0, 8);
-        setPostcodeSuggestions(suggestions);
-        setShowSuggestions(suggestions.length > 0);
-        setPostcodeStatus("idle");
-      } catch {
+  const lookupPostcode = useCallback(
+    async (value: string) => {
+      const v = value.trim();
+      if (v.length < 3) {
         setPostcodeSuggestions([]);
         setShowSuggestions(false);
+        setPostcodeStatus("idle");
+        return;
       }
-    }
-  }, [lookupAddress]);
+
+      if (FULL_POSTCODE_RE.test(v)) {
+        await lookupAddress(v);
+      } else {
+        // Partial autocomplete via postcodes.io
+        try {
+          const res = await fetch(
+            `https://api.postcodes.io/postcodes/${encodeURIComponent(v)}/autocomplete`,
+          );
+          const data = (await res.json()) as {
+            status: number;
+            result: string[] | null;
+          };
+          const suggestions = (data.result ?? []).slice(0, 8);
+          setPostcodeSuggestions(suggestions);
+          setShowSuggestions(suggestions.length > 0);
+          setPostcodeStatus("idle");
+        } catch {
+          setPostcodeSuggestions([]);
+          setShowSuggestions(false);
+        }
+      }
+    },
+    [lookupAddress],
+  );
 
   const handlePostcodeChange = (value: string) => {
     const normalised = value.toUpperCase();
@@ -211,12 +235,12 @@ export default function CheckoutPage() {
       return { ...item, product, lineTotal: product.price * item.quantity };
     })
     .filter(Boolean) as Array<{
-      slug: string;
-      size: string;
-      quantity: number;
-      product: NonNullable<ReturnType<typeof getProduct>> & { price: number };
-      lineTotal: number;
-    }>;
+    slug: string;
+    size: string;
+    quantity: number;
+    product: NonNullable<ReturnType<typeof getProduct>> & { price: number };
+    lineTotal: number;
+  }>;
 
   const subtotal = lineItems.reduce((sum, i) => sum + i.lineTotal, 0);
 
@@ -225,7 +249,9 @@ export default function CheckoutPage() {
     setError(null);
 
     if (!stripeRef.current || !cardRef.current) {
-      setError("To place your order, please message us on Instagram @aryolondon and we will process it directly.");
+      setError(
+        "To place your order, please message us on Instagram @aryolondon and we will process it directly.",
+      );
       return;
     }
 
@@ -243,8 +269,17 @@ export default function CheckoutPage() {
         body: JSON.stringify({
           items: items,
           customerDetails: {
-            firstName, lastName, email, phone,
-            address: { line1: address1, line2: address2, city, postcode, country },
+            firstName,
+            lastName,
+            email,
+            phone,
+            address: {
+              line1: address1,
+              line2: address2,
+              city,
+              postcode,
+              country,
+            },
           },
         }),
       });
@@ -267,10 +302,10 @@ export default function CheckoutPage() {
         throw new Error(data.message || "Checkout failed.");
       }
 
-      const { paymentIntent, error: stripeError } = await stripeRef.current.confirmCardPayment(
-        data.clientSecret,
-        { payment_method: { card: cardRef.current } }
-      );
+      const { paymentIntent, error: stripeError } =
+        await stripeRef.current.confirmCardPayment(data.clientSecret, {
+          payment_method: { card: cardRef.current },
+        });
 
       if (stripeError) {
         throw new Error(stripeError.message);
@@ -298,7 +333,7 @@ export default function CheckoutPage() {
 
         clearCart();
         router.push(
-          `/order-confirmed?name=${encodeURIComponent(firstName)}&email=${encodeURIComponent(email)}&total=${subtotal}&orderId=${data.orderId ?? ""}`
+          `/order-confirmed?name=${encodeURIComponent(firstName)}&email=${encodeURIComponent(email)}&total=${subtotal}&orderId=${data.orderId ?? ""}`,
         );
       }
     } catch (err) {
@@ -327,54 +362,84 @@ export default function CheckoutPage() {
   return (
     <main className="checkout-page">
       <div className="checkout-inner">
-        <p className="eyebrow">Checkout</p>
+        <h1 className="store-checkout-title">Checkout</h1>
       </div>
 
       <form className="checkout-layout" onSubmit={handleSubmit}>
-        {/* LEFT — Order summary */}
-        <div className="checkout-summary">
-          <p className="checkout-section-title">Order summary</p>
-          <div className="checkout-summary-items">
-            {lineItems.map((item) => (
-              <div className="checkout-summary-item" key={`${item.slug}-${item.size}`}>
-                <div className="checkout-summary-image">
-                  <img src={item.product.cardImage} alt={item.product.name} />
+        {/* Order summary; shown above the form as a disclosure on mobile. */}
+        <div
+          className={`checkout-summary ${summaryExpanded ? "is-expanded" : ""}`}
+        >
+          <button
+            className="checkout-summary-toggle"
+            type="button"
+            aria-expanded={summaryExpanded}
+            aria-controls="checkout-summary-content"
+            onClick={() => setSummaryExpanded((value) => !value)}
+          >
+            <span>Order summary {summaryExpanded ? "−" : "+"}</span>
+            <strong>{formatPrice(subtotal)} GBP</strong>
+          </button>
+          <div
+            className="checkout-summary-content"
+            id="checkout-summary-content"
+          >
+            <p className="checkout-section-title">Order summary</p>
+            <div className="checkout-summary-items">
+              {lineItems.map((item) => (
+                <div
+                  className="checkout-summary-item"
+                  key={`${item.slug}-${item.size}`}
+                >
+                  <div className="checkout-summary-image">
+                    <img src={item.product.cardImage} alt={item.product.name} />
+                  </div>
+                  <div className="checkout-summary-copy">
+                    <strong>
+                      {item.product.name} / {item.product.color}
+                    </strong>
+                    <span>
+                      Size {item.size} · Qty {item.quantity}
+                    </span>
+                    {item.product.fulfillment === "made-to-order" && (
+                      <em className="checkout-mto-note">
+                        Made to order — approx. 3 weeks
+                      </em>
+                    )}
+                  </div>
+                  <span className="checkout-summary-price">
+                    {formatPrice(item.lineTotal)}
+                  </span>
                 </div>
-                <div className="checkout-summary-copy">
-                  <strong>{item.product.name} / {item.product.color}</strong>
-                  <span>Size {item.size} · Qty {item.quantity}</span>
-                  {item.product.fulfillment === "made-to-order" && (
-                    <em className="checkout-mto-note">Made to order — approx. 3 weeks</em>
-                  )}
-                </div>
-                <span className="checkout-summary-price">{formatPrice(item.lineTotal)}</span>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
 
-          <div className="checkout-summary-totals">
-            <div className="checkout-summary-row">
-              <span>Subtotal</span>
-              <span>{formatPrice(subtotal)}</span>
-            </div>
-            <div className="checkout-summary-row">
-              <span>Shipping</span>
-              <span>Complimentary</span>
-            </div>
-            <div className="checkout-summary-row checkout-summary-total">
-              <strong>Total</strong>
-              <strong>{formatPrice(subtotal)} GBP</strong>
+            <div className="checkout-summary-totals">
+              <div className="checkout-summary-row">
+                <span>Subtotal</span>
+                <span>{formatPrice(subtotal)}</span>
+              </div>
+              <div className="checkout-summary-row">
+                <span>Shipping</span>
+                <span>Complimentary</span>
+              </div>
+              <div className="checkout-summary-row checkout-summary-total">
+                <strong>Total</strong>
+                <strong>{formatPrice(subtotal)} GBP</strong>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* RIGHT — Customer form */}
+        {/* Customer form */}
         <div className="checkout-form-section">
           <p className="checkout-section-title">Your details</p>
 
           <div className="checkout-field-row">
             <div className="checkout-field">
-              <label className="checkout-label" htmlFor="co-first-name">First name</label>
+              <label className="checkout-label" htmlFor="co-first-name">
+                First name
+              </label>
               <input
                 id="co-first-name"
                 className="checkout-input"
@@ -385,7 +450,9 @@ export default function CheckoutPage() {
               />
             </div>
             <div className="checkout-field">
-              <label className="checkout-label" htmlFor="co-last-name">Last name</label>
+              <label className="checkout-label" htmlFor="co-last-name">
+                Last name
+              </label>
               <input
                 id="co-last-name"
                 className="checkout-input"
@@ -398,7 +465,9 @@ export default function CheckoutPage() {
           </div>
 
           <div className="checkout-field">
-            <label className="checkout-label" htmlFor="co-email">Email address</label>
+            <label className="checkout-label" htmlFor="co-email">
+              Email address
+            </label>
             <input
               id="co-email"
               className="checkout-input"
@@ -410,7 +479,9 @@ export default function CheckoutPage() {
           </div>
 
           <div className="checkout-field">
-            <label className="checkout-label" htmlFor="co-phone">Phone number <span className="checkout-optional">(optional)</span></label>
+            <label className="checkout-label" htmlFor="co-phone">
+              Phone number <span className="checkout-optional">(optional)</span>
+            </label>
             <input
               id="co-phone"
               className="checkout-input"
@@ -420,10 +491,14 @@ export default function CheckoutPage() {
             />
           </div>
 
-          <p className="checkout-section-title" style={{ marginTop: "2rem" }}>Shipping address</p>
+          <p className="checkout-section-title" style={{ marginTop: "2rem" }}>
+            Shipping address
+          </p>
 
           <div className="checkout-field">
-            <label className="checkout-label" htmlFor="co-address1">Address line 1</label>
+            <label className="checkout-label" htmlFor="co-address1">
+              Address line 1
+            </label>
             <input
               id="co-address1"
               className="checkout-input"
@@ -435,7 +510,9 @@ export default function CheckoutPage() {
           </div>
 
           <div className="checkout-field">
-            <label className="checkout-label" htmlFor="co-address2">Address line 2</label>
+            <label className="checkout-label" htmlFor="co-address2">
+              Address line 2
+            </label>
             <input
               id="co-address2"
               className="checkout-input"
@@ -447,7 +524,9 @@ export default function CheckoutPage() {
 
           <div className="checkout-field-row">
             <div className="checkout-field">
-              <label className="checkout-label" htmlFor="co-city">City</label>
+              <label className="checkout-label" htmlFor="co-city">
+                City
+              </label>
               <input
                 id="co-city"
                 className="checkout-input"
@@ -477,18 +556,26 @@ export default function CheckoutPage() {
                   autoComplete="postal-code"
                   onChange={(e) => handlePostcodeChange(e.target.value)}
                   onBlur={handlePostcodeBlur}
-                  onFocus={() => postcodeSuggestions.length > 0 && setShowSuggestions(true)}
+                  onFocus={() =>
+                    postcodeSuggestions.length > 0 && setShowSuggestions(true)
+                  }
                 />
               </div>
 
               {postcodeStatus === "idle" && (
                 <p className="postcode-lookup-message">
-                  We&apos;ll fill the city automatically for UK postcodes. Please enter the street address and exact door or flat number manually.
+                  We&apos;ll fill the city automatically for UK postcodes.
+                  Please enter the street address and exact door or flat number
+                  manually.
                 </p>
               )}
 
               {showSuggestions && postcodeSuggestions.length > 0 && (
-                <ul className="postcode-suggestions" role="listbox" aria-label="Postcode suggestions">
+                <ul
+                  className="postcode-suggestions"
+                  role="listbox"
+                  aria-label="Postcode suggestions"
+                >
                   {postcodeSuggestions.map((s) => (
                     <li
                       key={s}
@@ -507,19 +594,23 @@ export default function CheckoutPage() {
 
               {postcodeStatus === "not-found" && (
                 <p className="postcode-lookup-message">
-                  We couldn&apos;t match that postcode. Please check it or enter the address manually.
+                  We couldn&apos;t match that postcode. Please check it or enter
+                  the address manually.
                 </p>
               )}
               {postcodeStatus === "found" && (
                 <p className="postcode-lookup-message postcode-lookup-found">
-                  Postcode confirmed and city filled. Please enter the street address and exact door or flat number manually.
+                  Postcode confirmed and city filled. Please enter the street
+                  address and exact door or flat number manually.
                 </p>
               )}
             </div>
           </div>
 
           <div className="checkout-field">
-            <label className="checkout-label" htmlFor="co-country">Country</label>
+            <label className="checkout-label" htmlFor="co-country">
+              Country
+            </label>
             <select
               id="co-country"
               className="checkout-input checkout-select"
@@ -527,7 +618,9 @@ export default function CheckoutPage() {
               onChange={(e) => setCountry(e.target.value)}
             >
               {COUNTRIES.map((c) => (
-                <option key={c} value={c}>{c}</option>
+                <option key={c} value={c}>
+                  {c}
+                </option>
               ))}
             </select>
           </div>
@@ -562,8 +655,13 @@ export default function CheckoutPage() {
               {!stripeEnabled ? (
                 <div className="checkout-notice">
                   <p>
-                    Online payment is coming soon. To place your order now, message us on Instagram{" "}
-                    <a href="https://instagram.com/aryolondon" target="_blank" rel="noreferrer">
+                    Online payment is coming soon. To place your order now,
+                    message us on Instagram{" "}
+                    <a
+                      href="https://instagram.com/aryolondon"
+                      target="_blank"
+                      rel="noreferrer"
+                    >
                       @aryolondon
                     </a>{" "}
                     and we will process it directly.
@@ -576,16 +674,20 @@ export default function CheckoutPage() {
                     <span>Secure payment powered by Stripe</span>
                   </div>
                   {/* Always rendered so cardMountRef is available when stripePromise resolves */}
-                  <div className="stripe-card-element" ref={cardMountRef} id="stripe-card-element" />
-                  {!stripeReady && <p className="checkout-stripe-loading">Loading payment form…</p>}
+                  <div
+                    className="stripe-card-element"
+                    ref={cardMountRef}
+                    id="stripe-card-element"
+                  />
+                  {!stripeReady && (
+                    <p className="checkout-stripe-loading">
+                      Loading payment form…
+                    </p>
+                  )}
                 </div>
               )}
               {error && <p className="checkout-error">{error}</p>}
-              <button
-                className="checkout-submit"
-                type="submit"
-                disabled={busy}
-              >
+              <button className="checkout-submit" type="submit" disabled={busy}>
                 {busy ? "Processing…" : "Place order"}
               </button>
             </>
@@ -593,7 +695,7 @@ export default function CheckoutPage() {
 
           {/* Crypto payment */}
           {paymentMethod === "crypto" && isWalletConnectConfigured && (
-            <CryptoPaymentSection
+            <CryptoCheckout
               orderTotal={subtotal}
               firstName={firstName}
               lastName={lastName}

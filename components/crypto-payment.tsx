@@ -17,7 +17,7 @@ type OrderItem = {
   fulfillment: string;
 };
 
-type CryptoPaymentProps = {
+export type CryptoPaymentProps = {
   orderTotal: number;
   firstName: string;
   lastName: string;

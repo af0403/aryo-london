@@ -23,31 +23,22 @@ const houseSections = [
     label: "Savoir-Faire",
     title: "Construction details do the talking.",
     text: "Collar shape, lining, zip, snap hardware, and signature placement are treated as the main visual events. That keeps the finish elevated while the overall language remains quiet.",
-    image: null,
-    alt: "",
+    image: "/assets/generated/luma-pack/detail-noir-hardware.png",
+    alt: "Pennicella Jacket hardware and collar detail",
   },
   {
     id: "timeline",
     label: "Timeline",
     title: "Pennicella is the opening chapter.",
     text: "The first release introduces noir and ivory through outerwear and trousers. The next step is a wider campaign and the continuation of the collection into new silhouettes.",
-    image: null,
-    alt: "",
+    image: "/assets/generated/luma-pack/wide-collection-still-life.png",
+    alt: "Pennicella collection still life",
   },
 ];
 
 export default function AboutPage() {
   return (
     <main className="section house-page">
-      <div className="page-intro house-intro">
-        <p className="eyebrow">House</p>
-        <h1 className="page-title">ARYO</h1>
-        <p>
-          A tighter house language built through structure, material, and
-          restraint rather than volume, graphics, or noise.
-        </p>
-      </div>
-
       <nav className="house-nav" aria-label="House sections">
         {houseSections.map((section) => (
           <a href={`#${section.id}`} key={section.id}>
@@ -55,21 +46,23 @@ export default function AboutPage() {
           </a>
         ))}
       </nav>
-
       <div className="house-stack">
         {houseSections.map((section, index) => (
-          <section
-            className={`house-panel ${index % 2 === 1 ? "is-reverse" : ""}`}
-            id={section.id}
-            key={section.id}
-          >
-            {section.image ? (
-              <figure className="house-panel-media">
-                <img src={section.image} alt={section.alt} />
-              </figure>
-            ) : null}
-
+          <section className="house-panel" id={section.id} key={section.id}>
+            <figure className="house-panel-media">
+              <img src={section.image} alt={section.alt} />
+            </figure>
             <div className="house-panel-copy">
+              {index === 0 ? (
+                <div className="house-intro">
+                  <p className="eyebrow">House</p>
+                  <h1 className="page-title">ARYO</h1>
+                  <p>
+                    A tighter house language built through structure, material,
+                    and restraint rather than volume, graphics, or noise.
+                  </p>
+                </div>
+              ) : null}
               <p className="eyebrow">{section.label}</p>
               <h2>{section.title}</h2>
               <p>{section.text}</p>

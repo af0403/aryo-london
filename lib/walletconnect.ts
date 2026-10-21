@@ -1,10 +1,11 @@
 import { defaultWagmiConfig } from "@web3modal/wagmi/react";
 import { mainnet, polygon, base } from "wagmi/chains";
 
-export const walletConnectProjectId =
-  process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID ?? "";
-
-export const isWalletConnectConfigured = walletConnectProjectId !== "";
+import { walletConnectProjectId } from "./payment-config";
+export {
+  walletConnectProjectId,
+  isWalletConnectConfigured,
+} from "./payment-config";
 
 const chains = [mainnet, polygon, base] as const;
 
