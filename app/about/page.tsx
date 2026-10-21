@@ -19,14 +19,6 @@ const houseSections = [
     alt: "Pennicella noir full look — Pennicella Jacket and Essential Trouser",
   },
   {
-    id: "heritage",
-    label: "Heritage",
-    title: "Made in London, built around texture and restraint.",
-    text: "The reference point is not speed or noise. The collection is shaped through controlled silhouette, heavier surface, cleaner finishes, and branding that does not interrupt the garment.",
-    image: "/assets/generated/luma-pack/wide-collection-still-life.png",
-    alt: "Pennicella collection still life — structure jacket and essential trouser",
-  },
-  {
     id: "savoir-faire",
     label: "Savoir-Faire",
     title: "Construction details do the talking.",
@@ -51,8 +43,8 @@ export default function AboutPage() {
         <p className="eyebrow">House</p>
         <h1 className="page-title">ARYO</h1>
         <p>
-          A tighter house language built through structure, material, and restraint rather than volume, graphics, or
-          noise.
+          A tighter house language built through structure, material, and
+          restraint rather than volume, graphics, or noise.
         </p>
       </div>
 

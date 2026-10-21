@@ -36,7 +36,10 @@ export default function AccountPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
 
   useEffect(() => {
-    if (!isSupabaseConfigured) { setLoading(false); return; }
+    if (!isSupabaseConfigured) {
+      setLoading(false);
+      return;
+    }
     const supabase = createClient();
 
     supabase.auth.getSession().then(({ data }) => {
@@ -44,9 +47,11 @@ export default function AccountPage() {
       setLoading(false);
     });
 
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-    });
+    const { data: listener } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        setUser(session?.user ?? null);
+      },
+    );
 
     return () => listener.subscription.unsubscribe();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
@@ -64,7 +69,10 @@ export default function AccountPage() {
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!isSupabaseConfigured) { setError("Supabase is not configured yet."); return; }
+    if (!isSupabaseConfigured) {
+      setError("Supabase is not configured yet.");
+      return;
+    }
     setError(null);
     setBusy(true);
     const { error: err } = await createClient().auth.signInWithPassword({
@@ -77,7 +85,10 @@ export default function AccountPage() {
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!isSupabaseConfigured) { setError("Supabase is not configured yet."); return; }
+    if (!isSupabaseConfigured) {
+      setError("Supabase is not configured yet.");
+      return;
+    }
     setError(null);
     if (createPassword !== confirmPassword) {
       setError("Passwords do not match.");
@@ -91,11 +102,15 @@ export default function AccountPage() {
     });
     setBusy(false);
     if (err) setError(err.message);
-    else setSuccess("Account created. Check your email to confirm, then sign in.");
+    else
+      setSuccess("Account created. Check your email to confirm, then sign in.");
   };
 
   const handleForgotPassword = async () => {
-    if (!isSupabaseConfigured) { setError("Supabase is not configured yet."); return; }
+    if (!isSupabaseConfigured) {
+      setError("Supabase is not configured yet.");
+      return;
+    }
     if (!signInEmail) {
       setError("Enter your email address above first.");
       return;
@@ -146,8 +161,12 @@ export default function AccountPage() {
                 {orders.map((order) => (
                   <div className="account-order-row" key={order.id}>
                     <div className="account-order-meta">
-                      <span>{new Date(order.created_at).toLocaleDateString("en-GB")}</span>
-                      <span className="account-order-status">{order.status}</span>
+                      <span>
+                        {new Date(order.created_at).toLocaleDateString("en-GB")}
+                      </span>
+                      <span className="account-order-status">
+                        {order.status}
+                      </span>
                     </div>
                     <strong>{formatPrice(order.total_pence / 100)}</strong>
                     <div className="account-order-items">
@@ -164,7 +183,11 @@ export default function AccountPage() {
           </div>
 
           <div className="account-actions">
-            <button className="account-signout" type="button" onClick={handleSignOut}>
+            <button
+              className="account-signout"
+              type="button"
+              onClick={handleSignOut}
+            >
               Sign out
             </button>
             <Link className="account-link" href="/collections/pennicella">
@@ -179,34 +202,21 @@ export default function AccountPage() {
   return (
     <main className="account-page">
       <div className="account-inner">
-        <p className="eyebrow">Your account</p>
-
-        <div className="account-tabs">
-          <button
-            className={`account-tab-btn ${tab === "signin" ? "is-active" : ""}`}
-            type="button"
-            onClick={() => { setTab("signin"); setError(null); setSuccess(null); }}
-          >
-            Sign in
-          </button>
-          <button
-            className={`account-tab-btn ${tab === "create" ? "is-active" : ""}`}
-            type="button"
-            onClick={() => { setTab("create"); setError(null); setSuccess(null); }}
-          >
-            Create account
-          </button>
-        </div>
-
+        <h1 className="store-account-title">
+          {tab === "signin" ? "Login" : "Create an Account"}
+        </h1>
         {error && <p className="account-error">{error}</p>}
         {success && <p className="account-success">{success}</p>}
 
         {tab === "signin" ? (
           <form className="account-form" onSubmit={handleSignIn}>
             <div className="account-field">
-              <label className="account-label" htmlFor="signin-email">Email address</label>
+              <label className="account-label" htmlFor="signin-email">
+                Email address
+              </label>
               <input
                 id="signin-email"
+                placeholder="Email"
                 className="account-input"
                 type="email"
                 required
@@ -216,9 +226,12 @@ export default function AccountPage() {
               />
             </div>
             <div className="account-field">
-              <label className="account-label" htmlFor="signin-password">Password</label>
+              <label className="account-label" htmlFor="signin-password">
+                Password
+              </label>
               <input
                 id="signin-password"
+                placeholder="Password"
                 className="account-input"
                 type="password"
                 required
@@ -227,23 +240,26 @@ export default function AccountPage() {
                 onChange={(e) => setSignInPassword(e.target.value)}
               />
             </div>
-            <button className="account-submit" type="submit" disabled={busy}>
-              {busy ? "Signing in…" : "Sign in"}
-            </button>
             <button
               className="account-forgot"
               type="button"
               onClick={handleForgotPassword}
             >
-              Forgot password?
+              Forgot your password?
+            </button>
+            <button className="account-submit" type="submit" disabled={busy}>
+              {busy ? "Signing in…" : "Sign in"}
             </button>
           </form>
         ) : (
           <form className="account-form" onSubmit={handleCreate}>
             <div className="account-field">
-              <label className="account-label" htmlFor="first-name">First name</label>
+              <label className="account-label" htmlFor="first-name">
+                First name
+              </label>
               <input
                 id="first-name"
+                placeholder="First name"
                 className="account-input"
                 type="text"
                 required
@@ -253,9 +269,12 @@ export default function AccountPage() {
               />
             </div>
             <div className="account-field">
-              <label className="account-label" htmlFor="create-email">Email address</label>
+              <label className="account-label" htmlFor="create-email">
+                Email address
+              </label>
               <input
                 id="create-email"
+                placeholder="Email"
                 className="account-input"
                 type="email"
                 required
@@ -265,9 +284,12 @@ export default function AccountPage() {
               />
             </div>
             <div className="account-field">
-              <label className="account-label" htmlFor="create-password">Password</label>
+              <label className="account-label" htmlFor="create-password">
+                Password
+              </label>
               <input
                 id="create-password"
+                placeholder="Password"
                 className="account-input"
                 type="password"
                 required
@@ -278,9 +300,12 @@ export default function AccountPage() {
               />
             </div>
             <div className="account-field">
-              <label className="account-label" htmlFor="confirm-password">Confirm password</label>
+              <label className="account-label" htmlFor="confirm-password">
+                Confirm password
+              </label>
               <input
                 id="confirm-password"
+                placeholder="Confirm password"
                 className="account-input"
                 type="password"
                 required
@@ -294,6 +319,17 @@ export default function AccountPage() {
             </button>
           </form>
         )}
+        <button
+          className="store-account-switch"
+          type="button"
+          onClick={() => {
+            setTab(tab === "signin" ? "create" : "signin");
+            setError(null);
+            setSuccess(null);
+          }}
+        >
+          {tab === "signin" ? "Create an account" : "Sign in"}
+        </button>
       </div>
     </main>
   );

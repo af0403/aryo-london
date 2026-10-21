@@ -1,3 +1,4 @@
+import { RecentlyViewed } from "../../../components/storefront/recently-viewed";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
@@ -6,10 +7,17 @@ import { ProductShowcase } from "../../../components/product-showcase";
 import { ProductInlineCart } from "../../../components/product-inline-cart";
 import { formatProductPrice } from "../../../lib/format";
 import { type Product, getProduct, products } from "../../../lib/products";
-import { SITE_NAME, absoluteUrl, createNoIndexMetadata, createPageMetadata } from "../../../lib/seo";
+import {
+  SITE_NAME,
+  absoluteUrl,
+  createNoIndexMetadata,
+  createPageMetadata,
+} from "../../../lib/seo";
 
 export function generateStaticParams() {
-  return products.filter((product) => !product.hidden).map((product) => ({ slug: product.slug }));
+  return products
+    .filter((product) => !product.hidden)
+    .map((product) => ({ slug: product.slug }));
 }
 
 function getAvailability(product: Product): string {
@@ -18,10 +26,12 @@ function getAvailability(product: Product): string {
   }
 
   const isSoldOut = product.variants.every(
-    (variant) => typeof variant.stock === "number" && variant.stock <= 0
+    (variant) => typeof variant.stock === "number" && variant.stock <= 0,
   );
 
-  return isSoldOut ? "https://schema.org/SoldOut" : "https://schema.org/InStock";
+  return isSoldOut
+    ? "https://schema.org/SoldOut"
+    : "https://schema.org/InStock";
 }
 
 export async function generateMetadata({
@@ -103,11 +113,36 @@ export default async function ProductPage({
       <div className="product-page-layout">
         <ProductShowcase product={product} />
 
-        <aside className="product-page-copy reveal-block" data-purchase-sentinel>
-          <p className="product-page-kicker">{product.line}</p>
+        <aside className="product-page-copy" data-purchase-sentinel>
           <h1>{product.name}</h1>
-          <p className="product-page-price">{formatProductPrice(product.price)}{product.price === null ? "" : " GBP"}</p>
-          <p className="product-page-colour">{product.color}</p>
+          <p className="product-page-price">
+            {formatProductPrice(product.price)}
+            {product.price === null ? "" : " GBP"}
+          </p>
+          <div className="store-product-colours">
+            <p>Colour: {product.color}</p>
+            <nav aria-label="Colourways">
+              {products
+                .filter((p) => !p.hidden && p.name === product.name)
+                .map((p) => (
+                  <Link
+                    key={p.slug}
+                    href={`/products/${p.slug}`}
+                    aria-label={`${product.name} in ${p.color}`}
+                    aria-current={p.slug === product.slug ? "page" : undefined}
+                    title={p.color}
+                    className={`store-swatch ${p.slug === product.slug ? "is-active" : ""}`}
+                    style={{
+                      background: /noir|black/i.test(p.color)
+                        ? "#111"
+                        : /ivory|bone|white/i.test(p.color)
+                          ? "#e8e1d1"
+                          : "#a89576",
+                    }}
+                  />
+                ))}
+            </nav>
+          </div>
           {product.editionNote ? (
             <p className="product-page-edition">{product.editionNote}</p>
           ) : null}
@@ -115,44 +150,12 @@ export default async function ProductPage({
 
           <ProductInlineCart product={product} />
 
-          {product.category === "Outerwear" && (
-            <Link href="/size-guide" className="product-size-guide-link">
-              View Size Guide →
-            </Link>
-          )}
-
           <div className="product-accordion-stack">
             <details className="product-accordion">
-              <summary>Description</summary>
+              <summary>Details</summary>
               <div className="product-accordion-content">
                 <p>{product.longDescription}</p>
-              </div>
-            </details>
-
-            {product.category === "Outerwear" && (
-              <details className="product-accordion">
-                <summary>Sizing</summary>
-                <div className="product-accordion-content">
-                  <p>
-                    The Pennicella Jacket is cut to a size M block pattern. We recommend checking our
-                    size guide before ordering. If you fall between sizes, size up for a more relaxed
-                    fit. For sizing or fit queries, message us on Instagram{" "}
-                    <a href="https://instagram.com/aryolondon" target="_blank" rel="noreferrer">
-                      @aryolondon
-                    </a>{" "}
-                    and we will advise.
-                  </p>
-                  <p>
-                    <Link href="/size-guide" className="inline-link">View Size Guide →</Link>
-                  </p>
-                </div>
-              </details>
-            )}
-
-            {product.details.length > 0 && (
-              <details className="product-accordion">
-                <summary>Construction &amp; details</summary>
-                <div className="product-accordion-content">
+                {product.details.length > 0 && (
                   <ul>
                     {product.details.map((detail) => (
                       <li key={detail.label}>
@@ -161,12 +164,39 @@ export default async function ProductPage({
                       </li>
                     ))}
                   </ul>
+                )}
+              </div>
+            </details>
+
+            {product.category === "Outerwear" && (
+              <details className="product-accordion">
+                <summary>Size and Fit</summary>
+                <div className="product-accordion-content">
+                  <p>
+                    The Pennicella Jacket is cut to a size M block pattern. We
+                    recommend checking our size guide before ordering. If you
+                    fall between sizes, size up for a more relaxed fit. For
+                    sizing or fit queries, message us on Instagram{" "}
+                    <a
+                      href="https://instagram.com/aryolondon"
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      @aryolondon
+                    </a>{" "}
+                    and we will advise.
+                  </p>
+                  <p>
+                    <Link href="/size-guide" className="inline-link">
+                      Size guide
+                    </Link>
+                  </p>
                 </div>
               </details>
             )}
 
             <details className="product-accordion">
-              <summary>Care</summary>
+              <summary>Care and Maintenance</summary>
               <div className="product-accordion-content">
                 <ul>
                   {product.notes.map((note) => (
@@ -177,15 +207,21 @@ export default async function ProductPage({
             </details>
 
             <details className="product-accordion">
-              <summary>Shipping and returns</summary>
+              <summary>Shipping / Returns</summary>
               <div className="product-accordion-content">
-                <p>Worldwide shipping on every order. Returns accepted within 14 days in unworn condition.</p>
-                {product.fulfillmentNote ? <p>{product.fulfillmentNote}</p> : null}
+                <p>
+                  Worldwide shipping on every order. Returns accepted within 14
+                  days in unworn condition.
+                </p>
+                {product.fulfillmentNote ? (
+                  <p>{product.fulfillmentNote}</p>
+                ) : null}
               </div>
             </details>
           </div>
         </aside>
       </div>
+      <RecentlyViewed currentSlug={product.slug} />
     </main>
   );
 }

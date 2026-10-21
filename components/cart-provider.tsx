@@ -25,6 +25,11 @@ type CartContextValue = {
   addItem: (payload: { slug: string; size: Size }) => void;
   removeItem: (payload: { slug: string; size: Size }) => void;
   clearCart: () => void;
+  setQuantity: (payload: {
+    slug: string;
+    size: Size;
+    quantity: number;
+  }) => void;
   openCart: () => void;
   closeCart: () => void;
 };
@@ -71,10 +76,14 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         const merged = [...current];
         for (const row of data) {
           const exists = merged.findIndex(
-            (i) => i.slug === row.product_slug && i.size === row.size
+            (i) => i.slug === row.product_slug && i.size === row.size,
           );
           if (exists === -1) {
-            merged.push({ slug: row.product_slug, size: row.size as Size, quantity: row.quantity });
+            merged.push({
+              slug: row.product_slug,
+              size: row.size as Size,
+              quantity: row.quantity,
+            });
           }
         }
         return merged;
@@ -93,15 +102,17 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       supabase.auth.getSession().then(({ data }) => {
         if (data.session?.user) syncFromSupabase(data.session.user.id);
       });
-      const { data: listener } = supabase.auth.onAuthStateChange((event, session) => {
-        if (event === "SIGNED_IN" && session?.user) {
-          syncFromSupabase(session.user.id);
-        }
-        if (event === "SIGNED_OUT") {
-          setItems([]);
-          window.localStorage.removeItem(STORAGE_KEY);
-        }
-      });
+      const { data: listener } = supabase.auth.onAuthStateChange(
+        (event, session) => {
+          if (event === "SIGNED_IN" && session?.user) {
+            syncFromSupabase(session.user.id);
+          }
+          if (event === "SIGNED_OUT") {
+            setItems([]);
+            window.localStorage.removeItem(STORAGE_KEY);
+          }
+        },
+      );
       unsubscribe = () => listener.subscription.unsubscribe();
     });
 
@@ -137,27 +148,36 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
               size,
               quantity,
             },
-            { onConflict: "user_id,product_slug,size" }
+            { onConflict: "user_id,product_slug,size" },
           );
         }
       } catch {
         // Non-fatal
       }
     },
-    []
+    [],
   );
 
   // ── Cart mutations ───────────────────────────────────────────────────────
   const addItem = ({ slug, size }: { slug: string; size: Size }) => {
     setItems((current) => {
       const product = getProduct(slug);
-      if (!product) return current;
+      if (
+        !product ||
+        product.hidden ||
+        product.launchState !== "live" ||
+        product.price === null
+      )
+        return current;
 
       const variant = getSelectedVariant(product, size);
       if (!variant) return current;
-      if (typeof variant.stock === "number" && variant.stock <= 0) return current;
+      if (typeof variant.stock === "number" && variant.stock <= 0)
+        return current;
 
-      const existing = current.findIndex((item) => item.slug === slug && item.size === size);
+      const existing = current.findIndex(
+        (item) => item.slug === slug && item.size === size,
+      );
       if (existing === -1) {
         const next = [...current, { slug, size, quantity: 1 }];
         persistItem(slug, size, 1);
@@ -180,9 +200,41 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
   const removeItem = ({ slug, size }: { slug: string; size: Size }) => {
     setItems((current) =>
-      current.filter((item) => !(item.slug === slug && item.size === size))
+      current.filter((item) => !(item.slug === slug && item.size === size)),
     );
     persistItem(slug, size, 0, true);
+  };
+
+  const setQuantity = ({
+    slug,
+    size,
+    quantity,
+  }: {
+    slug: string;
+    size: Size;
+    quantity: number;
+  }) => {
+    const product = getProduct(slug);
+    if (!product || !Number.isFinite(quantity)) return;
+    const variant = getSelectedVariant(product, size);
+    if (!variant) return;
+    const nextQuantity = Math.max(
+      0,
+      Math.min(
+        Math.floor(quantity),
+        typeof variant.stock === "number" ? variant.stock : 99,
+      ),
+    );
+    setItems((current) =>
+      nextQuantity === 0
+        ? current.filter((item) => !(item.slug === slug && item.size === size))
+        : current.map((item) =>
+            item.slug === slug && item.size === size
+              ? { ...item, quantity: nextQuantity }
+              : item,
+          ),
+    );
+    persistItem(slug, size, nextQuantity, nextQuantity === 0);
   };
 
   const clearCart = () => {
@@ -192,22 +244,35 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         const supabase = createClient();
         supabase.auth.getSession().then(({ data }) => {
           const userId = data.session?.user?.id;
-          if (userId) supabase.from("customer_carts").delete().eq("user_id", userId);
+          if (userId)
+            supabase.from("customer_carts").delete().eq("user_id", userId);
         });
       });
     }
   };
 
-  const openCart = () => setIsOpen(true);
-  const closeCart = () => setIsOpen(false);
+  const openCart = useCallback(() => setIsOpen(true), []);
+  const closeCart = useCallback(() => setIsOpen(false), []);
 
   const itemCount = useMemo(
     () => items.reduce((count, item) => count + item.quantity, 0),
-    [items]
+    [items],
   );
 
   return (
-    <CartContext.Provider value={{ items, itemCount, isOpen, addItem, removeItem, clearCart, openCart, closeCart }}>
+    <CartContext.Provider
+      value={{
+        items,
+        itemCount,
+        isOpen,
+        addItem,
+        removeItem,
+        setQuantity,
+        clearCart,
+        openCart,
+        closeCart,
+      }}
+    >
       {children}
     </CartContext.Provider>
   );

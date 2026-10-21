@@ -1,112 +1,118 @@
 "use client";
-
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
-import { createPortal } from "react-dom";
-
+import Image from "next/image";
+import { formatProductPrice } from "../lib/format";
+import { useCallback, useState } from "react";
 import { products } from "../lib/products";
-import { CloseIcon, SearchIcon } from "./site-icons";
-
+import { SearchIcon } from "./site-icons";
+import { Drawer } from "./storefront/drawer";
 export const SiteSearch = () => {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
-  const [mounted, setMounted] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => { setMounted(true); }, []);
-
-  const q = query.trim().toLowerCase();
-  const results = q.length > 0
-    ? products.filter((p) =>
-        `${p.name} ${p.color} ${p.category} ${p.line}`.toLowerCase().includes(q)
-      )
-    : [];
-
-  useEffect(() => {
-    if (open) {
-      setTimeout(() => inputRef.current?.focus(), 60);
-    }
-  }, [open]);
-
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") close();
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, []);
-
-  const close = () => {
+  const close = useCallback(() => {
     setOpen(false);
     setQuery("");
-  };
-
-  const panel = open ? (
-    <div className="site-search" role="dialog" aria-modal="true" aria-label="Search">
-      <button
-        className="site-search-backdrop"
-        type="button"
-        aria-label="Close search"
-        onClick={close}
-      />
-      <div className="site-search-panel">
-        <div className="site-search-bar">
-          <SearchIcon className="site-icon site-search-lead-icon" />
-          <input
-            ref={inputRef}
-            className="site-search-input"
-            type="search"
-            placeholder="Search products…"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            autoComplete="off"
-            spellCheck={false}
-          />
-          <button
-            className="icon-button"
-            type="button"
-            aria-label="Close search"
-            onClick={close}
-          >
-            <CloseIcon className="site-icon" />
-          </button>
-        </div>
-
-        {results.length > 0 && (
-          <ul className="site-search-results">
-            {results.map((p) => (
-              <li key={p.slug}>
-                <Link
-                  href={`/products/${p.slug}`}
-                  className="site-search-result"
-                  onClick={close}
-                >
-                  <span className="site-search-result-name">{p.name}</span>
-                  <span className="site-search-result-meta">{p.color} — {p.category}</span>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        )}
-
-        {q.length > 0 && results.length === 0 && (
-          <p className="site-search-empty">No results for &ldquo;{query}&rdquo;</p>
-        )}
-      </div>
-    </div>
-  ) : null;
-
+  }, []);
+  const q = query.trim().toLocaleLowerCase();
+  const visible = products.filter((p) => !p.hidden);
+  const results = q
+    ? visible.filter((p) =>
+        `${p.name} ${p.color} ${p.category} ${p.line}`
+          .toLocaleLowerCase()
+          .includes(q),
+      )
+    : visible.filter((p) => p.price !== null).slice(0, 4);
   return (
     <>
       <button
-        className="icon-button"
-        type="button"
+        className="store-icon house-search-trigger"
         aria-label="Open search"
         onClick={() => setOpen(true)}
       >
-        <SearchIcon className="site-icon" />
+        <SearchIcon />
       </button>
-      {mounted ? createPortal(panel, document.body) : null}
+      <Drawer
+        open={open}
+        close={close}
+        title="Search"
+        className="store-search-drawer"
+      >
+        <form
+          className="store-search-form"
+          onSubmit={(e) => e.preventDefault()}
+        >
+          <label className="sr-only" htmlFor="store-search">
+            Search products
+          </label>
+          <input
+            id="store-search"
+            data-autofocus
+            type="search"
+            placeholder="SEARCH"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            autoComplete="off"
+          />
+        </form>
+        {!q ? (
+          <div className="store-popular">
+            <h3>Popular Searches</h3>
+            {["Pennicella", "Headwear", "Ivory"].map((term) => (
+              <button onClick={() => setQuery(term)} key={term}>
+                {term}
+              </button>
+            ))}
+          </div>
+        ) : null}
+        <h3 className="store-search-title" role="status">
+          {q
+            ? `${results.length} result${results.length === 1 ? "" : "s"}`
+            : "You Might Like"}
+        </h3>
+        {results.length ? (
+          <div
+            className="store-search-grid"
+            onClick={(e) => {
+              if ((e.target as HTMLElement).closest("a")) close();
+            }}
+          >
+            {results.map((p) => (
+              <Link
+                className="store-search-result"
+                key={p.slug}
+                href={`/products/${p.slug}`}
+                onClick={close}
+              >
+                <Image
+                  src={p.cardImage}
+                  alt={p.name}
+                  width={66}
+                  height={94}
+                  sizes="66px"
+                  style={{ objectFit: "cover" }}
+                />
+                <span>
+                  <strong>{p.name}</strong>
+                  <small>
+                    {formatProductPrice(p.price)}
+                    {p.price === null ? "" : " GBP"}
+                  </small>
+                </span>
+              </Link>
+            ))}
+          </div>
+        ) : (
+          <div className="store-empty">
+            <p>No results for “{query}”.</p>
+            <button className="store-text-button" onClick={() => setQuery("")}>
+              Clear search
+            </button>
+            <Link href="/collections" onClick={close}>
+              Explore the collections
+            </Link>
+          </div>
+        )}
+      </Drawer>
     </>
   );
 };

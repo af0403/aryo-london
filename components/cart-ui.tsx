@@ -1,113 +1,139 @@
 "use client";
+import { Drawer } from "./storefront/drawer";
 
-import { useEffect, useMemo, useState } from "react";
-import { createPortal } from "react-dom";
+import { useCallback } from "react";
 import Link from "next/link";
 
 import { formatPrice } from "../lib/format";
-import { getProduct, type Size } from "../lib/products";
+import { getProduct } from "../lib/products";
 import { useCart } from "./cart-provider";
-import { BagIcon, CloseIcon } from "./site-icons";
-
-type LineItem = {
-  slug: string;
-  size: Size;
-  quantity: number;
-  product: NonNullable<ReturnType<typeof getProduct>> & { price: number };
-  lineTotal: number;
-};
+import { BagIcon } from "./site-icons";
 
 export const CartUI = () => {
-  const { items, itemCount, isOpen, openCart, closeCart, removeItem, clearCart } = useCart();
-  const [checkoutMessage] = useState<string | null>(null);
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => { setMounted(true); }, []);
-
-  const lineItems = useMemo(() => {
-    return items
-      .map((item): LineItem | null => {
-        const product = getProduct(item.slug);
-        const price = product?.price;
-        if (!product || price === null || price === undefined) return null;
-        return { ...item, product: { ...product, price }, lineTotal: price * item.quantity };
-      })
-      .filter((item): item is LineItem => item !== null);
-  }, [items]);
-
+  const {
+    items,
+    itemCount,
+    isOpen,
+    openCart,
+    closeCart,
+    removeItem,
+    setQuantity,
+  } = useCart();
+  const close = useCallback(() => closeCart(), [closeCart]);
+  const lineItems = items.flatMap((item) => {
+    const product = getProduct(item.slug);
+    return product && !product.hidden && product.price !== null
+      ? [
+          {
+            ...item,
+            product,
+            price: product.price,
+            lineTotal: product.price * item.quantity,
+          },
+        ]
+      : [];
+  });
   const total = lineItems.reduce((sum, item) => sum + item.lineTotal, 0);
-
-  const cartPanel = (
-    <div className={`cart-shell ${isOpen ? "is-open" : ""}`} aria-hidden={!isOpen}>
-      <button className="cart-overlay" type="button" aria-label="Close cart" onClick={closeCart} />
-      <aside className="cart-panel" aria-label="Shopping cart">
-        <div className="cart-head">
-          <div>
-            <p className="eyebrow">Shopping bag</p>
-            <h2>Pennicella</h2>
-          </div>
-          <button className="icon-button" type="button" onClick={closeCart} aria-label="Close shopping bag">
-            <CloseIcon className="site-icon" />
-          </button>
-        </div>
-        <div className="cart-body">
-          {lineItems.length ? (
-            lineItems.map((item) => (
-              <article className="cart-item" key={`${item.slug}-${item.size}`}>
-                <img src={item.product.cardImage} alt={item.product.name} />
-                <div className="cart-item-copy">
-                  <strong className="cart-item-title">
-                    {item.product.name} / {item.product.color}
-                  </strong>
-                  <span>{formatPrice(item.product.price)}</span>
-                  <span>Size {item.size} / Qty {item.quantity}</span>
-                </div>
-                <button
-                  className="cart-remove"
-                  type="button"
-                  onClick={() => removeItem({ slug: item.slug, size: item.size })}
-                >
-                  Remove
-                </button>
-              </article>
-            ))
-          ) : (
-            <div className="cart-empty">
-              <p>Your shopping bag is empty.</p>
-              <p>Select a Pennicella piece to begin the launch edit.</p>
-            </div>
-          )}
-        </div>
-        <div className="cart-foot">
-          <div className="cart-total">
-            <span>Total</span>
-            <strong>{formatPrice(total)}</strong>
-          </div>
-          <Link
-            className="checkout-button"
-            href="/checkout"
-            onClick={closeCart}
-            aria-disabled={!lineItems.length}
-            style={!lineItems.length ? { pointerEvents: "none", opacity: 0.45 } : undefined}
-          >
-            Proceed to checkout
-          </Link>
-          <button className="cart-clear" type="button" onClick={clearCart} disabled={!lineItems.length}>
-            Clear bag
-          </button>
-          {checkoutMessage ? <p className="cart-message">{checkoutMessage}</p> : null}
-        </div>
-      </aside>
-    </div>
-  );
-
   return (
     <>
-      <button className="cart-icon-button" type="button" onClick={openCart} aria-label="Open shopping bag">
-        <BagIcon className="site-icon" />
-        {itemCount > 0 ? <span>{itemCount}</span> : null}
+      <button
+        className="store-icon"
+        onClick={openCart}
+        aria-label={`Open shopping bag${itemCount ? ` (${itemCount})` : ""}`}
+      >
+        <BagIcon />
+        {itemCount ? <sup>{itemCount}</sup> : null}
       </button>
-      {mounted ? createPortal(cartPanel, document.body) : null}
+      <Drawer
+        open={isOpen}
+        close={close}
+        title="Shopping bag"
+        className="store-bag-drawer"
+        footer={
+          lineItems.length ? (
+            <>
+              <div className="store-bag-total">
+                <span>Subtotal</span>
+                <span>{formatPrice(total)} GBP</span>
+              </div>
+              <p>
+                Complimentary worldwide shipping. Taxes calculated at checkout.
+              </p>
+              <Link className="store-button" href="/checkout" onClick={close}>
+                Checkout
+              </Link>
+              <button className="store-reset" onClick={close}>
+                Continue shopping
+              </button>
+            </>
+          ) : undefined
+        }
+      >
+        {lineItems.length ? (
+          <div className="store-bag-items">
+            {lineItems.map((item) => (
+              <article
+                className="store-bag-item"
+                key={`${item.slug}-${item.size}`}
+              >
+                <Link href={`/products/${item.slug}`} onClick={close}>
+                  <img
+                    src={item.product.cardImage}
+                    alt={`${item.product.name} in ${item.product.color}`}
+                  />
+                </Link>
+                <div>
+                  <Link href={`/products/${item.slug}`} onClick={close}>
+                    <h3>{item.product.name}</h3>
+                  </Link>
+                  <p>{formatPrice(item.price)} GBP</p>
+                  <p>Colour: {item.product.color}</p>
+                  <p>Size: {item.size}</p>
+                  <div className="store-quantity">
+                    <button
+                      aria-label={`Decrease ${item.product.name} quantity`}
+                      onClick={() =>
+                        setQuantity({ ...item, quantity: item.quantity - 1 })
+                      }
+                    >
+                      −
+                    </button>
+                    <span aria-live="polite">{item.quantity}</span>
+                    <button
+                      aria-label={`Increase ${item.product.name} quantity`}
+                      onClick={() =>
+                        setQuantity({ ...item, quantity: item.quantity + 1 })
+                      }
+                    >
+                      +
+                    </button>
+                  </div>
+                  <button
+                    className="store-text-button"
+                    onClick={() => removeItem(item)}
+                  >
+                    Remove
+                  </button>
+                  {item.product.fulfillment === "made-to-order" ? (
+                    <small>Made to order</small>
+                  ) : null}
+                </div>
+              </article>
+            ))}
+          </div>
+        ) : (
+          <div className="store-empty">
+            <p>Your shopping bag is empty.</p>
+            <Link
+              className="store-button"
+              href="/collections/men"
+              onClick={close}
+            >
+              Continue shopping
+            </Link>
+          </div>
+        )}
+      </Drawer>
     </>
   );
 };

@@ -561,7 +561,7 @@ export const products: Product[] = [
     shortDescription:
       "Made to order in our signature Pennicella fabric. Cut to a size M block with concealed zip placket, four-popper front fastening, functional cuff vents, and welt pockets inside and out. Fully lined in black cotton. Made in London.",
     longDescription:
-      "The Pennicella Jacket is crafted in our signature Pennicella fabric — named after the Italian word for brushstroke. Made to order in London. Each piece is produced individually after your order is placed.",
+      "The Pennicella Jacket is crafted in our signature Pennicella fabric. Made to order in London. Each piece is produced individually after your order is placed.",
     leadImage: `${refreshedStillPath}/noir-jacket-front.png`,
     leadImagePosition: "center top",
     leadImageFit: "cover",
@@ -631,7 +631,7 @@ export const products: Product[] = [
     shortDescription:
       "Relaxed straight-leg trouser in our signature Pennicella fabric. Elasticated waistband. ARYO signature embroidery on the back pocket. Only 100 made.",
     longDescription:
-      "The Noir Essential Trouser balances the Pennicella Jacket with a softer, longer line. Crafted in our signature Pennicella fabric — named after the Italian word for brushstroke — the fit stays calm and fluid while the ARYO signature embroidery on the back pocket keeps it anchored inside the Pennicella language. Only 100 pieces were made.",
+      "The Noir Essential Trouser balances the Pennicella Jacket with a softer, longer line. Crafted in our signature Pennicella fabric, the fit stays calm and fluid while the ARYO signature embroidery on the back pocket keeps it anchored inside the Pennicella language. Only 100 pieces were made.",
     leadImage: `${refreshedStillPath}/noir-trouser-front.png`,
     leadImagePosition: "center top",
     leadImageFit: "cover",
@@ -699,7 +699,7 @@ export const products: Product[] = [
     shortDescription:
       "Relaxed straight-leg trouser in our signature Pennicella fabric. Elasticated waistband. ARYO signature embroidery on the back pocket. Only 100 made.",
     longDescription:
-      "The Ivory Essential Trouser opens the collection through a brighter tone without changing the proportion. Crafted in our signature Pennicella fabric — named after the Italian word for brushstroke — the blue ARYO signature embroidery on the back pocket stays quiet, which lets the material and silhouette carry the luxury of the piece. Only 100 pieces were produced.",
+      "The Ivory Essential Trouser opens the collection through a brighter tone without changing the proportion. Crafted in our signature Pennicella fabric, the blue ARYO signature embroidery on the back pocket stays quiet, which lets the material and silhouette carry the luxury of the piece. Only 100 pieces were produced.",
     leadImage: `${refreshedStillPath}/ivory-trouser-front.png`,
     leadImagePosition: "center top",
     leadImageFit: "cover",
@@ -767,7 +767,7 @@ export const products: Product[] = [
     shortDescription:
       "Made to order in our signature Pennicella fabric. Cut to a size M block with concealed zip placket, four-popper front fastening, functional cuff vents, and welt pockets inside and out. Fully lined. Made in London.",
     longDescription:
-      "The Pennicella Jacket is crafted in our signature Pennicella fabric — named after the Italian word for brushstroke. Made to order in London. Each piece is produced individually after your order is placed.",
+      "The Pennicella Jacket is crafted in our signature Pennicella fabric. Made to order in London. Each piece is produced individually after your order is placed.",
     leadImage: `${refreshedStillPath}/ivory-jacket-front.png`,
     leadImagePosition: "center top",
     leadImageFit: "cover",

@@ -14,26 +14,18 @@ export default function StoryPage() {
         <p className="eyebrow">About ARYO</p>
         <h1 className="page-title">The House</h1>
         <p>
-          ARYO is a London-based house built on the belief that considered design outlasts the cycle. Every piece is
-          conceived as a limited edition — made in small numbers, with materials and proportions that hold their
-          weight over time.
+          ARYO is a London-based house built on the belief that considered
+          design outlasts the cycle. Every piece is conceived as a limited
+          edition — made in small numbers, with materials and proportions that
+          hold their weight over time.
         </p>
         <p>
-          The name Pennicella comes from the Italian for brushstroke. It is both the opening collection and the name
-          of the signature ARYO fabric — a textured, structured material developed specifically for the house.
-          Pennicella is the clearest expression of what ARYO stands for: structure, texture, and restraint over
-          volume, graphics, or noise. The debut release introduces two silhouettes across two colourways — Noir and
-          Ivory — each finished with signature hardware and embroidery that sit inside the garment rather than on
-          top of it.
+          Production is kept deliberately tight. Made-to-order pieces are
+          produced only after purchase. Stocked editions are limited from the
+          outset. This is not artificial scarcity — it is how the house intends
+          to work: fewer pieces, more attention paid to each one.
         </p>
-        <p>
-          Production is kept deliberately tight. Made-to-order pieces are produced only after purchase. Stocked
-          editions are limited from the outset. This is not artificial scarcity — it is how the house intends to
-          work: fewer pieces, more attention paid to each one.
-        </p>
-        <p>
-          ARYO is made in London. The next chapter builds from here.
-        </p>
+        <p>ARYO is made in London. The next chapter builds from here.</p>
       </div>
     </main>
   );

@@ -9,3 +9,8 @@ dist
 .claude
 *.log
 tsconfig.tsbuildinfo
+.env*
+
+# Local visual QA output
+/output/
+/.playwright-cli/
