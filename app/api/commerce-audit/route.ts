@@ -11,7 +11,7 @@ export async function POST(request: Request) {
  result.email = {support:env.NEXT_PUBLIC_SUPPORT_EMAIL || null, contactInbox:env.ARYO_CONTACT_FALLBACK_EMAIL || "orders@aryo.london"};
  try {
   const {stripe}=await import("../../../lib/stripe");
-  const a=await stripe.accounts.retrieve();
+  const a=await stripe.accounts.retrieve(null);
   const hooks=await stripe.webhookEndpoints.list({limit:100});
   result.stripe={chargesEnabled:a.charges_enabled,payoutsEnabled:a.payouts_enabled,country:a.country,businessName:a.business_profile?.name,supportEmail:a.business_profile?.support_email,receiptSettings:a.settings?.branding,webhooks:hooks.data.map(h=>({id:h.id,url:h.url,status:h.status,events:h.enabled_events}))};
  }catch{result.stripe={error:"Stripe connection failed"};}
