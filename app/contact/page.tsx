@@ -51,7 +51,7 @@ export default function ContactPage() {
 
         {status === "sent" ? (
           <p className="contact-success">
-            Thank you — we&rsquo;ll be in touch within 24 hours.
+            Thank you. Your message has been sent to client services.
           </p>
         ) : (
           <form className="contact-form" onSubmit={handleSubmit}>
@@ -131,7 +131,7 @@ export default function ContactPage() {
           <p className="eyebrow">Direct support</p>
           <h2>Get in touch.</h2>
           <p>
-            For fastest response, message us on Instagram{" "}
+            Email client services at <a href="mailto:support@aryo.london">support@aryo.london</a>, or message us on Instagram{" "}
             <a
               href="https://instagram.com/aryolondon"
               target="_blank"
@@ -142,7 +142,7 @@ export default function ContactPage() {
             .
           </p>
           <p>
-            The contact form below can also be used for order questions,
+            The contact form above can also be used for order questions,
             returns, and sizing guidance.
           </p>
         </article>

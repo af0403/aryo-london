@@ -26,7 +26,7 @@ const FAQS = [
   },
   {
     q: "How can I contact client services?",
-    a: "Message us directly on Instagram @aryolondon. We aim to respond as quickly as possible.",
+    a: "Email support@aryo.london for order, delivery, returns and sizing enquiries. Include your order reference where available.",
   },
 ];
 

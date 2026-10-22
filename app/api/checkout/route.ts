@@ -1,112 +1,170 @@
-export const runtime = "edge";
-
+import { isCommerceEnabled } from "../../../lib/commerce/availability";
+import { createHash } from "node:crypto";
 import { NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
-
-import { validateCheckoutItems, type CheckoutRequestItem } from "../../../lib/checkout";
-
-type CustomerDetails = {
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone?: string;
-  address: {
-    line1: string;
-    line2?: string;
-    city: string;
-    postcode: string;
-    country: string;
-  };
-};
-
+import { validateCheckoutItems } from "../../../lib/checkout";
+import { stripe } from "../../../lib/stripe";
+import { cryptoOrderId } from "../../../lib/commerce/crypto";
+import { orderDatabase } from "../../../lib/commerce/orders";
+import {
+  readCheckoutBody,
+  signToken,
+  validateCustomer,
+} from "../../../lib/commerce/security";
+export const runtime = "nodejs";
 export async function POST(request: Request) {
-  const body = (await request.json().catch(() => null)) as {
-    items?: CheckoutRequestItem[];
-    customerDetails?: CustomerDetails;
-  } | null;
-
-  const items = body?.items ?? [];
-  const customerDetails = body?.customerDetails;
-
-  if (!items.length) {
-    return NextResponse.json({ message: "Your cart is empty." }, { status: 400 });
-  }
-
-  const validation = validateCheckoutItems(items);
-  if (validation.errors.length) {
-    return NextResponse.json({ message: validation.errors[0] }, { status: 400 });
-  }
-
-  const requestOrigin = new URL(request.url).origin;
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || requestOrigin;
-
-  const stripeKey = process.env.STRIPE_SECRET_KEY;
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-  // ── Prototype mode: no Stripe key configured ──────────────────────────────
-  if (!stripeKey || stripeKey.includes("placeholder")) {
-    const name = customerDetails
-      ? `${customerDetails.firstName} ${customerDetails.lastName}`.trim()
-      : "";
-    const email = customerDetails?.email ?? "";
-    return NextResponse.json({
-      url: `${siteUrl}/order-confirmed?name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}&total=${validation.total}`,
-      message: "Prototype mode — add Stripe keys to go live.",
-    });
-  }
-
-  // ── Live mode: Stripe + Supabase ──────────────────────────────────────────
-  const { stripe } = await import("../../../lib/stripe");
-
-  const totalPence = Math.round(validation.total * 100);
-
-  const paymentIntent = await stripe.paymentIntents.create({
-    amount: totalPence,
-    currency: "gbp",
-    automatic_payment_methods: { enabled: true },
-    metadata: {
-      customer_email: customerDetails?.email ?? "",
-      customer_name: customerDetails
-        ? `${customerDetails.firstName} ${customerDetails.lastName}`
-        : "",
-    },
-  });
-
-  let orderId: string | undefined;
-
-  if (supabaseUrl && supabaseServiceKey) {
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
-
-    const orderItems = validation.items.map((item) => ({
-      name: item.product.name,
-      color: item.product.color,
-      size: item.size,
-      quantity: item.quantity,
-      price: item.product.price,
-    }));
-
-    const { data: order } = await supabase
+  if (!isCommerceEnabled())
+    return NextResponse.json(
+      {
+        message:
+          "Checkout is temporarily unavailable. Please contact support@aryo.london for order enquiries.",
+      },
+      { status: 503 },
+    );
+  try {
+    const body = await readCheckoutBody(request);
+    const validation = validateCheckoutItems(body?.items);
+    if (validation.errors.length)
+      return NextResponse.json(
+        { message: validation.errors[0] },
+        { status: 400 },
+      );
+    const customer = validateCustomer(body.customerDetails);
+    if (
+      !process.env.STRIPE_SECRET_KEY ||
+      process.env.STRIPE_SECRET_KEY.includes("placeholder")
+    )
+      return NextResponse.json(
+        {
+          message:
+            "Card payment is temporarily unavailable. Please contact client services.",
+        },
+        { status: 503 },
+      );
+    const attempt = body.attemptId;
+    if (typeof attempt !== "string" || !/^[a-zA-Z0-9-]{16,80}$/.test(attempt))
+      return NextResponse.json(
+        { message: "Please refresh checkout and try again." },
+        { status: 400 },
+      );
+    const fingerprint = createHash("sha256")
+      .update(
+        JSON.stringify({
+          items: body.items,
+          customer,
+          total: validation.total,
+        }),
+      )
+      .digest("hex");
+    const totalPence = Math.round(validation.total * 100);
+    const intent = await stripe.paymentIntents.create(
+      {
+        amount: totalPence,
+        currency: "gbp",
+        automatic_payment_methods: { enabled: true, allow_redirects: "never" },
+        receipt_email: customer.email,
+        description: "ARYO online order",
+        metadata: { checkout_attempt: attempt, customer_email: customer.email },
+        shipping: {
+          name: `${customer.firstName} ${customer.lastName}`,
+          phone: customer.phone,
+          address: {
+            line1: customer.address.line1,
+            line2: customer.address.line2,
+            city: customer.address.city,
+            postal_code: customer.address.postcode,
+            country: countryCode(customer.address.country),
+          },
+        },
+      },
+      { idempotencyKey: `checkout/${attempt}/${fingerprint}` },
+    );
+    const db = orderDatabase();
+    const existing = await db
       .from("customer_orders")
-      .insert({
-        customer_email: customerDetails?.email ?? "",
-        customer_name: customerDetails
-          ? `${customerDetails.firstName} ${customerDetails.lastName}`
-          : "",
-        items: orderItems,
-        total_pence: totalPence,
-        stripe_payment_intent_id: paymentIntent.id,
-        status: "pending",
-        shipping_address: customerDetails?.address ?? null,
-      })
       .select("id")
-      .single();
-
-    orderId = (order as { id: string } | null)?.id;
+      .eq("stripe_payment_intent_id", intent.id)
+      .maybeSingle();
+    if (existing.error) throw new Error("Order service unavailable");
+    let orderId = existing.data?.id;
+    if (!orderId) {
+      const id = cryptoOrderId(intent.id);
+      const { error } = await db.from("customer_orders").insert({
+        id,
+        customer_email: customer.email,
+        customer_name: `${customer.firstName} ${customer.lastName}`,
+        items: validation.items.map((i) => ({
+          slug: i.slug,
+          name: i.product.name,
+          color: i.product.color,
+          size: i.size,
+          quantity: i.quantity,
+          price: i.product.price,
+          fulfillment: i.product.fulfillment,
+        })),
+        total_pence: totalPence,
+        stripe_payment_intent_id: intent.id,
+        status: "pending",
+        shipping_address: { ...customer.address, phone: customer.phone },
+      });
+      if (error) {
+        const { data: concurrent } = await db
+          .from("customer_orders")
+          .select("id")
+          .eq("id", id)
+          .maybeSingle();
+        if (!concurrent) {
+          await stripe.paymentIntents.cancel(intent.id).catch(() => null);
+          throw new Error("Order could not be saved");
+        }
+      }
+      orderId = id;
+    }
+    await stripe.paymentIntents.update(intent.id, {
+      metadata: { order_id: orderId },
+    });
+    return NextResponse.json(
+      {
+        clientSecret: intent.client_secret,
+        orderId,
+        receiptToken: signToken(
+          { kind: "card", intentId: intent.id },
+          "receipt",
+        ),
+      },
+      { headers: { "Cache-Control": "no-store" } },
+    );
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "";
+    const validationError =
+      /Please |valid email|delivery country|Request is too large|JSON/.test(
+        message,
+      );
+    return NextResponse.json(
+      {
+        message: validationError
+          ? message
+          : "We could not prepare your order. No payment has been taken. Please try again or contact client services.",
+      },
+      { status: validationError ? 400 : 503 },
+    );
   }
-
-  return NextResponse.json({
-    clientSecret: paymentIntent.client_secret,
-    orderId,
-  });
+}
+const countries: Record<string, string> = {
+  "United Kingdom": "GB",
+  "United States": "US",
+  Australia: "AU",
+  Canada: "CA",
+  France: "FR",
+  Germany: "DE",
+  Ireland: "IE",
+  Italy: "IT",
+  Netherlands: "NL",
+  "New Zealand": "NZ",
+  Spain: "ES",
+  Sweden: "SE",
+  Switzerland: "CH",
+  "United Arab Emirates": "AE",
+};
+function countryCode(name: string) {
+  return countries[name] || (/^[A-Z]{2}$/.test(name) ? name : undefined);
 }

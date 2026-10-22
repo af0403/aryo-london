@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
-  if (searchParams.get("key") !== "aryo-admin-2024") {
+  if (!process.env.ARYO_ADMIN_KEY || searchParams.get("key") !== process.env.ARYO_ADMIN_KEY) {
     return NextResponse.json({ message: "Unauthorised." }, { status: 401 });
   }
 

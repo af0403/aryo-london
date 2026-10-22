@@ -34,7 +34,7 @@ export default function ReturnsPage() {
           <h2>Returns are handled directly.</h2>
           <ul className="info-list">
             <li>You have 14 days from delivery to request a return.</li>
-            <li>Message client services on Instagram at @aryolondon to begin the process.</li>
+            <li>Email <a href="mailto:support@aryo.london">support@aryo.london</a> with your order reference to begin the process.</li>
             <li>Refunds are processed once the returned piece is received and inspected.</li>
           </ul>
         </article>

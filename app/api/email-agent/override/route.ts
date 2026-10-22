@@ -45,7 +45,7 @@ function buildOverrideHtml(toEmail: string, body: string): string {
 
 export async function POST(request: Request) {
   const { searchParams } = new URL(request.url);
-  if (searchParams.get("key") !== "aryo-admin-2024") {
+  if (!process.env.ARYO_ADMIN_KEY || searchParams.get("key") !== process.env.ARYO_ADMIN_KEY) {
     return NextResponse.json({ message: "Unauthorised." }, { status: 401 });
   }
 

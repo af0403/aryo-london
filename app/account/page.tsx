@@ -58,13 +58,17 @@ export default function AccountPage() {
 
   useEffect(() => {
     if (!user || !isSupabaseConfigured) return;
-    const supabase = createClient();
-    supabase
-      .from("customer_orders")
-      .select("*")
-      .eq("user_id", user.id)
-      .order("created_at", { ascending: false })
-      .then(({ data }) => setOrders((data as Order[]) ?? []));
+    fetch("/api/orders", { cache: "no-store" })
+      .then(async (response) => {
+        if (!response.ok) throw new Error();
+        const data = await response.json();
+        setOrders(data.orders ?? []);
+      })
+      .catch(() =>
+        setError(
+          "Your orders could not be loaded. Please contact client services if this continues.",
+        ),
+      );
   }, [user]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleSignIn = async (e: React.FormEvent) => {
@@ -98,7 +102,10 @@ export default function AccountPage() {
     const { error: err } = await createClient().auth.signUp({
       email: createEmail,
       password: createPassword,
-      options: { data: { first_name: firstName } },
+      options: {
+        data: { first_name: firstName },
+        emailRedirectTo: `${window.location.origin}/auth/callback?next=/account`,
+      },
     });
     setBusy(false);
     if (err) setError(err.message);
@@ -116,10 +123,16 @@ export default function AccountPage() {
       return;
     }
     setError(null);
-    await createClient().auth.resetPasswordForEmail(signInEmail, {
-      redirectTo: `${window.location.origin}/account`,
-    });
-    setSuccess("Password reset link sent — check your inbox.");
+    const { error: resetError } =
+      await createClient().auth.resetPasswordForEmail(signInEmail, {
+        redirectTo: `${window.location.origin}/auth/callback?next=/account/reset`,
+      });
+    if (resetError)
+      setError("We could not send the reset link. Please try again.");
+    else
+      setSuccess(
+        "If an account exists for this address, a password reset link will arrive shortly.",
+      );
   };
 
   const handleSignOut = async () => {

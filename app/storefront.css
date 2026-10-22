@@ -2432,3 +2432,16 @@ body:has(.home-main) .house-header.has-menu {
     padding: 40px 20px;
   }
 }
+
+/* Verified order summary and printed customer copy. */
+.store-receipt .success-inner { max-width: 680px; }
+.receipt-reference { margin:32px 0 20px;font-size:14px; }
+.receipt-reference span,.receipt-item span,.receipt-delivery p { color:#666; }
+.receipt-items { border-top:1px solid #ddd; }
+.receipt-item { display:flex;justify-content:space-between;gap:20px;padding:20px 0;border-bottom:1px solid #ddd;line-height:1.6;text-align:left; }
+.receipt-item>div:last-child { white-space:nowrap; }
+.receipt-delivery { text-align:left;margin:32px 0;line-height:1.6; }
+.receipt-delivery h2 { font-size:14px;font-weight:400; }
+.receipt-help,.checkout-terms { font-size:12px;line-height:1.6;margin-top:24px;color:#666; }
+.receipt-help a,.checkout-terms a { text-decoration:underline; }
+@media print { .house-header,.house-announcement,.house-footer,.site-chat-button,.success-links,.receipt-help { display:none!important; } body { padding:0!important;background:#fff!important; } .store-receipt { padding:20px!important; } .success-inner { max-width:100%!important; } }

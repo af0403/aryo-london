@@ -17,7 +17,7 @@ type ResendInboundPayload = {
 const SYSTEM_PROMPT = `You are the ARYO customer service team. ARYO is a London luxury clothing brand.
 
 The Pennicella collection includes:
-- Structure Jacket: £200, made to order, approximately 3 week lead time, available in Noir and Ivory colourways
+- Pennicella Jacket: £250, made to order, approximately 3 week lead time, available in Noir and Ivory colourways
 - Essential Trouser: £100, limited run of 100, available in Noir and Ivory colourways
 
 Shipping is complimentary worldwide. Returns are accepted within 14 days, unworn, in original condition.
@@ -118,7 +118,15 @@ export async function POST(request: Request) {
     return NextResponse.json({ message: "Agent not configured." }, { status: 501 });
   }
 
-  const payload = (await request.json().catch(() => null)) as ResendInboundPayload | null;
+  const webhookSecret = process.env.RESEND_WEBHOOK_SECRET;
+  if (!webhookSecret) return NextResponse.json({ message: "Inbound email verification is not configured." }, { status: 503 });
+  const raw = await request.text();
+  try {
+    const { Resend } = await import("resend");
+    new Resend(resendKey).webhooks.verify({ payload: raw, headers: { id: request.headers.get("svix-id") || "", timestamp: request.headers.get("svix-timestamp") || "", signature: request.headers.get("svix-signature") || "" }, webhookSecret });
+  } catch { return new Response(null, { status: 401 }); }
+  // The legacy handler expects a direct payload. Unrecognised events never trigger replies.
+  const payload = JSON.parse(raw) as ResendInboundPayload | null;
   if (!payload?.from || !payload?.subject) {
     return NextResponse.json({ message: "Invalid inbound payload." }, { status: 400 });
   }

@@ -5,7 +5,7 @@ export async function middleware(request: NextRequest) {
   // Admin lockdown — key required in query string
   if (request.nextUrl.pathname.startsWith("/admin")) {
     const key = request.nextUrl.searchParams.get("key");
-    if (key !== "aryo-admin-2024") {
+    if (!process.env.ARYO_ADMIN_KEY || key !== process.env.ARYO_ADMIN_KEY) {
       return NextResponse.redirect(new URL("/", request.url));
     }
   }

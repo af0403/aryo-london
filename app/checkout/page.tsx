@@ -48,8 +48,16 @@ export default function CheckoutPage() {
   const stripeRef = useRef<Stripe | null>(null);
   const cardRef = useRef<StripeCardElement | null>(null);
   const cardMountRef = useRef<HTMLDivElement>(null);
+  const attemptRef = useRef<string>("");
 
   const [stripeReady, setStripeReady] = useState(false);
+  const [checkoutAvailable, setCheckoutAvailable] = useState(false);
+  useEffect(() => {
+    fetch("/api/checkout/status", { cache: "no-store" })
+      .then((r) => r.json())
+      .then((d) => setCheckoutAvailable(d.available === true))
+      .catch(() => setCheckoutAvailable(false));
+  }, []);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [paymentMethod, setPaymentMethod] = useState<"card" | "crypto">("card");
@@ -63,6 +71,8 @@ export default function CheckoutPage() {
   const [city, setCity] = useState("");
   const [postcode, setPostcode] = useState("");
   const [country, setCountry] = useState("United Kingdom");
+  const [otherCountry, setOtherCountry] = useState("");
+  const deliveryCountry = country === "Other" ? otherCountry.trim() : country;
 
   // Postcode lookup
   const [postcodeSuggestions, setPostcodeSuggestions] = useState<string[]>([]);
@@ -99,32 +109,42 @@ export default function CheckoutPage() {
     if (!mounted || !cardMountRef.current) return;
 
     let card: StripeCardElement | null = null;
+    let active = true;
+    setStripeReady(false);
 
-    stripePromise.then((stripe) => {
-      if (!stripe || !cardMountRef.current) return;
-      stripeRef.current = stripe;
+    stripePromise
+      .then((stripe) => {
+        if (!active || !stripe || !cardMountRef.current) return;
+        stripeRef.current = stripe;
 
-      const elements = stripe.elements();
-      card = elements.create("card", {
-        style: {
-          base: {
-            fontFamily: "sans-serif",
-            fontSize: "14px",
-            color: "#111111",
-            "::placeholder": { color: "#aaaaaa" },
+        const elements = stripe.elements();
+        card = elements.create("card", {
+          style: {
+            base: {
+              fontFamily: "sans-serif",
+              fontSize: "14px",
+              color: "#111111",
+              "::placeholder": { color: "#aaaaaa" },
+            },
           },
-        },
+        });
+        card.mount(cardMountRef.current);
+        cardRef.current = card;
+        setStripeReady(true);
+      })
+      .catch(() => {
+        if (active)
+          setError(
+            "The payment form could not load. Please refresh or contact client services.",
+          );
       });
-      card.mount(cardMountRef.current);
-      cardRef.current = card;
-      setStripeReady(true);
-    });
 
     return () => {
+      active = false;
       card?.destroy();
       cardRef.current = null;
     };
-  }, [mounted]);
+  }, [mounted, paymentMethod, items.length, checkoutAvailable]);
 
   // Close suggestions on outside click
   useEffect(() => {
@@ -250,7 +270,7 @@ export default function CheckoutPage() {
 
     if (!stripeRef.current || !cardRef.current) {
       setError(
-        "To place your order, please message us on Instagram @aryolondon and we will process it directly.",
+        "The payment form is not ready. Please refresh checkout or contact support@aryo.london.",
       );
       return;
     }
@@ -261,12 +281,14 @@ export default function CheckoutPage() {
     }
 
     setBusy(true);
+    if (!attemptRef.current) attemptRef.current = crypto.randomUUID();
 
     try {
       const res = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          attemptId: attemptRef.current,
           items: items,
           customerDetails: {
             firstName,
@@ -278,7 +300,7 @@ export default function CheckoutPage() {
               line2: address2,
               city,
               postcode,
-              country,
+              country: deliveryCountry,
             },
           },
         }),
@@ -287,16 +309,10 @@ export default function CheckoutPage() {
       const data = (await res.json()) as {
         clientSecret?: string;
         orderId?: string;
+        receiptToken?: string;
         message?: string;
         url?: string;
       };
-
-      // Prototype mode — redirect directly
-      if (data.url) {
-        clearCart();
-        window.location.href = data.url;
-        return;
-      }
 
       if (!res.ok || !data.clientSecret) {
         throw new Error(data.message || "Checkout failed.");
@@ -304,7 +320,14 @@ export default function CheckoutPage() {
 
       const { paymentIntent, error: stripeError } =
         await stripeRef.current.confirmCardPayment(data.clientSecret, {
-          payment_method: { card: cardRef.current },
+          payment_method: {
+            card: cardRef.current,
+            billing_details: {
+              name: `${firstName} ${lastName}`,
+              email,
+              phone: phone || undefined,
+            },
+          },
         });
 
       if (stripeError) {
@@ -312,28 +335,22 @@ export default function CheckoutPage() {
       }
 
       if (paymentIntent?.status === "succeeded") {
-        await fetch("/api/send-email", {
+        await fetch("/api/orders/confirm", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            to: email,
-            customerName: firstName,
-            orderId: data.orderId,
-            items: lineItems.map((i) => ({
-              name: i.product.name,
-              color: i.product.color,
-              size: i.size,
-              quantity: i.quantity,
-              price: i.product.price,
-              fulfillment: i.product.fulfillment,
-            })),
-            total: subtotal,
-          }),
+          body: JSON.stringify({ receiptToken: data.receiptToken }),
         }).catch(() => null);
-
         clearCart();
         router.push(
-          `/order-confirmed?name=${encodeURIComponent(firstName)}&email=${encodeURIComponent(email)}&total=${subtotal}&orderId=${data.orderId ?? ""}`,
+          `/order-confirmed?receipt=${encodeURIComponent(data.receiptToken || "")}`,
+        );
+      } else if (paymentIntent?.status === "processing") {
+        router.push(
+          `/order-confirmed?receipt=${encodeURIComponent(data.receiptToken || "")}`,
+        );
+      } else {
+        setError(
+          "Payment has not completed. Please review your card details and try again.",
         );
       }
     } catch (err) {
@@ -612,6 +629,7 @@ export default function CheckoutPage() {
               Country
             </label>
             <select
+              required
               id="co-country"
               className="checkout-input checkout-select"
               value={country}
@@ -623,6 +641,19 @@ export default function CheckoutPage() {
                 </option>
               ))}
             </select>
+            {country === "Other" && (
+              <input
+                className="checkout-input"
+                type="text"
+                aria-label="Delivery country"
+                placeholder="Enter your country"
+                required
+                autoComplete="country-name"
+                maxLength={100}
+                value={otherCountry}
+                onChange={(e) => setOtherCountry(e.target.value)}
+              />
+            )}
           </div>
 
           <div className="checkout-divider" />
@@ -638,7 +669,7 @@ export default function CheckoutPage() {
             >
               Card
             </button>
-            {isWalletConnectConfigured && (
+            {isWalletConnectConfigured && checkoutAvailable && (
               <button
                 type="button"
                 className={`payment-tab ${paymentMethod === "crypto" ? "is-active" : ""}`}
@@ -652,19 +683,13 @@ export default function CheckoutPage() {
           {/* Card payment */}
           {paymentMethod === "card" && (
             <>
-              {!stripeEnabled ? (
+              {!stripeEnabled || !checkoutAvailable ? (
                 <div className="checkout-notice">
                   <p>
-                    Online payment is coming soon. To place your order now,
-                    message us on Instagram{" "}
-                    <a
-                      href="https://instagram.com/aryolondon"
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      @aryolondon
-                    </a>{" "}
-                    and we will process it directly.
+                    Checkout is temporarily unavailable. For order enquiries,
+                    contact{" "}
+                    <a href="mailto:support@aryo.london">support@aryo.london</a>
+                    .
                   </p>
                 </div>
               ) : (
@@ -686,32 +711,65 @@ export default function CheckoutPage() {
                   )}
                 </div>
               )}
-              {error && <p className="checkout-error">{error}</p>}
-              <button className="checkout-submit" type="submit" disabled={busy}>
-                {busy ? "Processing…" : "Place order"}
+              {error && (
+                <p className="checkout-error" role="alert">
+                  {error}
+                </p>
+              )}
+              <button
+                className="checkout-submit"
+                type="submit"
+                disabled={
+                  busy || !checkoutAvailable || !stripeEnabled || !stripeReady
+                }
+              >
+                {busy ? "Processing…" : `Pay ${formatPrice(subtotal)}`}
               </button>
             </>
           )}
 
+          <p className="checkout-terms">
+            By placing your order, you agree to our{" "}
+            <Link href="/terms">Terms of Use</Link>. Read our{" "}
+            <Link href="/privacy">Privacy Policy</Link> and{" "}
+            <Link href="/returns">Returns information</Link>. Need assistance?{" "}
+            <a href="mailto:support@aryo.london">Client services</a>.
+          </p>
+
           {/* Crypto payment */}
-          {paymentMethod === "crypto" && isWalletConnectConfigured && (
-            <CryptoCheckout
-              orderTotal={subtotal}
-              firstName={firstName}
-              lastName={lastName}
-              email={email}
-              items={lineItems.map((i) => ({
-                slug: i.slug,
-                size: i.size,
-                quantity: i.quantity,
-                name: i.product.name,
-                color: i.product.color,
-                price: i.product.price,
-                fulfillment: i.product.fulfillment,
-              }))}
-              onClearCart={clearCart}
-            />
-          )}
+          {paymentMethod === "crypto" &&
+            checkoutAvailable &&
+            isWalletConnectConfigured && (
+              <CryptoCheckout
+                orderTotal={subtotal}
+                firstName={firstName}
+                lastName={lastName}
+                email={email}
+                items={lineItems.map((i) => ({
+                  slug: i.slug,
+                  size: i.size,
+                  quantity: i.quantity,
+                  name: i.product.name,
+                  color: i.product.color,
+                  price: i.product.price,
+                  fulfillment: i.product.fulfillment,
+                }))}
+                customerDetails={{
+                  firstName,
+                  lastName,
+                  email,
+                  phone,
+                  address: {
+                    line1: address1,
+                    line2: address2,
+                    city,
+                    postcode,
+                    country: deliveryCountry,
+                  },
+                }}
+                onClearCart={clearCart}
+              />
+            )}
         </div>
       </form>
     </main>

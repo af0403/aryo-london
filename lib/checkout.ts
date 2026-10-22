@@ -33,8 +33,28 @@ const isSize = (value: string): value is Size =>
   sizeValues.some((size) => size === value);
 
 export const validateCheckoutItems = (
-  requestItems: CheckoutRequestItem[]
+  requestItems: CheckoutRequestItem[],
 ): CheckoutValidationResult => {
+  if (
+    !Array.isArray(requestItems) ||
+    !requestItems.length ||
+    requestItems.length > 30 ||
+    requestItems.some(
+      (item) =>
+        !item ||
+        typeof item.slug !== "string" ||
+        typeof item.size !== "string" ||
+        !Number.isSafeInteger(item.quantity) ||
+        item.quantity < 1 ||
+        item.quantity > 20,
+    )
+  ) {
+    return {
+      items: [],
+      total: 0,
+      errors: ["Please review the pieces and quantities in your bag."],
+    };
+  }
   const groupedItems = new Map<string, CheckoutRequestItem>();
 
   for (const requestItem of requestItems) {
@@ -57,7 +77,7 @@ export const validateCheckoutItems = (
 
   for (const requestItem of groupedItems.values()) {
     const product = getProduct(requestItem.slug);
-    if (!product) {
+    if (!product || product.hidden) {
       errors.push("One of the selected pieces is no longer available.");
       continue;
     }
@@ -68,22 +88,30 @@ export const validateCheckoutItems = (
     }
 
     if (product.price === null) {
-      errors.push(`${product.name} / ${product.color} does not have a retail price yet.`);
+      errors.push(
+        `${product.name} / ${product.color} does not have a retail price yet.`,
+      );
       continue;
     }
 
     if (!isSize(requestItem.size)) {
-      errors.push(`The selected size for ${product.name} / ${product.color} is not valid.`);
+      errors.push(
+        `The selected size for ${product.name} / ${product.color} is not valid.`,
+      );
       continue;
     }
 
     const variant = getSelectedVariant(product, requestItem.size);
     if (!variant) {
-      errors.push(`The selected size for ${product.name} / ${product.color} is unavailable.`);
+      errors.push(
+        `The selected size for ${product.name} / ${product.color} is unavailable.`,
+      );
       continue;
     }
 
-    const quantity = Number.isInteger(requestItem.quantity) ? requestItem.quantity : 0;
+    const quantity = Number.isInteger(requestItem.quantity)
+      ? requestItem.quantity
+      : 0;
     if (quantity <= 0) {
       errors.push(`${product.name} / ${product.color} needs a valid quantity.`);
       continue;
@@ -91,7 +119,9 @@ export const validateCheckoutItems = (
 
     if (typeof variant.stock === "number") {
       if (variant.stock <= 0) {
-        errors.push(`${product.name} / ${product.color} in size ${variant.size} is sold out.`);
+        errors.push(
+          `${product.name} / ${product.color} in size ${variant.size} is sold out.`,
+        );
         continue;
       }
 
@@ -99,7 +129,7 @@ export const validateCheckoutItems = (
         errors.push(
           `${product.name} / ${product.color} in size ${variant.size} only has ${variant.stock} piece${
             variant.stock === 1 ? "" : "s"
-          } available.`
+          } available.`,
         );
         continue;
       }
@@ -122,7 +152,9 @@ export const validateCheckoutItems = (
   };
 };
 
-export const buildPrototypeCheckoutMessage = (result: CheckoutValidationResult) => {
+export const buildPrototypeCheckoutMessage = (
+  result: CheckoutValidationResult,
+) => {
   if (!result.items.length) {
     return "No valid items were passed into checkout.";
   }
@@ -130,11 +162,11 @@ export const buildPrototypeCheckoutMessage = (result: CheckoutValidationResult) 
   const leadItem = result.items[0];
   if (result.items.length === 1) {
     return `${leadItem.product.name} / ${leadItem.product.color} is ready to move into live checkout at ${formatPrice(
-      result.total
+      result.total,
     )}.`;
   }
 
   return `${result.items.length} live line items are ready to move into live checkout at ${formatPrice(
-    result.total
+    result.total,
   )}.`;
 };
