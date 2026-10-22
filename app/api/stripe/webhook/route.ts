@@ -27,11 +27,12 @@ export async function POST(request: Request) {
   try {
     if (event.type === "payment_intent.succeeded") {
       const intent = event.data.object;
-      if (intent.metadata.order_id) await finaliseCardOrder(intent);
+      if (intent.metadata.store === "aryo" && intent.metadata.order_id)
+        await finaliseCardOrder(intent);
     }
     if (event.type === "payment_intent.canceled") {
       const intent = event.data.object;
-      if (intent.metadata.order_id) {
+      if (intent.metadata.store === "aryo" && intent.metadata.order_id) {
         const { error } = await orderDatabase()
           .from("customer_orders")
           .update({ status: "cancelled" })
@@ -43,6 +44,11 @@ export async function POST(request: Request) {
     if (event.type === "charge.refunded") {
       const charge = event.data.object;
       if (charge.refunded && typeof charge.payment_intent === "string") {
+        const intent = await stripe.paymentIntents.retrieve(
+          charge.payment_intent,
+        );
+        if (intent.metadata.store !== "aryo")
+          return NextResponse.json({ received: true });
         const { error } = await orderDatabase()
           .from("customer_orders")
           .update({ status: "refunded" })

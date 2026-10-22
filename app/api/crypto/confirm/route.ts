@@ -1,15 +1,12 @@
 import { NextResponse } from "next/server";
-import { createPublicClient, http, isHash } from "viem";
+import { createPublicClient, http, isHash, fallback } from "viem";
 import { mainnet } from "viem/chains";
 import {
   readCheckoutBody,
   readToken,
   signToken,
 } from "../../../../lib/commerce/security";
-import {
-  cryptoOrderId,
-  type CryptoQuote,
-} from "../../../../lib/commerce/crypto";
+import { type CryptoQuote } from "../../../../lib/commerce/crypto";
 import {
   orderDatabase,
   sendOrderConfirmation,
@@ -25,9 +22,12 @@ export async function POST(request: Request) {
     const hash = body.transactionHash as `0x${string}`;
     const rpc = createPublicClient({
       chain: mainnet,
-      transport: http(
-        process.env.ETHEREUM_RPC_URL || "https://ethereum-rpc.publicnode.com",
-      ),
+      transport: fallback([
+        http(
+          process.env.ETHEREUM_RPC_URL || "https://ethereum-rpc.publicnode.com",
+        ),
+        http("https://cloudflare-eth.com"),
+      ]),
     });
     const [transaction, receipt, head] = await Promise.all([
       rpc.getTransaction({ hash }),
@@ -70,7 +70,7 @@ export async function POST(request: Request) {
         },
         { status: 202 },
       );
-    const id = cryptoOrderId(hash),
+    const id = quote.id,
       db = orderDatabase();
     let { data: existing, error: readError } = await db
       .from("customer_orders")
@@ -87,36 +87,34 @@ export async function POST(request: Request) {
         { message: "This transaction is already assigned to another order." },
         { status: 409 },
       );
-    if (!existing) {
-      const record = {
-        id,
-        customer_email: quote.customer.email,
-        customer_name: `${quote.customer.firstName} ${quote.customer.lastName}`,
-        items: quote.items,
-        total_pence: quote.totalPence,
-        stripe_payment_intent_id: hash,
-        status: "pending",
-        shipping_address: {
-          ...quote.customer.address,
-          phone: quote.customer.phone,
-          crypto_quote_id: quote.id,
+    if (
+      !existing ||
+      existing.status === "cancelled" ||
+      existing.status === "refunded"
+    )
+      return NextResponse.json(
+        {
+          message:
+            "This order reservation has expired. Contact client services with your transaction hash; do not send another payment.",
         },
-      };
-      const { error } = await db.from("customer_orders").insert(record);
-      if (error) {
-        const { data } = await db
-          .from("customer_orders")
-          .select("*")
-          .eq("id", id)
-          .single();
-        if (!data || data.shipping_address?.crypto_quote_id !== quote.id)
-          throw error;
-        existing = data;
-      } else existing = record;
-    }
+        { status: 409 },
+      );
+    const { data: assigned } = await db
+      .from("customer_orders")
+      .select("id")
+      .eq("stripe_payment_intent_id", hash)
+      .maybeSingle();
+    if (assigned && assigned.id !== id)
+      return NextResponse.json(
+        { message: "This transaction is already assigned to another order." },
+        { status: 409 },
+      );
     const { error } = await db
       .from("customer_orders")
-      .update({ status: "paid" })
+      .update({
+        status: existing.status === "fulfilled" ? "fulfilled" : "paid",
+        stripe_payment_intent_id: hash,
+      })
       .eq("id", id);
     if (error) throw error;
     const order = { ...existing, status: "paid" } as OrderRecord;

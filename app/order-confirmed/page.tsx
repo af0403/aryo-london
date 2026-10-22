@@ -11,11 +11,14 @@ import {
   type OrderRecord,
 } from "../../lib/commerce/orders";
 import { PrintReceipt } from "../../components/storefront/print-receipt";
-export const metadata = createNoIndexMetadata({
-  title: "Your Order",
-  description: "Private ARYO order details.",
-  path: "/order-confirmed",
-});
+export const metadata = {
+  ...createNoIndexMetadata({
+    title: "Your Order",
+    description: "Private ARYO order details.",
+    path: "/order-confirmed",
+  }),
+  referrer: "no-referrer" as const,
+};
 export const dynamic = "force-dynamic";
 export default async function OrderConfirmedPage({
   searchParams,
@@ -62,7 +65,7 @@ export default async function OrderConfirmedPage({
         .single();
       if (error || !data) throw new Error();
       order = data as OrderRecord;
-      paid = order.status === "paid";
+      paid = order.status === "paid" || order.status === "fulfilled";
       emailSent = Boolean(order.shipping_address?.confirmation_email_id);
       receiptUrl = `https://etherscan.io/tx/${order.stripe_payment_intent_id}`;
     }
@@ -70,14 +73,28 @@ export default async function OrderConfirmedPage({
     message =
       "We could not verify this order link. Please contact client services if a payment has been taken.";
   }
+  const refunded = order?.status === "refunded";
+  if (refunded) {
+    paid = false;
+    message =
+      "This order has been refunded. View your payment receipt for details.";
+  }
   return (
     <main className="success-page store-receipt">
       <div className="success-inner">
-        <p className="eyebrow">{paid ? "Payment received" : "Your order"}</p>
+        <p className="eyebrow">
+          {refunded
+            ? "Order refunded"
+            : paid
+              ? "Payment received"
+              : "Your order"}
+        </p>
         <h1 className="success-heading">
           {paid
             ? `Thank you${order?.customer_name ? `, ${order.customer_name.split(" ")[0]}` : ""}.`
-            : "Order status"}
+            : refunded
+              ? "Order refunded"
+              : "Order status"}
         </h1>
         <p className="success-body">
           {paid && emailSent

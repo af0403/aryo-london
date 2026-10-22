@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useWeb3Modal } from "@web3modal/wagmi/react";
 import {
@@ -7,8 +7,10 @@ import {
   useDisconnect,
   useSendTransaction,
   useSwitchChain,
+  useSignMessage,
 } from "wagmi";
 import { formatEther } from "viem";
+import { cryptoAuthorisationMessage } from "../lib/commerce/crypto-message";
 import type { CustomerDetails } from "../lib/commerce/security";
 export type CryptoPaymentProps = {
   orderTotal: number;
@@ -34,6 +36,8 @@ export function CryptoPaymentSection({
   customerDetails,
   onClearCart,
 }: CryptoPaymentProps) {
+  const { signMessageAsync } = useSignMessage();
+  const attemptRef = useRef<string>("");
   const router = useRouter(),
     { open } = useWeb3Modal(),
     { address, isConnected, chainId } = useAccount(),
@@ -81,6 +85,24 @@ export function CryptoPaymentSection({
       `/order-confirmed?receipt=${encodeURIComponent(data.receiptToken)}`,
     );
   }
+  useEffect(() => {
+    if (!pending) return;
+    let active = true;
+    const timer = setInterval(() => {
+      void verify(pending).catch((e) => {
+        if (active)
+          setError(
+            e instanceof Error
+              ? e.message
+              : "Verification is pending. Keep your transaction reference.",
+          );
+      });
+    }, 15000);
+    return () => {
+      active = false;
+      clearInterval(timer);
+    };
+  }, [pending]);
   async function pay() {
     if (
       !pending &&
@@ -99,10 +121,31 @@ export function CryptoPaymentSection({
       }
       if (!address) throw new Error("Please connect your wallet.");
       if (chainId !== 1) await switchChainAsync({ chainId: 1 });
+      if (!attemptRef.current) attemptRef.current = crypto.randomUUID();
+      const timestamp = Math.floor(Date.now() / 1000);
+      setStatus(
+        "Approve the checkout request in your wallet. This signature does not transfer funds.",
+      );
+      const signature = await signMessageAsync({
+        message: cryptoAuthorisationMessage({
+          payer: address,
+          attemptId: attemptRef.current,
+          email: customerDetails.email,
+          items,
+          timestamp,
+        }),
+      });
       const response = await fetch("/api/crypto/quote", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ items, customerDetails, payer: address }),
+        body: JSON.stringify({
+          items,
+          customerDetails,
+          payer: address,
+          attemptId: attemptRef.current,
+          timestamp,
+          signature,
+        }),
       });
       const quote = await response.json();
       if (!response.ok) throw new Error(quote.message);

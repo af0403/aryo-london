@@ -114,6 +114,7 @@ export async function sendOrderConfirmation(
   return data.id;
 }
 export async function finaliseCardOrder(intent: Stripe.PaymentIntent) {
+  intent = await stripe.paymentIntents.retrieve(intent.id);
   if (intent.status !== "succeeded" || intent.currency !== "gbp")
     throw new Error("Payment has not been confirmed.");
   const order = await findCardOrder(intent.id);
@@ -136,7 +137,7 @@ export async function finaliseCardOrder(intent: Stripe.PaymentIntent) {
     receiptUrl = charge.receipt_url || undefined;
   }
   let emailSent = Boolean(intent.metadata.confirmation_email_id);
-  if (!emailSent) {
+  if (!emailSent && order.status !== "refunded") {
     const id = await sendOrderConfirmation(order, receiptUrl);
     await stripe.paymentIntents.update(intent.id, {
       metadata: { confirmation_email_id: id },

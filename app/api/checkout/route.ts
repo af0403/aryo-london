@@ -1,10 +1,14 @@
+import {
+  releaseExpiredReservations,
+  reserveOrder,
+} from "../../../lib/commerce/inventory";
 import { isCommerceEnabled } from "../../../lib/commerce/availability";
 import { createHash } from "node:crypto";
 import { NextResponse } from "next/server";
 import { validateCheckoutItems } from "../../../lib/checkout";
 import { stripe } from "../../../lib/stripe";
 import { cryptoOrderId } from "../../../lib/commerce/crypto";
-import { orderDatabase } from "../../../lib/commerce/orders";
+import { orderDatabase, orderNumber } from "../../../lib/commerce/orders";
 import {
   readCheckoutBody,
   signToken,
@@ -55,6 +59,7 @@ export async function POST(request: Request) {
         }),
       )
       .digest("hex");
+    await releaseExpiredReservations();
     const totalPence = Math.round(validation.total * 100);
     const intent = await stripe.paymentIntents.create(
       {
@@ -63,7 +68,12 @@ export async function POST(request: Request) {
         automatic_payment_methods: { enabled: true, allow_redirects: "never" },
         receipt_email: customer.email,
         description: "ARYO online order",
-        metadata: { checkout_attempt: attempt, customer_email: customer.email },
+        statement_descriptor_suffix: "ARYO",
+        metadata: {
+          store: "aryo",
+          checkout_attempt: attempt,
+          customer_email: customer.email,
+        },
         shipping: {
           name: `${customer.firstName} ${customer.lastName}`,
           phone: customer.phone,
@@ -88,25 +98,29 @@ export async function POST(request: Request) {
     let orderId = existing.data?.id;
     if (!orderId) {
       const id = cryptoOrderId(intent.id);
-      const { error } = await db.from("customer_orders").insert({
-        id,
-        customer_email: customer.email,
-        customer_name: `${customer.firstName} ${customer.lastName}`,
-        items: validation.items.map((i) => ({
-          slug: i.slug,
-          name: i.product.name,
-          color: i.product.color,
-          size: i.size,
-          quantity: i.quantity,
-          price: i.product.price,
-          fulfillment: i.product.fulfillment,
-        })),
-        total_pence: totalPence,
-        stripe_payment_intent_id: intent.id,
-        status: "pending",
-        shipping_address: { ...customer.address, phone: customer.phone },
-      });
-      if (error) {
+      try {
+        await reserveOrder(
+          {
+            id,
+            customer_email: customer.email,
+            customer_name: `${customer.firstName} ${customer.lastName}`,
+            items: validation.items.map((i) => ({
+              slug: i.slug,
+              name: i.product.name,
+              color: i.product.color,
+              size: i.size,
+              quantity: i.quantity,
+              price: i.product.price,
+              fulfillment: i.product.fulfillment,
+            })),
+            total_pence: totalPence,
+            stripe_payment_intent_id: intent.id,
+            status: "pending",
+            shipping_address: { ...customer.address, phone: customer.phone },
+          },
+          validation.items,
+        );
+      } catch (error) {
         const { data: concurrent } = await db
           .from("customer_orders")
           .select("id")
@@ -114,13 +128,14 @@ export async function POST(request: Request) {
           .maybeSingle();
         if (!concurrent) {
           await stripe.paymentIntents.cancel(intent.id).catch(() => null);
-          throw new Error("Order could not be saved");
+          throw error;
         }
       }
       orderId = id;
     }
     await stripe.paymentIntents.update(intent.id, {
       metadata: { order_id: orderId },
+      description: `ARYO ${orderNumber(orderId)}`,
     });
     return NextResponse.json(
       {
@@ -136,7 +151,7 @@ export async function POST(request: Request) {
   } catch (error) {
     const message = error instanceof Error ? error.message : "";
     const validationError =
-      /Please |valid email|delivery country|Request is too large|JSON/.test(
+      /Please |valid email|delivery country|Request is too large|JSON|selected piece/.test(
         message,
       );
     return NextResponse.json(

@@ -50,6 +50,10 @@ function query() {
       filters.push((r) => r[k] === v);
       return q;
     },
+    lt(k, v) {
+      filters.push((r) => r[k] < v);
+      return q;
+    },
     in(k, v) {
       filters.push((r) => v.includes(r[k]));
       return q;
@@ -139,7 +143,32 @@ Module._load = function (request, parent, isMain) {
   if (request.endsWith("/lib/stripe") || request === "../stripe")
     return { stripe };
   if (request === "@supabase/supabase-js")
-    return { createClient: () => ({ from: () => query() }) };
+    return {
+      createClient: () => ({
+        from: () => query(),
+        rpc: async (name, { order_data, stock_limits }) => {
+          if (records.some((r) => r.id === order_data.id))
+            return { data: order_data.id, error: null };
+          for (const limit of stock_limits) {
+            const used = records
+              .filter((r) => r.status !== "cancelled")
+              .flatMap((r) => r.items)
+              .filter((i) => i.slug === limit.slug && i.size === limit.size)
+              .reduce((sum, i) => sum + i.quantity, 0);
+            const requested = order_data.items
+              .filter((i) => i.slug === limit.slug && i.size === limit.size)
+              .reduce((sum, i) => sum + i.quantity, 0);
+            if (used + requested > limit.stock)
+              return {
+                data: null,
+                error: { message: "ARYO_STOCK insufficient availability" },
+              };
+          }
+          records.push({ ...order_data, created_at: new Date().toISOString() });
+          return { data: order_data.id, error: null };
+        },
+      }),
+    };
   if (request === "viem")
     return { ...load.apply(this, arguments), createPublicClient: () => rpc };
   if (request === "resend")
@@ -335,6 +364,13 @@ test("crypto verification checks confirmations, recipient, amount, status and re
     transactionHash: hash,
     quoteToken: security.signToken(quote, "crypto-quote"),
   };
+  records.push({
+    ...records[0],
+    id: quote.id,
+    status: "pending",
+    stripe_payment_intent_id: `crypto_quote_${quote.id}`,
+    shipping_address: { ...customer.address, crypto_quote_id: quote.id },
+  });
   const before = sends;
   assert.equal((await cryptoConfirm.POST(request(body))).status, 202);
   chain.transaction = { from: payer, to: wallet, value: 1000n };
@@ -366,4 +402,95 @@ test("crypto verification checks confirmations, recipient, amount, status and re
   };
   assert.equal((await cryptoConfirm.POST(request(replay))).status, 409);
   assert.equal(sends, before + 1);
+});
+test("checkout maintenance gate prevents creating an intent or crypto payment", async () => {
+  const count = creates;
+  process.env.ARYO_COMMERCE_ENABLED = "false";
+  assert.equal((await checkout.POST(request(valid))).status, 503);
+  const cryptoQuote = require("../app/api/crypto/quote/route.ts");
+  assert.equal((await cryptoQuote.POST(request(valid))).status, 503);
+  assert.equal(creates, count);
+  process.env.ARYO_COMMERCE_ENABLED = "true";
+});
+test("finite stock reservations reject quantities already held by another order", async () => {
+  const { reserveOrder } = require("../lib/commerce/inventory.ts");
+  const { getProduct, getSelectedVariant } = require("../lib/products.ts");
+  const product = getProduct("essential-trouser-ivory"),
+    variant = getSelectedVariant(product, "S");
+  const item = { slug: product.slug, size: "S", quantity: 5, product, variant };
+  const record = {
+    id: "stock-one",
+    items: [{ slug: product.slug, size: "S", quantity: 5 }],
+    status: "pending",
+  };
+  await reserveOrder(record, [item]);
+  await assert.rejects(
+    reserveOrder(
+      {
+        ...record,
+        id: "stock-two",
+        items: [{ slug: product.slug, size: "S", quantity: 1 }],
+      },
+      [{ ...item, quantity: 1 }],
+    ),
+  );
+});
+test("valid Stripe events for another store are acknowledged without touching ARYO orders", async () => {
+  const count = sends;
+  const payload = JSON.stringify({
+    id: "evt_other",
+    type: "payment_intent.succeeded",
+    data: {
+      object: { id: "pi_other", metadata: { store: "alf", order_id: "other" } },
+    },
+  });
+  const signature = sdk.webhooks.generateTestHeaderString({
+    payload,
+    secret: "whsec_unit",
+  });
+  assert.equal(
+    (
+      await webhook.POST(
+        new Request("https://aryo.london/api/stripe/webhook", {
+          method: "POST",
+          headers: { "stripe-signature": signature },
+          body: payload,
+        }),
+      )
+    ).status,
+    200,
+  );
+  assert.equal(sends, count);
+});
+test("wallet authorisation binds the quote to its owner, email and bag", async () => {
+  const { privateKeyToAccount } = require("viem/accounts");
+  const { verifyMessage } = require("viem");
+  const {
+    cryptoAuthorisationMessage,
+  } = require("../lib/commerce/crypto-message.ts");
+  const account = privateKeyToAccount("0x" + "1".repeat(64));
+  const input = {
+    payer: account.address,
+    attemptId: "12345678-1234-4234-a234-123456789012",
+    email: "test@example.invalid",
+    items: valid.items,
+    timestamp: Math.floor(Date.now() / 1000),
+  };
+  const message = cryptoAuthorisationMessage(input),
+    signature = await account.signMessage({ message });
+  assert.equal(
+    await verifyMessage({ address: account.address, message, signature }),
+    true,
+  );
+  assert.equal(
+    await verifyMessage({
+      address: account.address,
+      message: cryptoAuthorisationMessage({
+        ...input,
+        email: "other@example.invalid",
+      }),
+      signature,
+    }),
+    false,
+  );
 });

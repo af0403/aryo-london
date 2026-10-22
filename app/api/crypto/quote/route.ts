@@ -1,7 +1,13 @@
 import { isCommerceEnabled } from "../../../../lib/commerce/availability";
-import { randomUUID } from "node:crypto";
+import { createHash } from "node:crypto";
+import {
+  releaseExpiredReservations,
+  reserveOrder,
+} from "../../../../lib/commerce/inventory";
+import { cryptoOrderId } from "../../../../lib/commerce/crypto";
 import { NextResponse } from "next/server";
-import { isAddress } from "viem";
+import { isAddress, verifyMessage } from "viem";
+import { cryptoAuthorisationMessage } from "../../../../lib/commerce/crypto-message";
 import { validateCheckoutItems } from "../../../../lib/checkout";
 import {
   readCheckoutBody,
@@ -40,6 +46,33 @@ export async function POST(request: Request) {
         { message: "Please connect an Ethereum wallet, or pay by card." },
         { status: 400 },
       );
+    if (
+      typeof body.attemptId !== "string" ||
+      !/^[a-zA-Z0-9-]{16,80}$/.test(body.attemptId) ||
+      !Number.isSafeInteger(body.timestamp) ||
+      Math.abs(Date.now() / 1000 - body.timestamp) > 300 ||
+      typeof body.signature !== "string"
+    )
+      return NextResponse.json(
+        { message: "Please approve a fresh checkout request in your wallet." },
+        { status: 400 },
+      );
+    const authorised = await verifyMessage({
+      address: body.payer,
+      message: cryptoAuthorisationMessage({
+        payer: body.payer,
+        attemptId: body.attemptId,
+        email: customer.email,
+        items: body.items,
+        timestamp: body.timestamp,
+      }),
+      signature: body.signature as `0x${string}`,
+    }).catch(() => false);
+    if (!authorised)
+      return NextResponse.json(
+        { message: "Your wallet signature could not be verified." },
+        { status: 401 },
+      );
     const response = await fetch(
       "https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=gbp",
       { cache: "no-store", signal: AbortSignal.timeout(10000) },
@@ -51,8 +84,18 @@ export async function POST(request: Request) {
     const issuedAt = Math.floor(Date.now() / 1000),
       expiresAt = issuedAt + 1800;
     const wei = BigInt(Math.ceil((validation.total / rate) * 1e18)).toString();
+    if (
+      typeof body.attemptId !== "string" ||
+      !/^[a-zA-Z0-9-]{16,80}$/.test(body.attemptId)
+    )
+      return new Response(null, { status: 400 });
+    const fingerprint = createHash("sha256")
+      .update(
+        JSON.stringify({ items: body.items, customer, payer: body.payer }),
+      )
+      .digest("hex");
     const quote: CryptoQuote = {
-      id: randomUUID(),
+      id: cryptoOrderId(`quote:${body.attemptId}:${fingerprint}`),
       payer: body.payer,
       wallet,
       wei,
@@ -70,6 +113,24 @@ export async function POST(request: Request) {
         fulfillment: i.product.fulfillment,
       })),
     };
+    await releaseExpiredReservations();
+    await reserveOrder(
+      {
+        id: quote.id,
+        customer_email: customer.email,
+        customer_name: `${customer.firstName} ${customer.lastName}`,
+        items: quote.items,
+        total_pence: quote.totalPence,
+        stripe_payment_intent_id: `crypto_quote_${quote.id}`,
+        status: "pending",
+        shipping_address: {
+          ...customer.address,
+          phone: customer.phone,
+          crypto_quote_id: quote.id,
+        },
+      },
+      validation.items,
+    );
     return NextResponse.json(
       {
         quoteToken: signToken(quote, "crypto-quote", 86400),
