@@ -55,6 +55,10 @@ export type Product = {
   cardImagePosition?: string;
   cardImageFit?: ProductImageFit;
   gallery: ProductMedia[];
+  /** Card hover clip (type "video"); cards without one keep the still cross-fade. */
+  hover?: ProductMedia;
+  /** Fabric swatch for the product information column; macro is the zoomed weave. */
+  fabric?: { name: string; swatch: string; macro: string };
   editorialImage?: ProductMedia;
   details: Array<{ label: string; value: string }>;
   variants: ProductVariant[];
@@ -84,6 +88,13 @@ const createOneSizeVariant = (prefix: string, color: string, stock: InventoryCou
 });
 
 const refreshedStillPath = "/assets/generated/product-refresh/stills";
+const hoverMotionPath = "/assets/generated/product-refresh/motion";
+const fabricPath = "/assets/motion/fabric";
+const pennicellaFabric = {
+  noir: { name: "Black Fleck Pennicella", swatch: `${fabricPath}/noir-swatch.jpg`, macro: `${fabricPath}/noir-macro.jpg` },
+  ivory: { name: "Ivory Pennicella", swatch: `${fabricPath}/ivory-swatch.jpg`, macro: `${fabricPath}/ivory-macro.jpg` },
+};
+const hoverClip = (file: string, alt: string) => ({ type: "video" as const, src: `${hoverMotionPath}/${file}`, alt });
 
 type ConceptProductInput = {
   slug: string;
@@ -566,6 +577,8 @@ export const products: Product[] = [
     leadImagePosition: "center top",
     leadImageFit: "cover",
     cardImage: `${refreshedStillPath}/noir-jacket-front.png`,
+    hover: hoverClip("noir-jacket-hover.mp4", "Noir Pennicella Jacket in motion"),
+    fabric: pennicellaFabric.noir,
     cardImagePosition: "center top",
     cardImageFit: "cover",
     gallery: [
@@ -636,6 +649,8 @@ export const products: Product[] = [
     leadImagePosition: "center top",
     leadImageFit: "cover",
     cardImage: `${refreshedStillPath}/noir-trouser-front.png`,
+    hover: hoverClip("noir-trouser-hover.mp4", "Noir Essential Trouser in motion"),
+    fabric: pennicellaFabric.noir,
     cardImagePosition: "center top",
     cardImageFit: "cover",
     gallery: [
@@ -704,6 +719,8 @@ export const products: Product[] = [
     leadImagePosition: "center top",
     leadImageFit: "cover",
     cardImage: `${refreshedStillPath}/ivory-trouser-front.png`,
+    hover: hoverClip("ivory-trouser-hover.mp4", "Ivory Essential Trouser in motion"),
+    fabric: pennicellaFabric.ivory,
     cardImagePosition: "center top",
     cardImageFit: "cover",
     gallery: [
@@ -772,6 +789,8 @@ export const products: Product[] = [
     leadImagePosition: "center top",
     leadImageFit: "cover",
     cardImage: `${refreshedStillPath}/ivory-jacket-front.png`,
+    hover: hoverClip("ivory-jacket-hover.mp4", "Ivory Pennicella Jacket in motion"),
+    fabric: pennicellaFabric.ivory,
     cardImagePosition: "center top",
     cardImageFit: "cover",
     gallery: [

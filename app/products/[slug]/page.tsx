@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 
 import Link from "next/link";
 import { ProductShowcase } from "../../../components/product-showcase";
+import { FabricSwatch } from "../../../components/motion/fabric-swatch";
 import { ProductInlineCart } from "../../../components/product-inline-cart";
 import { formatProductPrice } from "../../../lib/format";
 import { type Product, getProduct, products } from "../../../lib/products";
@@ -143,6 +144,13 @@ export default async function ProductPage({
                 ))}
             </nav>
           </div>
+          {product.fabric ? (
+            <FabricSwatch
+              swatch={product.fabric.swatch}
+              macro={product.fabric.macro}
+              name={product.fabric.name}
+            />
+          ) : null}
           {product.editionNote ? (
             <p className="product-page-edition">{product.editionNote}</p>
           ) : null}

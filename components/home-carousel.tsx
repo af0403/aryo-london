@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { RevealScope } from "./motion/reveal-scope";
+
 export const HomeCarousel = () => (
   <>
     <section className="store-home-hero" aria-labelledby="home-title">
@@ -16,54 +18,61 @@ export const HomeCarousel = () => (
         </p>
       </div>
     </section>
-    <section className="store-home-pair" aria-label="Explore ARYO">
-      <Link href="/collections/men">
-        <img
-          src="/assets/generated/aryo-campaign-noir.jpg"
-          alt="ARYO Pennicella Noir campaign"
-          loading="lazy"
-        />
-        <h2>Shop Men</h2>
-      </Link>
-      <Link href="/collections/women">
-        <img
-          src="/assets/concepts/generated/personal-accessories/silk-headscarf.png"
-          alt="ARYO silk headscarf"
-          loading="lazy"
-        />
-        <h2>Shop Women</h2>
-      </Link>
-    </section>
-    <section className="store-home-feature">
-      <Link href="/campaign">
-        <img
-          src="/assets/generated/luma-pack/wide-collection-still-life.png"
-          alt="Pennicella collection still life"
-          loading="lazy"
-        />
-        <span>
-          <h2>The Pennicella Campaign</h2>
-          <span>Discover the campaign</span>
-        </span>
-      </Link>
-    </section>
-    <section className="store-home-pair" aria-label="From the house">
-      <Link href="/collections/men/headwear">
-        <img
-          src="/assets/beanies/nur-signature-noir/editorial-approved-model.png"
-          alt="Nūr Signature Beanie Noir"
-          loading="lazy"
-        />
-        <h2>Explore Headwear</h2>
-      </Link>
-      <Link href="/collections/home">
-        <img
-          src="/assets/concepts/generated/home/marble-chess-set.png"
-          alt="ARYO marble chess set"
-          loading="lazy"
-        />
-        <h2>Discover Home</h2>
-      </Link>
-    </section>
+    <RevealScope>
+      <section className="store-home-pair" aria-label="Explore ARYO">
+        <Link href="/collections/men">
+          <img
+            src="/assets/generated/aryo-campaign-noir.jpg"
+            alt="ARYO Pennicella Noir campaign"
+            loading="lazy"
+            data-reveal=""
+          />
+          <h2 data-reveal="copy">Shop Men</h2>
+        </Link>
+        <Link href="/collections/women">
+          <img
+            src="/assets/concepts/generated/personal-accessories/silk-headscarf.png"
+            alt="ARYO silk headscarf"
+            loading="lazy"
+            data-reveal=""
+          />
+          <h2 data-reveal="copy">Shop Women</h2>
+        </Link>
+      </section>
+      <section className="store-home-feature">
+        <Link href="/campaign">
+          <img
+            src="/assets/generated/luma-pack/wide-collection-still-life.png"
+            alt="Pennicella collection still life"
+            loading="lazy"
+            data-reveal=""
+          />
+          <span data-reveal="copy">
+            <h2>The Pennicella Campaign</h2>
+            <span>Discover the campaign</span>
+          </span>
+        </Link>
+      </section>
+      <section className="store-home-pair" aria-label="From the house">
+        <Link href="/collections/men/headwear">
+          <img
+            src="/assets/beanies/nur-signature-noir/editorial-approved-model.png"
+            alt="Nūr Signature Beanie Noir"
+            loading="lazy"
+            data-reveal=""
+          />
+          <h2 data-reveal="copy">Explore Headwear</h2>
+        </Link>
+        <Link href="/collections/home">
+          <img
+            src="/assets/concepts/generated/home/marble-chess-set.png"
+            alt="ARYO marble chess set"
+            loading="lazy"
+            data-reveal=""
+          />
+          <h2 data-reveal="copy">Discover Home</h2>
+        </Link>
+      </section>
+    </RevealScope>
   </>
 );

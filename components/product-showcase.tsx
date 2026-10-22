@@ -355,9 +355,6 @@ export const ProductShowcase = ({ product }: { product: Product }) => {
 
               <div className="product-lightbox-shell">
                 <div className="product-lightbox-head">
-                  <p className="product-lightbox-meta">
-                    {activeIndex + 1} / {gallery.length}
-                  </p>
                   <button
                     className="product-lightbox-close"
                     type="button"
@@ -429,10 +426,26 @@ export const ProductShowcase = ({ product }: { product: Product }) => {
                 </div>
 
                 <div className="product-lightbox-foot">
-                  <p>
-                    {media.type === "video"
-                      ? "Tap outside to close."
-                      : "Pinch to zoom. Tap outside to close."}
+                  {gallery.length > 1 ? (
+                    <div className="product-lightbox-nav">
+                      <button
+                        type="button"
+                        aria-label="Previous product image"
+                        onClick={() => nextMedia(-1)}
+                      >
+                        <span aria-hidden="true">‹</span>
+                      </button>
+                      <button
+                        type="button"
+                        aria-label="Next product image"
+                        onClick={() => nextMedia(1)}
+                      >
+                        <span aria-hidden="true">›</span>
+                      </button>
+                    </div>
+                  ) : null}
+                  <p className="product-lightbox-meta" aria-live="polite">
+                    {activeIndex + 1} / {gallery.length}
                   </p>
                 </div>
               </div>
