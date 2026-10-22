@@ -9,6 +9,7 @@ import { SiteSearch } from "../site-search";
 import { CartUI } from "../cart-ui";
 import { Drawer } from "./drawer";
 import { useSaved } from "./store-provider";
+import { useHeaderScroll } from "../motion/use-header-scroll";
 
 const navigation = [
   { label: "Men", slug: "men", href: "/collections/men" },
@@ -102,7 +103,7 @@ export function StoreHeader() {
   const [active, setActive] = useState<string | null>(null);
   const [mobile, setMobile] = useState(false);
   const [mobileView, setMobileView] = useState<string | null>(null);
-  const [scrolled, setScrolled] = useState(false);
+  const { scrolled, hidden } = useHeaderScroll();
   const { saved } = useSaved();
   const close = useCallback(() => {
     setActive(null);
@@ -111,22 +112,18 @@ export function StoreHeader() {
   }, []);
   useEffect(close, [pathname, close]);
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 50);
     const key = (event: KeyboardEvent) => {
       if (event.key === "Escape") close();
     };
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
     document.addEventListener("keydown", key);
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      document.removeEventListener("keydown", key);
-    };
+    return () => document.removeEventListener("keydown", key);
   }, [close]);
+  // Transparent inverse header only over the campaign-style heroes; product and
+  // every other page keep the solid paper header.
   const hero =
     pathname === "/" || pathname === "/campaign" || pathname === "/collections";
-  const product = pathname.startsWith("/products/");
-  const overlay = (hero || product) && !scrolled && !active && !mobile;
+  const overlay = hero && !scrolled && !active && !mobile;
+  const hide = hidden && !active && !mobile;
   const department = departmentNavigation.find((d) => d.slug === mobileView);
   return (
     <>
@@ -137,7 +134,7 @@ export function StoreHeader() {
         Complimentary worldwide shipping on all orders
       </div>
       <header
-        className={`house-header ${overlay ? "is-overlay" : ""} ${overlay && hero ? "is-inverse" : ""} ${active ? "has-menu" : ""} ${mobile ? "is-mobile-open" : ""}`}
+        className={`house-header ${overlay ? "is-overlay is-inverse" : ""} ${scrolled ? "is-scrolled" : ""} ${hide ? "is-hidden" : ""} ${active ? "has-menu" : ""} ${mobile ? "is-mobile-open" : ""}`}
         onMouseLeave={() => setActive(null)}
         onBlur={(e) => {
           if (!e.currentTarget.contains(e.relatedTarget)) setActive(null);

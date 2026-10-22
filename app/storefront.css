@@ -102,7 +102,12 @@ button {
   color: #000;
   transition:
     background 200ms ease,
-    color 200ms ease;
+    color 200ms ease,
+    transform 300ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+/* Scroll down: the header slides away; any scroll up brings it back, solid. */
+.house-header.is-hidden {
+  transform: translate3d(0, -100%, 0);
 }
 .house-header.is-overlay {
   background: transparent;
@@ -214,7 +219,7 @@ body:has(.home-main) .house-header.has-menu {
 .house-mega {
   padding: 22px 30px 16px;
   min-height: 350px;
-  animation: store-enter 180ms ease;
+  animation: store-enter 400ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 .house-mega-columns {
   display: grid;
@@ -248,6 +253,7 @@ body:has(.home-main) .house-header.has-menu {
   background: #0005;
   backdrop-filter: blur(3px);
   z-index: 100;
+  animation: store-enter 500ms ease;
 }
 .store-overlay {
   position: fixed;
@@ -259,7 +265,14 @@ body:has(.home-main) .house-header.has-menu {
   inset: 0;
   border: 0;
   background: #0004;
-  animation: store-enter 180ms ease;
+  animation: store-enter 500ms ease;
+  transition: opacity 500ms ease;
+}
+.store-overlay.is-closing {
+  pointer-events: none;
+}
+.store-overlay.is-closing .store-scrim {
+  opacity: 0;
 }
 .store-drawer {
   position: absolute;
@@ -275,11 +288,25 @@ body:has(.home-main) .house-header.has-menu {
 }
 .store-drawer-right {
   right: 0;
-  animation: store-slide-right 250ms ease;
+  animation: store-slide-right 400ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 .store-drawer-left {
   left: 0;
-  animation: store-slide-left 250ms ease;
+  animation: store-slide-left 400ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.store-drawer {
+  transition:
+    transform 400ms cubic-bezier(0.22, 1, 0.36, 1),
+    visibility 0s linear 400ms;
+}
+.store-overlay.is-closing .store-drawer {
+  visibility: hidden;
+}
+.store-overlay.is-closing .store-drawer-right {
+  transform: translateX(100%);
+}
+.store-overlay.is-closing .store-drawer-left {
+  transform: translateX(-100%);
 }
 .store-drawer-head {
   display: flex;
@@ -2445,3 +2472,243 @@ body:has(.home-main) .house-header.has-menu {
 .receipt-help,.checkout-terms { font-size:12px;line-height:1.6;margin-top:24px;color:#666; }
 .receipt-help a,.checkout-terms a { text-decoration:underline; }
 @media print { .house-header,.house-announcement,.house-footer,.site-chat-button,.success-links,.receipt-help { display:none!important; } body { padding:0!important;background:#fff!important; } .store-receipt { padding:20px!important; } .success-inner { max-width:100%!important; } }
+
+/* ---------------------------------------------------------------------------
+   Motion pass (reference timings): media reveal, hero video, card hover clips,
+   zoom modal, fabric swatch, script mark. All honour prefers-reduced-motion.
+   --------------------------------------------------------------------------- */
+:root {
+  --motion-ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+/* Media reveal: opacity 0.7 s, scale 1.04 -> 1 over 1.2 s, once in view and loaded.
+   Only inside a reveal scope, so media without an observer always renders. */
+[data-reveal-scope] [data-reveal] {
+  transition:
+    opacity 700ms var(--motion-ease),
+    transform 1200ms var(--motion-ease);
+}
+[data-reveal-scope] img[data-reveal],
+[data-reveal-scope] video[data-reveal] {
+  opacity: 0;
+  transform: scale(1.04);
+}
+[data-reveal-scope] img[data-reveal].is-loaded,
+[data-reveal-scope] video[data-reveal].is-loaded {
+  opacity: 1;
+  transform: scale(1);
+}
+/* Overlaid copy fades up 10 px, 0.7 s after the media starts. */
+[data-reveal-scope] [data-reveal="copy"] {
+  opacity: 0;
+  transform: translateY(10px);
+  transition:
+    opacity 700ms var(--motion-ease) 700ms,
+    transform 700ms var(--motion-ease) 700ms;
+}
+[data-reveal-scope] [data-reveal="copy"].is-loaded {
+  opacity: 1;
+  transform: translateY(0);
+}
+.store-card-media img[data-reveal] {
+  transition:
+    opacity 700ms var(--motion-ease),
+    transform 1200ms var(--motion-ease);
+}
+.store-home-pair a:hover img[data-reveal].is-loaded {
+  transform: scale(1.015);
+  transition:
+    opacity 700ms var(--motion-ease),
+    transform 600ms ease;
+}
+/* Card hover clip: plays on hover (pointer) or in view (touch); the still stays under it. */
+.store-card-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 300ms ease;
+}
+.store-card-video.is-playing {
+  opacity: 1;
+}
+/* Zoom modal: paper, full-height slides, round arrows and counter bottom-left. */
+.product-lightbox-shell {
+  padding: 0;
+  grid-template-rows: 0 minmax(0, 1fr) 0;
+}
+.product-lightbox-head {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 2;
+}
+.product-lightbox-close {
+  width: 44px;
+  height: 44px;
+  border: 0;
+  background: transparent;
+  color: #000;
+}
+.product-lightbox-stage {
+  height: 100dvh;
+  animation: store-enter 400ms var(--motion-ease);
+}
+.product-lightbox-stage.is-video {
+  height: 100dvh;
+}
+.product-lightbox-media,
+.product-lightbox-video {
+  height: 100%;
+  background: transparent;
+}
+.product-lightbox-foot {
+  position: absolute;
+  left: 20px;
+  bottom: 20px;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.product-lightbox-nav {
+  display: flex;
+  gap: 8px;
+}
+.product-lightbox-nav button {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border: 1px solid #000;
+  border-radius: 50%;
+  background: var(--store-paper);
+  color: #000;
+  font-size: 22px;
+  line-height: 1;
+  padding: 0 0 2px;
+  transition:
+    background 160ms ease,
+    color 160ms ease;
+}
+.product-lightbox-nav button:hover {
+  background: #000;
+  color: var(--store-paper);
+}
+.product-lightbox-foot .product-lightbox-meta {
+  margin: 0;
+  font-size: 14px;
+  letter-spacing: 0;
+  text-transform: none;
+  color: #000;
+}
+/* Fabric swatch beside the colour swatches: Helvetica 14 px, square, paper. */
+.fabric-swatch {
+  display: grid;
+  grid-template-columns: 72px 1fr;
+  gap: 16px;
+  align-items: center;
+  margin: 20px 0 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  font: inherit;
+  font-size: 14px;
+  color: #000;
+  cursor: zoom-in;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  touch-action: none;
+}
+.fabric-swatch-frame {
+  position: relative;
+  aspect-ratio: 1;
+  overflow: hidden;
+  background: var(--store-paper);
+  border: 1px solid var(--store-line);
+}
+.fabric-swatch-frame img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transform-origin: 50% 50%;
+  transition:
+    transform 1200ms var(--motion-ease),
+    opacity 1200ms var(--motion-ease);
+}
+.fabric-swatch-frame img.is-macro {
+  opacity: 0;
+}
+.fabric-swatch:is(:hover, :focus-visible, .is-held) .fabric-swatch-frame img.is-base {
+  transform: scale(2.4);
+}
+.fabric-swatch:is(:hover, :focus-visible, .is-held) .fabric-swatch-frame img.is-macro {
+  opacity: 1;
+  transform: scale(1.08);
+}
+.fabric-swatch-copy {
+  display: grid;
+  gap: 4px;
+  font-size: 14px;
+  line-height: 1.2;
+}
+.fabric-swatch-copy > span:first-child {
+  font-size: 12px;
+  text-transform: uppercase;
+}
+/* Script mark: آریو drawn right-to-left once per session on /story and /order-confirmed. */
+.script-mark {
+  display: block;
+  height: 56px;
+  width: auto;
+  aspect-ratio: 141.26 / 107.42;
+  overflow: visible;
+  color: #000;
+  margin: 0 0 28px;
+}
+.script-mark path {
+  fill: currentColor;
+}
+.script-mark-glyphs {
+  clip-path: inset(0 0 0 100%);
+}
+.script-mark.is-settled .script-mark-glyphs {
+  clip-path: none;
+}
+.success-inner .script-mark {
+  margin: 0 auto 28px;
+}
+@media (max-width: 768px) {
+  .product-lightbox-foot {
+    left: 16px;
+    bottom: calc(16px + var(--safe-area-bottom, 0px));
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal-scope] [data-reveal],
+  [data-reveal-scope] [data-reveal="copy"] {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+  .house-header.is-hidden {
+    transform: none;
+  }
+  .store-card-video {
+    display: none;
+  }
+  .fabric-swatch-frame img {
+    transition: none;
+  }
+  .script-mark-glyphs {
+    clip-path: none;
+  }
+}
