@@ -21,7 +21,7 @@ export const auth = betterAuth({
   baseURL: process.env.BETTER_AUTH_URL || SITE_ORIGIN,
   secret: process.env.BETTER_AUTH_SECRET,
   database: process.env.DATABASE_URL ? commercePool() : undefined,
-  trustedOrigins: [SITE_ORIGIN],
+  trustedOrigins: [SITE_ORIGIN, "https://www.aryo.london"],
   emailAndPassword: {
     enabled: true,
     requireEmailVerification: true,
