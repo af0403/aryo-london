@@ -8,7 +8,7 @@ import type { Stripe, StripeCardElement } from "@stripe/stripe-js";
 import { formatPrice } from "../../lib/format";
 import { getProduct } from "../../lib/products";
 import { stripePromise, stripeEnabled } from "../../lib/stripe-client";
-import { createClient, isSupabaseConfigured } from "../../lib/supabase/client";
+import { authClient } from "../../lib/auth-client";
 import { useCart } from "../../components/cart-provider";
 import { CryptoCheckout } from "../../components/crypto-checkout";
 import { isWalletConnectConfigured } from "../../lib/payment-config";
@@ -51,9 +51,14 @@ export default function CheckoutPage() {
   const attemptRef = useRef<string>("");
 
   const [stripeReady, setStripeReady] = useState(false);
-  const [checkoutAvailable, setCheckoutAvailable] = useState(false);
+  const [checkoutAvailable, setCheckoutAvailable] = useState<boolean | null>(
+    null,
+  );
   useEffect(() => {
-    fetch("/api/checkout/status", { cache: "no-store" })
+    fetch("/api/checkout/status", {
+      cache: "no-store",
+      signal: AbortSignal.timeout(10000),
+    })
       .then((r) => r.json())
       .then((d) => setCheckoutAvailable(d.available === true))
       .catch(() => setCheckoutAvailable(false));
@@ -88,18 +93,17 @@ export default function CheckoutPage() {
     setMounted(true);
   }, []);
 
-  // Pre-fill email from Supabase session
+  // Signed-in customers can still use the same guest checkout form.
   useEffect(() => {
-    if (!isSupabaseConfigured) return;
-    const supabase = createClient();
-    supabase.auth
+    authClient
       .getSession()
       .then(({ data }) => {
-        const u = data.session?.user;
-        if (!u) return;
-        setEmail(u.email ?? "");
-        const fn = u.user_metadata?.first_name as string | undefined;
-        if (fn) setFirstName(fn);
+        const user = data?.user;
+        if (!user) return;
+        setEmail(user.email);
+        const [first, ...last] = user.name.split(" ");
+        setFirstName(first || "");
+        setLastName(last.join(" "));
       })
       .catch(() => null);
   }, []);
@@ -683,7 +687,11 @@ export default function CheckoutPage() {
           {/* Card payment */}
           {paymentMethod === "card" && (
             <>
-              {!stripeEnabled || !checkoutAvailable ? (
+              {checkoutAvailable === null ? (
+                <p className="checkout-stripe-loading" role="status">
+                  Preparing secure checkout…
+                </p>
+              ) : !stripeEnabled || !checkoutAvailable ? (
                 <div className="checkout-notice">
                   <p>
                     Checkout is temporarily unavailable. For order enquiries,
