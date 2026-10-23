@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { RevealScope } from "./motion/reveal-scope";
 
 export const HomeCarousel = () => (
@@ -29,14 +30,19 @@ export const HomeCarousel = () => (
           />
           <h2 data-reveal="copy">Shop Men</h2>
         </Link>
-        <Link href="/collections/women">
-          <img
-            src="/assets/concepts/generated/personal-accessories/silk-headscarf.png"
-            alt="ARYO silk headscarf"
-            loading="lazy"
+        <Link
+          href="/products/structure-jacket-ivory"
+          className="store-home-panel-light"
+        >
+          <Image
+            src="/assets/generated/product-refresh/stills/ivory-jacket-front.png"
+            alt="Ivory Pennicella Jacket against pale stone"
+            fill
+            sizes="(max-width: 820px) 100vw, 50vw"
+            quality={85}
             data-reveal=""
           />
-          <h2 data-reveal="copy">Shop Women</h2>
+          <h2 data-reveal="copy">Pennicella in Ivory</h2>
         </Link>
       </section>
       <section className="store-home-feature">
@@ -62,14 +68,16 @@ export const HomeCarousel = () => (
           />
           <h2 data-reveal="copy">Explore Headwear</h2>
         </Link>
-        <Link href="/collections/home">
-          <img
-            src="/assets/concepts/generated/home/marble-chess-set.png"
-            alt="ARYO marble chess set"
-            loading="lazy"
+        <Link href="/products/structure-jacket-noir">
+          <Image
+            src="/assets/generated/product-refresh/stills/noir-jacket-detail.png"
+            alt="Noir Pennicella Jacket fabric, collar and silver hardware detail"
+            fill
+            sizes="(max-width: 820px) 100vw, 50vw"
+            quality={85}
             data-reveal=""
           />
-          <h2 data-reveal="copy">Discover Home</h2>
+          <h2 data-reveal="copy">The Pennicella Jacket</h2>
         </Link>
       </section>
     </RevealScope>

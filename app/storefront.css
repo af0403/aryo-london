@@ -3370,3 +3370,7 @@ body:has(.home-main) .house-header.has-menu {
   /* The portrait starts at y=282 in the 1402×1122 source. */
   background-size: auto 133.571429%;
 }
+
+.store-home-pair .store-home-panel-light h2 {
+  color: #111;
+}
