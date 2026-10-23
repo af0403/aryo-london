@@ -3358,3 +3358,15 @@ body:has(.home-main) .house-header.has-menu {
     max-height: none;
   }
 }
+
+/* Show only the model panel from the approved Gozar editorial composite. */
+.store-headwear-portrait {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background-image: url("/assets/beanies/gozar-aryo-noir/editorial-approved-model.png");
+  background-repeat: no-repeat;
+  background-position: right bottom;
+  /* The portrait starts at y=282 in the 1402×1122 source. */
+  background-size: auto 133.571429%;
+}

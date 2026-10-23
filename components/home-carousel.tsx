@@ -55,11 +55,10 @@ export const HomeCarousel = () => (
       </section>
       <section className="store-home-pair" aria-label="From the house">
         <Link href="/collections/men/headwear">
-          <img
-            src="/assets/beanies/nur-signature-noir/editorial-approved-model.png"
-            alt="Nūr Signature Beanie Noir"
-            loading="lazy"
-            data-reveal=""
+          <span
+            className="store-headwear-portrait"
+            role="img"
+            aria-label="Model wearing the black Gozar beanie with blurred ARYO lettering"
           />
           <h2 data-reveal="copy">Explore Headwear</h2>
         </Link>
