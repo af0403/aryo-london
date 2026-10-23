@@ -9,10 +9,16 @@ export const metadata = createPageMetadata({
 
 export default function StoryPage() {
   return (
-    <main className="section">
+    <main className="section store-story">
+      <figure className="store-story-media">
+        <img
+          src="/assets/generated/luma-pack/wide-collection-still-life.png"
+          alt="The Pennicella collection by ARYO"
+        />
+      </figure>
       <div className="page-intro">
         <p className="eyebrow">About ARYO</p>
-        <h1 className="page-title">The House</h1>
+        <h1 className="page-title">The ARYO story</h1>
         <p>
           ARYO is a London-based house built on the belief that considered
           design outlasts the cycle. Every piece is conceived as a limited
@@ -26,6 +32,9 @@ export default function StoryPage() {
           to work: fewer pieces, more attention paid to each one.
         </p>
         <p>ARYO is made in London. The next chapter builds from here.</p>
+        <a className="store-text-link" href="/collections/pennicella">
+          Discover Pennicella
+        </a>
       </div>
     </main>
   );

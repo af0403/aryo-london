@@ -1,3 +1,4 @@
+import { ServiceNav } from "../../components/storefront/service-nav";
 import { createPageMetadata } from "../../lib/seo";
 
 export const metadata = createPageMetadata({
@@ -10,11 +11,15 @@ export const metadata = createPageMetadata({
 export default function ReturnsPage() {
   return (
     <main className="section info-page">
+      <ServiceNav />
       <div className="page-intro">
         <p className="eyebrow">Returns</p>
-        <h1 className="page-title">Returns for pieces kept in original condition.</h1>
+        <h1 className="page-title">
+          Returns for pieces kept in original condition.
+        </h1>
         <p>
-          Returns are accepted within 14 days of delivery, provided the piece is returned in original unworn condition.
+          Returns are accepted within 14 days of delivery, provided the piece is
+          returned in original unworn condition.
         </p>
       </div>
 
@@ -24,8 +29,13 @@ export default function ReturnsPage() {
           <h2>Original condition matters.</h2>
           <ul className="info-list">
             <li>Pieces must be returned unworn and undamaged.</li>
-            <li>Items that arrive marked, altered, or damaged will not be accepted.</li>
-            <li>Original presentation and packaging should be kept where possible.</li>
+            <li>
+              Items that arrive marked, altered, or damaged will not be
+              accepted.
+            </li>
+            <li>
+              Original presentation and packaging should be kept where possible.
+            </li>
           </ul>
         </article>
 
@@ -34,8 +44,14 @@ export default function ReturnsPage() {
           <h2>Returns are handled directly.</h2>
           <ul className="info-list">
             <li>You have 14 days from delivery to request a return.</li>
-            <li>Email <a href="mailto:support@aryo.london">support@aryo.london</a> with your order reference to begin the process.</li>
-            <li>Refunds are processed once the returned piece is received and inspected.</li>
+            <li>
+              Email <a href="mailto:support@aryo.london">support@aryo.london</a>{" "}
+              with your order reference to begin the process.
+            </li>
+            <li>
+              Refunds are processed once the returned piece is received and
+              inspected.
+            </li>
           </ul>
         </article>
       </div>

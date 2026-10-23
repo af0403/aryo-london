@@ -6,7 +6,7 @@
     "build": "next build",
     "start": "next start",
     "typecheck": "tsc --noEmit",
-    "test:commerce": "node --test tests/commerce.test.cjs"
+    "test:commerce": "node --test tests/commerce.test.cjs tests/neon.test.cjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.91.1",
@@ -19,7 +19,8 @@
     "@wagmi/core": "^2.22.1",
     "@web3modal/wagmi": "^5.1.11",
     "clsx": "^2.1.1",
-    "next": "^15.0.0",
+    "next": "^15.5.28",
+    "pg": "^8.23.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "resend": "^6.12.2",
@@ -29,6 +30,7 @@
   },
   "devDependencies": {
     "@types/node": "^22.10.1",
+    "@types/pg": "^8.23.1",
     "@types/react": "^19.0.2",
     "@types/react-dom": "^19.0.2",
     "typescript": "^5.7.2"

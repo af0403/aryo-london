@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
+import { useModal } from "./storefront/use-modal";
 import { CloseIcon } from "./site-icons";
 
 type Message = {
@@ -18,11 +19,9 @@ export const SiteChatButton = () => {
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
-  useEffect(() => {
-    if (open) {
-      setTimeout(() => inputRef.current?.focus({ preventScroll: true }), 80);
-    }
-  }, [open]);
+  const panelRef = useRef<HTMLDivElement>(null);
+  const close = useCallback(() => setOpen(false), []);
+  useModal(open, close, panelRef);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -35,8 +34,14 @@ export const SiteChatButton = () => {
     const text = input.trim();
     if (!text || streaming) return;
 
-    const conversation: Message[] = [...messages, { role: "user", content: text }];
-    setMessages([...conversation, { role: "assistant", content: "", pending: true }]);
+    const conversation: Message[] = [
+      ...messages,
+      { role: "user", content: text },
+    ];
+    setMessages([
+      ...conversation,
+      { role: "assistant", content: "", pending: true },
+    ]);
     setInput("");
     setStreaming(true);
 
@@ -45,7 +50,10 @@ export const SiteChatButton = () => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          messages: conversation.map(({ role, content }) => ({ role, content })),
+          messages: conversation.map(({ role, content }) => ({
+            role,
+            content,
+          })),
         }),
       });
 
@@ -61,7 +69,11 @@ export const SiteChatButton = () => {
         reply += decoder.decode(value, { stream: true });
         setMessages((prev) => {
           const next = [...prev];
-          next[next.length - 1] = { role: "assistant", content: reply, pending: false };
+          next[next.length - 1] = {
+            role: "assistant",
+            content: reply,
+            pending: false,
+          };
           return next;
         });
       }
@@ -99,21 +111,34 @@ export const SiteChatButton = () => {
   return (
     <div className={`client-services-widget ${open ? "is-open" : ""}`}>
       {open ? (
-        <div className="client-services-panel chat-panel" role="dialog" aria-label="Client services">
+        <div
+          ref={panelRef}
+          id="client-services-chat"
+          className="client-services-panel chat-panel"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Client services"
+        >
           <div className="client-services-head">
             <div>
               <p className="eyebrow">ARYO</p>
               <strong>Client Services</strong>
             </div>
-            <button className="icon-button" type="button" onClick={() => setOpen(false)} aria-label="Close chat">
+            <button
+              className="icon-button"
+              type="button"
+              onClick={() => setOpen(false)}
+              aria-label="Close chat"
+            >
               <CloseIcon className="site-icon" />
             </button>
           </div>
 
-          <div className="chat-messages">
+          <div className="chat-messages" role="log" aria-label="Conversation">
             {messages.length === 0 ? (
               <p className="chat-welcome">
-                Ask about sizing, shipping, returns, or the Pennicella collection.
+                Ask about sizing, shipping, returns, or the Pennicella
+                collection.
               </p>
             ) : (
               messages.map((msg, i) => (
@@ -122,7 +147,11 @@ export const SiteChatButton = () => {
                   className={`chat-bubble ${msg.role === "user" ? "chat-bubble-user" : "chat-bubble-assistant"} ${msg.pending ? "is-thinking" : ""}`}
                 >
                   {msg.pending ? (
-                    <span className="chat-typing-dots" role="status" aria-label="Assistant is thinking">
+                    <span
+                      className="chat-typing-dots"
+                      role="status"
+                      aria-label="Assistant is thinking"
+                    >
                       <span className="chat-typing-dot" />
                       <span className="chat-typing-dot" />
                       <span className="chat-typing-dot" />
@@ -139,6 +168,8 @@ export const SiteChatButton = () => {
           <div className="chat-input-row">
             <textarea
               ref={inputRef}
+              data-autofocus
+              aria-label="Your message"
               className="chat-input"
               rows={1}
               placeholder="Type a message…"
@@ -164,7 +195,11 @@ export const SiteChatButton = () => {
         className="client-services-trigger"
         type="button"
         onClick={() => setOpen((v) => !v)}
-        aria-label="Open client services chat"
+        aria-label={
+          open ? "Close client services chat" : "Open client services chat"
+        }
+        aria-expanded={open}
+        aria-controls="client-services-chat"
       >
         <span>AF</span>
       </button>

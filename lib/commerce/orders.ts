@@ -1,3 +1,4 @@
+import { neonOrderDatabase } from "./neon";
 import { createClient } from "@supabase/supabase-js";
 import type Stripe from "stripe";
 import { stripe } from "../stripe";
@@ -24,6 +25,7 @@ export type OrderRecord = {
   shipping_address: Record<string, string> | null;
 };
 export function orderDatabase() {
+  if (process.env.DATABASE_URL) return neonOrderDatabase();
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL,
     key = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!url || !key)

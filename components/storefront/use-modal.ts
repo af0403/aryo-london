@@ -1,6 +1,8 @@
 "use client";
 import { useEffect, type RefObject } from "react";
 
+let locks = 0;
+let restoreBody: (() => void) | undefined;
 export function useModal(
   open: boolean,
   close: () => void,
@@ -9,8 +11,28 @@ export function useModal(
   useEffect(() => {
     if (!open) return;
     const previous = document.activeElement as HTMLElement | null;
-    const overflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
+    if (locks++ === 0) {
+      const body = document.body,
+        y = window.scrollY;
+      const previous = {
+        position: body.style.position,
+        top: body.style.top,
+        width: body.style.width,
+        overflow: body.style.overflow,
+        paddingRight: body.style.paddingRight,
+      };
+      const scrollbar =
+        window.innerWidth - document.documentElement.clientWidth;
+      body.style.position = "fixed";
+      body.style.top = `-${y}px`;
+      body.style.width = "100%";
+      body.style.overflow = "hidden";
+      if (scrollbar > 0) body.style.paddingRight = `${scrollbar}px`;
+      restoreBody = () => {
+        Object.assign(body.style, previous);
+        window.scrollTo({ top: y, behavior: "instant" });
+      };
+    }
     const focusable = () =>
       Array.from(
         ref.current?.querySelectorAll<HTMLElement>(
@@ -56,9 +78,12 @@ export function useModal(
     document.addEventListener("keydown", key);
     return () => {
       cancelAnimationFrame(frame);
-      document.body.style.overflow = overflow;
+      if (--locks === 0) {
+        restoreBody?.();
+        restoreBody = undefined;
+      }
       document.removeEventListener("keydown", key);
-      previous?.focus();
+      if (previous?.isConnected) previous.focus({ preventScroll: true });
     };
   }, [open, close, ref]);
 }

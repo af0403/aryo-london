@@ -1,5 +1,7 @@
 "use client";
 
+import { ServiceNav } from "../../components/storefront/service-nav";
+
 import { useState } from "react";
 
 export default function ContactPage() {
@@ -31,6 +33,7 @@ export default function ContactPage() {
 
   return (
     <main className="section info-page store-contact">
+      <ServiceNav />
       <div className="page-intro">
         <p className="eyebrow">Contact</p>
         <h1 className="page-title">Contact Us</h1>
@@ -131,7 +134,9 @@ export default function ContactPage() {
           <p className="eyebrow">Direct support</p>
           <h2>Get in touch.</h2>
           <p>
-            Email client services at <a href="mailto:support@aryo.london">support@aryo.london</a>, or message us on Instagram{" "}
+            Email client services at{" "}
+            <a href="mailto:support@aryo.london">support@aryo.london</a>, or
+            message us on Instagram{" "}
             <a
               href="https://instagram.com/aryolondon"
               target="_blank"

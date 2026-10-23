@@ -1,3 +1,4 @@
+import { ServiceNav } from "../../components/storefront/service-nav";
 import { createPageMetadata } from "../../lib/seo";
 
 export const metadata = createPageMetadata({
@@ -46,6 +47,7 @@ export default function FAQsPage() {
 
   return (
     <main className="section">
+      <ServiceNav />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}

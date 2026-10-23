@@ -227,6 +227,9 @@ export function StoreHeader() {
             <Link href="/account" onClick={close}>
               Log in / Create an account
             </Link>
+            <Link href="/wishlist" onClick={close}>
+              Saved items{saved.length ? ` (${saved.length})` : ""}
+            </Link>
             <span>United Kingdom / English</span>
           </>
         }

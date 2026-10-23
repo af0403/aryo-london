@@ -1,0 +1,40 @@
+const { test } = require('node:test');
+const assert = require('node:assert/strict');
+const Module = require('node:module');
+const ts = require('typescript');
+const fs = require('node:fs');
+Module._extensions['.ts'] = (module,file) => module._compile(ts.transpileModule(fs.readFileSync(file,'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText,file);
+const queries=[];
+let settings;
+const original=Module._load;
+Module._load=function(name,...args) {if(name==='pg')return {Pool: class {constructor(options){settings=options;} async query(sql,values){queries.push({sql,values});return {rows:[{id:'order-id'}]};}}};return original.call(this,name,...args);};
+process.env.DATABASE_URL='postgresql://user:password@example.invalid/db?sslmode=require';
+const {neonOrderDatabase}=require('../lib/commerce/neon.ts');
+Module._load=original;
+test('Neon order queries bind customer input and require verified TLS', async()=>{
+ const attack="buyer@example.test' OR true --";
+ const result=await neonOrderDatabase().from('customer_orders').select('id,status').eq('customer_email',attack).in('status',['paid','fulfilled']).order('created_at',{ascending:false}).limit(100);
+ assert.equal(result.error,null);
+ const query=queries.at(-1);
+ assert.ok(!query.sql.includes(attack));
+ assert.deepEqual(query.values,[attack,['paid','fulfilled']]);
+ assert.deepEqual(settings.ssl,{rejectUnauthorized:true});
+ assert.ok(!settings.connectionString.includes('sslmode'));
+});
+test('Neon adapter rejects unsafe identifiers and unfiltered order writes',async()=>{
+ assert.throws(()=>neonOrderDatabase().from('other_table'));
+ assert.throws(()=>neonOrderDatabase().from('customer_orders').select('id; DELETE FROM customer_orders'));
+ assert.throws(()=>neonOrderDatabase().from('customer_orders').limit(-1));
+ const count=queries.length;
+ const result=await neonOrderDatabase().from('customer_orders').update({status:'cancelled'});
+ assert.ok(result.error);
+ assert.equal(queries.length,count);
+});
+test('Neon stock reservation uses only the atomic database function with bound JSON',async()=>{
+ const record={id:'test',customer_email:'buyer@example.test'};
+ const limits=[{slug:'piece',size:'M',stock:1}];
+ const result=await neonOrderDatabase().rpc('create_store_order',{order_data:record,stock_limits:limits});
+ assert.equal(result.error,null);
+ assert.equal(queries.at(-1).sql,'SELECT public.create_store_order($1::jsonb,$2::jsonb)');
+ assert.deepEqual(queries.at(-1).values,[JSON.stringify(record),JSON.stringify(limits)]);
+});

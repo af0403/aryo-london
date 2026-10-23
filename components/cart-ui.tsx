@@ -57,7 +57,7 @@ export const CartUI = () => {
                 <span>{formatPrice(total)} GBP</span>
               </div>
               <p>
-                Complimentary worldwide shipping. Taxes calculated at checkout.
+                Complimentary worldwide shipping. International duties may apply.
               </p>
               <Link className="store-button" href="/checkout" onClick={close}>
                 Checkout

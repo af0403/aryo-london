@@ -49,3 +49,11 @@ The email preview and disabled checkout were checked at mobile and desktop width
 - Stripe webhooks: https://docs.stripe.com/webhooks
 
 The presentation uses clear order stages, itemised details and consistent client-services links observed in those public references. No AMIRI or Louis Vuitton customer emails were obtained through a purchase or copied, and ARYO's existing delivery/returns terms were retained.
+
+## 23 October — Neon and mobile refinement
+
+Neon Free resource `neon-aquamarine-ridge` (`wandering-cake-96617554`) is connected to the ARYO Vercel project for production and preview. Vercel lists DATABASE_URL and the integration's other database settings. The Neon console currently requires account email verification. Sensitive production variables cannot be pulled with Vercel CLI, so no live SQL migration or connection test has yet been performed.
+
+`database/neon-orders.sql` prepares the existing order/reservation schema for ordinary PostgreSQL without Supabase-specific roles. The order repository selects Neon when DATABASE_URL exists, uses verified TLS and parameterised queries, and restricts operations to the customer_orders table and atomic stock function. It retains the previous Supabase fallback. Checkout remains explicitly disabled until schema migration and live integration checks pass. Existing Supabase customer authentication is still pending migration; Neon database connection alone does not restore accounts or old data.
+
+Visual updates: mobile size sheet, larger touch targets, nested modal body scroll restoration, accessible chat focus, narrow size-guide layout, shared client-service navigation, stronger story/campaign layouts and consistent form/button spacing. Next patched to 15.5.28. Automated commerce checks now include restricted Neon SQL construction; these mock provider connections and do not establish live payment readiness.

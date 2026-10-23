@@ -1,3 +1,4 @@
+import { ServiceNav } from "../../components/storefront/service-nav";
 import { createPageMetadata } from "../../lib/seo";
 
 export const metadata = createPageMetadata({
@@ -10,11 +11,13 @@ export const metadata = createPageMetadata({
 export default function ShippingPage() {
   return (
     <main className="section info-page">
+      <ServiceNav />
       <div className="page-intro">
         <p className="eyebrow">Shipping</p>
         <h1 className="page-title">Worldwide shipping, everywhere.</h1>
         <p>
-          ARYO ships internationally. Complimentary worldwide shipping is included on all Pennicella pieces.
+          ARYO ships internationally. Complimentary worldwide shipping is
+          included on all Pennicella pieces.
         </p>
       </div>
 
@@ -24,8 +27,13 @@ export default function ShippingPage() {
           <h2>Global release.</h2>
           <ul className="info-list">
             <li>All orders ship worldwide from London.</li>
-            <li>International customers may be responsible for local duties or taxes depending on destination.</li>
-            <li>Tracking details are issued once your order has been dispatched.</li>
+            <li>
+              International customers may be responsible for local duties or
+              taxes depending on destination.
+            </li>
+            <li>
+              Tracking details are issued once your order has been dispatched.
+            </li>
           </ul>
         </article>
 
@@ -34,8 +42,14 @@ export default function ShippingPage() {
           <h2>Dispatch timing.</h2>
           <ul className="info-list">
             <li>Stocked pieces dispatch within 3 to 5 business days.</li>
-            <li>The Ivory Pennicella Jacket is made to order and carries an estimated 3 week lead time before dispatch.</li>
-            <li>You will receive tracking information by email once your order has been dispatched.</li>
+            <li>
+              The Ivory Pennicella Jacket is made to order and carries an
+              estimated 3 week lead time before dispatch.
+            </li>
+            <li>
+              You will receive tracking information by email once your order has
+              been dispatched.
+            </li>
           </ul>
         </article>
       </div>
