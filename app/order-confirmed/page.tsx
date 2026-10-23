@@ -11,6 +11,7 @@ import {
   type OrderRecord,
 } from "../../lib/commerce/orders";
 import { PrintReceipt } from "../../components/storefront/print-receipt";
+import { ScriptMark } from "../../components/motion/script-mark";
 export const metadata = {
   ...createNoIndexMetadata({
     title: "Your Order",
@@ -82,6 +83,7 @@ export default async function OrderConfirmedPage({
   return (
     <main className="success-page store-receipt">
       <div className="success-inner">
+        <ScriptMark className="page-script-mark" />
         <p className="eyebrow">
           {refunded
             ? "Order refunded"

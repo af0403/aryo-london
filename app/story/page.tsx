@@ -1,4 +1,5 @@
 import { createPageMetadata } from "../../lib/seo";
+import { ScriptMark } from "../../components/motion/script-mark";
 
 export const metadata = createPageMetadata({
   title: "Story",
@@ -17,6 +18,7 @@ export default function StoryPage() {
         />
       </figure>
       <div className="page-intro">
+        <ScriptMark className="page-script-mark" />
         <p className="eyebrow">About ARYO</p>
         <h1 className="page-title">The ARYO story</h1>
         <p>

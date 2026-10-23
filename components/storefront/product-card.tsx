@@ -9,6 +9,8 @@ import {
 import { formatProductPrice } from "../../lib/format";
 import { BookmarkIcon } from "../site-icons";
 import { useSaved } from "./store-provider";
+import { useState } from "react";
+import { CardHoverVideo } from "../motion/card-hover-video";
 export function StoreProductCard({
   product,
   priority = false,
@@ -17,6 +19,9 @@ export function StoreProductCard({
   priority?: boolean;
 }) {
   const { saved, toggle } = useSaved();
+  const [hovered, setHovered] = useState(false);
+  const hoverVideo =
+    product.hover?.type === "video" ? product.hover.src : null;
   const alternate =
     product.gallery
       .filter((x) => x.type !== "video")
@@ -29,9 +34,11 @@ export function StoreProductCard({
   return (
     <article className="store-product-card">
       <Link
-        className="store-card-media"
+        className={`store-card-media ${hoverVideo ? "has-video" : ""}`}
         href={`/products/${product.slug}`}
         aria-label={`${product.name} — ${product.color}`}
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
       >
         <Image
           src={product.cardImage}
@@ -39,12 +46,15 @@ export function StoreProductCard({
           fill
           priority={priority}
           sizes="(max-width: 767px) 50vw, 25vw"
+          data-reveal=""
           style={{
             objectFit: product.cardImageFit ?? "cover",
             objectPosition: product.cardImagePosition ?? "center",
           }}
         />
-        {alternate && alternate.type !== "video" ? (
+        {hoverVideo ? (
+          <CardHoverVideo src={hoverVideo} hovered={hovered} />
+        ) : alternate && alternate.type !== "video" ? (
           <Image
             className="store-card-alternate"
             src={alternate.src}

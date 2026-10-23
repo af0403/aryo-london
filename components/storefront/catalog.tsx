@@ -4,6 +4,7 @@ import { useCallback, useMemo, useState } from "react";
 import { type Product } from "../../lib/products";
 import { StoreProductCard } from "./product-card";
 import { Drawer } from "./drawer";
+import { RevealScope } from "../motion/reveal-scope";
 
 type Filters = {
   colours: string[];
@@ -123,11 +124,13 @@ export function StoreCatalog({
         </div>
       ) : null}
       {results.length ? (
-        <div className="store-product-grid">
-          {results.map((p, i) => (
-            <StoreProductCard key={p.slug} product={p} priority={i < 4} />
-          ))}
-        </div>
+        <RevealScope>
+          <div className="store-product-grid">
+            {results.map((p, i) => (
+              <StoreProductCard key={p.slug} product={p} priority={i < 4} />
+            ))}
+          </div>
+        </RevealScope>
       ) : (
         <div className="store-empty store-catalog-empty">
           <h2>
