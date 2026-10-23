@@ -1,3 +1,4 @@
+import { commercePool } from "../../../lib/commerce/neon";
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
@@ -22,27 +23,16 @@ export async function POST(request: Request) {
       { error: "Please enter a valid email address." },
       { status: 400 },
     );
-  const key = process.env.RESEND_API_KEY;
-  if (!key)
+  if (!process.env.DATABASE_URL)
     return NextResponse.json(
       { error: "Sign-up is temporarily unavailable. Please try again later." },
       { status: 503 },
     );
   try {
-    const response = await fetch("https://api.resend.com/contacts", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${key}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ email, unsubscribed: false }),
-      signal: AbortSignal.timeout(10000),
-    });
-    if (!response.ok)
-      return NextResponse.json(
-        { error: "We couldn't complete your sign-up. Please try again later." },
-        { status: response.status === 429 ? 429 : 503 },
-      );
+    await commercePool().query(
+      `INSERT INTO public.newsletter_subscribers(email,consented_at,source) VALUES ($1,now(),'website') ON CONFLICT(email) DO NOTHING`,
+      [email],
+    );
     return NextResponse.json({ success: true });
   } catch {
     return NextResponse.json(

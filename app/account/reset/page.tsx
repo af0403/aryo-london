@@ -1,10 +1,7 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
-import {
-  createClient,
-  isSupabaseConfigured,
-} from "../../../lib/supabase/client";
+import { authClient } from "../../../lib/auth-client";
 export default function ResetPassword() {
   const [password, setPassword] = useState(""),
     [confirm, setConfirm] = useState(""),
@@ -20,18 +17,12 @@ export default function ResetPassword() {
     }
     setBusy(true);
     try {
-      if (!isSupabaseConfigured) throw new Error();
-      const client = createClient();
-      const {
-        data: { user },
-      } = await client.auth.getUser();
-      if (!user) {
-        setError(
-          "This reset link is invalid or has expired. Request a new link from the login page.",
-        );
-        return;
-      }
-      const { error } = await client.auth.updateUser({ password });
+      const token = new URLSearchParams(window.location.search).get("token");
+      if (!token) throw new Error("Missing reset token");
+      const { error } = await authClient.resetPassword({
+        newPassword: password,
+        token,
+      });
       if (error) throw error;
       setDone(true);
     } catch {
@@ -61,7 +52,7 @@ export default function ResetPassword() {
               className="checkout-input"
               type="password"
               autoComplete="new-password"
-              minLength={8}
+              minLength={10}
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -74,7 +65,7 @@ export default function ResetPassword() {
               className="checkout-input"
               type="password"
               autoComplete="new-password"
-              minLength={8}
+              minLength={10}
               required
               value={confirm}
               onChange={(e) => setConfirm(e.target.value)}

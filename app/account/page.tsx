@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import type { User } from "@supabase/supabase-js";
-import { createClient, isSupabaseConfigured } from "../../lib/supabase/client";
+import { authClient } from "../../lib/auth-client";
+type User = { name: string; email: string; emailVerified: boolean };
 import { formatPrice } from "../../lib/format";
 
 type Tab = "signin" | "create";
@@ -35,29 +35,14 @@ export default function AccountPage() {
   const [createPassword, setCreatePassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
+  const session = authClient.useSession();
   useEffect(() => {
-    if (!isSupabaseConfigured) {
-      setLoading(false);
-      return;
-    }
-    const supabase = createClient();
-
-    supabase.auth.getSession().then(({ data }) => {
-      setUser(data.session?.user ?? null);
-      setLoading(false);
-    });
-
-    const { data: listener } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        setUser(session?.user ?? null);
-      },
-    );
-
-    return () => listener.subscription.unsubscribe();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+    setUser(session.data?.user ?? null);
+    setLoading(session.isPending);
+  }, [session.data, session.isPending]);
 
   useEffect(() => {
-    if (!user || !isSupabaseConfigured) return;
+    if (!user) return;
     fetch("/api/orders", { cache: "no-store" })
       .then(async (response) => {
         if (!response.ok) throw new Error();
@@ -73,60 +58,48 @@ export default function AccountPage() {
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!isSupabaseConfigured) {
-      setError("Supabase is not configured yet.");
-      return;
-    }
     setError(null);
     setBusy(true);
-    const { error: err } = await createClient().auth.signInWithPassword({
+    const { error: err } = await authClient.signIn.email({
       email: signInEmail,
       password: signInPassword,
     });
     setBusy(false);
-    if (err) setError(err.message);
+    if (err)
+      setError(err.message || "Please try again or contact client services.");
   };
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!isSupabaseConfigured) {
-      setError("Supabase is not configured yet.");
-      return;
-    }
     setError(null);
     if (createPassword !== confirmPassword) {
       setError("Passwords do not match.");
       return;
     }
     setBusy(true);
-    const { error: err } = await createClient().auth.signUp({
+    const { error: err } = await authClient.signUp.email({
       email: createEmail,
       password: createPassword,
-      options: {
-        data: { first_name: firstName },
-        emailRedirectTo: `${window.location.origin}/auth/callback?next=/account`,
-      },
+      name: firstName,
+      callbackURL: "/account",
     });
     setBusy(false);
-    if (err) setError(err.message);
+    if (err)
+      setError(err.message || "Please try again or contact client services.");
     else
       setSuccess("Account created. Check your email to confirm, then sign in.");
   };
 
   const handleForgotPassword = async () => {
-    if (!isSupabaseConfigured) {
-      setError("Supabase is not configured yet.");
-      return;
-    }
     if (!signInEmail) {
       setError("Enter your email address above first.");
       return;
     }
     setError(null);
-    const { error: resetError } =
-      await createClient().auth.resetPasswordForEmail(signInEmail, {
-        redirectTo: `${window.location.origin}/auth/callback?next=/account/reset`,
-      });
+    const { error: resetError } = await authClient.requestPasswordReset({
+      email: signInEmail,
+      redirectTo: "/account/reset",
+    });
     if (resetError)
       setError("We could not send the reset link. Please try again.");
     else
@@ -136,7 +109,7 @@ export default function AccountPage() {
   };
 
   const handleSignOut = async () => {
-    if (isSupabaseConfigured) await createClient().auth.signOut();
+    await authClient.signOut();
     setOrders([]);
     setUser(null);
   };
@@ -150,7 +123,7 @@ export default function AccountPage() {
   }
 
   if (user) {
-    const firstName = (user.user_metadata?.first_name as string) || "";
+    const firstName = user.name.split(" ")[0] || "";
     const email = user.email ?? "";
 
     return (
@@ -306,7 +279,7 @@ export default function AccountPage() {
                 className="account-input"
                 type="password"
                 required
-                minLength={8}
+                minLength={10}
                 autoComplete="new-password"
                 value={createPassword}
                 onChange={(e) => setCreatePassword(e.target.value)}
