@@ -1587,12 +1587,14 @@ body:has(.home-main) .house-header.has-menu {
     margin-left: 4px;
   }
   .store-home-hero {
-    height: 150vw;
+    /* Fill Safari's visible viewport below the shipping strip. */
+    height: calc(100vh - var(--announcement-height));
+    height: calc(100dvh - var(--announcement-height));
     min-height: 0;
-    max-height: 820px;
+    max-height: none;
   }
   .store-home-hero-copy {
-    bottom: 20px;
+    bottom: max(20px, env(safe-area-inset-bottom));
     left: 20px;
     right: 20px;
   }
@@ -1605,7 +1607,7 @@ body:has(.home-main) .house-header.has-menu {
     margin-top: 18px;
     font-size: 12px;
     line-height: 1.35;
-    max-width: 350px;
+    max-width: calc(100% - 64px);
   }
   .store-home-pair {
     grid-template-columns: 1fr;
