@@ -24,14 +24,14 @@ export const campaigns: Campaign[] = [
     chapter: "Chapter One",
     description:
       "Explore the Pennicella campaign by ARYO through silhouette, hardware, texture, and editorial imagery.",
-    heroImage: "/assets/generated/luma-pack/homepage-hero-noir-desktop.png",
-    heroAlt: "Pennicella noir campaign look",
+    heroImage: "/assets/generated/luma-pack/wide-collection-still-life.png",
+    heroAlt: "The Pennicella collection still life",
     lead: "The direction stays stripped back so the house, the silhouette, and the material can lead.",
     frames: [
       {
-        image: "/assets/generated/luma-pack/homepage-hero-noir-desktop.png",
-        alt: "Full noir Pennicella look — Pennicella Jacket and Essential Trouser",
-        eyebrow: "Noir look",
+        image: "/assets/generated/luma-pack/wide-collection-still-life.png",
+        alt: "The Pennicella collection — jacket and trousers laid out as one look",
+        eyebrow: "The collection",
         title: "The collection opens through silhouette.",
         text: "Pennicella is introduced through the full noir look. The jacket and trouser are designed as one piece of language — structure and ease held in the same quiet register.",
       },

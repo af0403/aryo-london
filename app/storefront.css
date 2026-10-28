@@ -3400,6 +3400,14 @@ body:has(.home-main) .house-header.has-menu {
   margin: 0;
   height: 70svh;
   min-height: 420px;
+  position: relative;
+}
+.campaigns-index-media::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(10, 10, 10, 0.55), transparent 45%);
+  pointer-events: none;
 }
 .campaigns-index-media img {
   width: 100%;
@@ -3429,6 +3437,14 @@ body:has(.home-main) .house-header.has-menu {
   font-size: 11px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
+}
+.campaign-page .campaign-lead {
+  position: static;
+  color: inherit;
+  padding: 60px 30px 40px;
+}
+.campaign-page {
+  margin-top: 0;
 }
 .campaign-return {
   padding: 50px 30px;
