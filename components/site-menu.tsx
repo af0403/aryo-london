@@ -158,7 +158,7 @@ export const SiteMenu = () => {
         </div>
 
         <div className="site-menu-secondary">
-          <Link href="/campaign" onClick={close}>World of ARYO</Link>
+          <Link href="/campaigns" onClick={close}>World of ARYO</Link>
           <Link href="/size-guide" onClick={close}>Size Guide</Link>
         </div>
         <div className="site-menu-foot">

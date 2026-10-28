@@ -1,4 +1,5 @@
 import { RecentlyViewed } from "../../../components/storefront/recently-viewed";
+import { RelatedProducts } from "../../../components/storefront/related-products";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
@@ -229,6 +230,7 @@ export default async function ProductPage({
           </div>
         </aside>
       </div>
+      <RelatedProducts product={product} />
       <RecentlyViewed currentSlug={product.slug} />
     </main>
   );

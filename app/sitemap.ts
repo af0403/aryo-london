@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 
+import { campaigns } from "../lib/campaigns";
 import { liveProducts } from "../lib/products";
 import { absoluteUrl } from "../lib/seo";
 import { categoryHref, departmentNavigation } from "../lib/catalog";
@@ -19,7 +20,8 @@ const staticRoutes: Array<{
   { path: "/collections/pennicella", changeFrequency: "weekly", priority: 0.95 },
   { path: "/about", changeFrequency: "monthly", priority: 0.8 },
   { path: "/story", changeFrequency: "monthly", priority: 0.8 },
-  { path: "/campaign", changeFrequency: "monthly", priority: 0.75 },
+  { path: "/campaigns", changeFrequency: "monthly", priority: 0.75 },
+  { path: "/pennicella-jacket", changeFrequency: "monthly", priority: 0.85 },
   { path: "/contact", changeFrequency: "monthly", priority: 0.7 },
   { path: "/faqs", changeFrequency: "monthly", priority: 0.7 },
   { path: "/shipping", changeFrequency: "monthly", priority: 0.6 },
@@ -46,6 +48,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: now,
       changeFrequency: route.changeFrequency,
       priority: route.priority,
+    })),
+    ...campaigns.map((campaign) => ({
+      url: absoluteUrl(`/campaigns/${campaign.slug}`),
+      lastModified: now,
+      changeFrequency: "monthly" as const,
+      priority: 0.75,
     })),
     ...publicProducts.map((product) => ({
       url: absoluteUrl(`/products/${product.slug}`),

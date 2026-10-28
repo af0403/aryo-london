@@ -46,7 +46,7 @@ export const HomeCarousel = () => (
         </Link>
       </section>
       <section className="store-home-feature">
-        <Link href="/campaign">
+        <Link href="/campaigns/pennicella">
           <img
             src="/assets/generated/luma-pack/wide-collection-still-life.png"
             alt="Pennicella collection still life"
@@ -68,7 +68,7 @@ export const HomeCarousel = () => (
           />
           <h2 data-reveal="copy">Explore Headwear</h2>
         </Link>
-        <Link href="/products/structure-jacket-noir">
+        <Link href="/pennicella-jacket">
           <Image
             src="/assets/generated/product-refresh/stills/noir-jacket-detail.png"
             alt="Noir Pennicella Jacket fabric, collar and silver hardware detail"

@@ -6,7 +6,7 @@ const columns = [
     links: [
       ["The House", "/about"],
       ["Story", "/story"],
-      ["Campaign", "/campaign"],
+      ["Campaigns", "/campaigns"],
       ["Collections", "/collections"],
     ],
   },

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import { HomeCarousel } from "../components/home-carousel";
+import { HomeProductStrip } from "../components/home-product-strip";
 import {
   DEFAULT_OG_IMAGE,
   DEFAULT_SITE_DESCRIPTION,
@@ -49,6 +50,7 @@ export default function HomePage() {
       />
       <main className="home-main">
         <HomeCarousel />
+        <HomeProductStrip />
       </main>
     </>
   );

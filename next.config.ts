@@ -21,6 +21,15 @@ const nextConfig: NextConfig = {
       "pino-pretty": "./lib/empty-module.ts",
     },
   },
+  async redirects() {
+    return [
+      {
+        source: "/campaign",
+        destination: "/campaigns/pennicella",
+        permanent: true,
+      },
+    ];
+  },
   async rewrites() {
     const origin =
       process.env.NODE_ENV === "development"
