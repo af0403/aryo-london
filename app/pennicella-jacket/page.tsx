@@ -59,8 +59,8 @@ export default function PennicellaJacketPage() {
         <section className="campaign-frame campaign-frame-full">
           <figure className="campaign-frame-media">
             <img
-              src="/assets/generated/product-refresh/stills/noir-jacket-front.png"
-              alt="The Pennicella Jacket in Noir, front view"
+              src="/assets/generated/luma-pack/detail-noir-hardware.png"
+              alt="The Pennicella fabric, collar line and silver hardware in close detail"
             />
           </figure>
           <div className="campaign-frame-copy">
@@ -77,8 +77,8 @@ export default function PennicellaJacketPage() {
         <section className="campaign-frame">
           <figure className="campaign-frame-media">
             <img
-              src="/assets/generated/luma-pack/detail-noir-hardware.png"
-              alt="Collar line and silver hardware detail on the Pennicella Jacket"
+              src="/assets/generated/product-refresh/stills/noir-jacket-front.png"
+              alt="The Pennicella Jacket in Noir, front view"
             />
           </figure>
           <div className="campaign-frame-copy">

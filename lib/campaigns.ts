@@ -4,6 +4,8 @@ export type CampaignFrame = {
   eyebrow: string;
   title: string;
   text: string;
+  /** The source asset is upside down; display it rotated until it is reshot. */
+  rotate?: boolean;
 };
 
 export type Campaign = {
@@ -45,6 +47,7 @@ export const campaigns: Campaign[] = [
       {
         image: "/assets/generated/luma-pack/detail-ivory-embroidery.png",
         alt: "ARYO signature embroidery on the ivory Essential Trouser",
+        rotate: true,
         eyebrow: "Ivory",
         title: "A softer tone without changing the language.",
         text: "The ivory trouser keeps the same measured proportion. Only the colour shifts the mood.",

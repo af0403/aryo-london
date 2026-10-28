@@ -61,7 +61,11 @@ export default async function CampaignPage({
             key={frame.title}
           >
             <figure className="campaign-frame-media">
-              <img src={frame.image} alt={frame.alt} />
+              <img
+                src={frame.image}
+                alt={frame.alt}
+                style={frame.rotate ? { transform: "rotate(180deg)" } : undefined}
+              />
             </figure>
 
             <div className="campaign-frame-copy">
