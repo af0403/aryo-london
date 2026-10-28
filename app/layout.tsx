@@ -64,21 +64,30 @@ export default function RootLayout({
     {
       "@context": "https://schema.org",
       "@type": "Organization",
+      "@id": `${SITE_URL}/#organization`,
       name: SITE_NAME,
+      alternateName: ["ARYO London", "آریو"],
+      description:
+        "ARYO is a London luxury fashion house. Construction-led clothing made in London, opening with the Pennicella collection.",
       url: SITE_URL,
       logo: absoluteUrl("/apple-touch-icon.png"),
+      foundingLocation: {
+        "@type": "Place",
+        name: "London, England",
+      },
       sameAs: [INSTAGRAM_URL],
     },
     {
       "@context": "https://schema.org",
       "@type": "WebSite",
+      "@id": `${SITE_URL}/#website`,
       name: SITE_NAME,
+      alternateName: "ARYO London",
       url: SITE_URL,
       description: DEFAULT_SITE_DESCRIPTION,
       inLanguage: "en-GB",
       publisher: {
-        "@type": "Organization",
-        name: SITE_NAME,
+        "@id": `${SITE_URL}/#organization`,
       },
     },
   ];
