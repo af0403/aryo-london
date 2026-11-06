@@ -13,10 +13,11 @@ const houseSections = [
   {
     id: "founder",
     label: "Founder",
-    title: "ARYO begins with a controlled first point of view.",
-    text: "The house is being built through a smaller and more disciplined release structure. Pennicella opens with fewer pieces and more focus, so the product can carry the language before the catalogue grows.",
-    image: "/assets/generated/luma-pack/homepage-hero-noir-desktop.png",
-    alt: "Pennicella noir full look — Pennicella Jacket and Essential Trouser",
+    title: "The house carries its founder's name.",
+    text: "ARYO is Aryo's own name, written آریو in Persian. He started the house in London to make clothing at the level of the houses he admired, built here and made to order. The heritage is carried in the name, and in every decision that follows.",
+    image: "/assets/generated/product-refresh/stills/noir-jacket-open-label.png",
+    alt: "The Noir Pennicella Jacket open to show the lining and the ARYO neck label",
+    position: "center 14%",
   },
   {
     id: "savoir-faire",
@@ -50,7 +51,15 @@ export default function AboutPage() {
         {houseSections.map((section, index) => (
           <section className="house-panel" id={section.id} key={section.id}>
             <figure className="house-panel-media">
-              <img src={section.image} alt={section.alt} />
+              <img
+                src={section.image}
+                alt={section.alt}
+                style={
+                  "position" in section
+                    ? { objectPosition: section.position }
+                    : undefined
+                }
+              />
             </figure>
             <div className="house-panel-copy">
               {index === 0 ? (
