@@ -4,10 +4,9 @@ import { useEffect, useRef, useState } from "react";
 import { useReducedMotion } from "./use-reduced-motion";
 
 /**
- * Product-card hover clip. Pointer devices: plays while the card is hovered
- * (the parent toggles `data-hover`). Touch devices: plays while the card is at
- * least half in view. Reduced motion: renders nothing, so the still cross-fade
- * remains the only hover state.
+ * Product-card hover clip. Plays only while the card is hovered with a
+ * pointer. Touch devices and reduced motion render nothing, so the card still
+ * is all they see.
  */
 export function CardHoverVideo({
   src,
@@ -18,25 +17,13 @@ export function CardHoverVideo({
 }) {
   const reduced = useReducedMotion();
   const ref = useRef<HTMLVideoElement>(null);
-  const [inView, setInView] = useState(false);
-  const [touch, setTouch] = useState(false);
+  const [canHover, setCanHover] = useState(false);
 
   useEffect(() => {
-    setTouch(window.matchMedia("(hover: none)").matches);
+    setCanHover(window.matchMedia("(hover: hover)").matches);
   }, []);
 
-  useEffect(() => {
-    const el = ref.current;
-    if (!el || !touch) return;
-    const io = new IntersectionObserver(
-      ([entry]) => setInView(entry.isIntersecting),
-      { threshold: 0.5 },
-    );
-    io.observe(el);
-    return () => io.disconnect();
-  }, [touch]);
-
-  const playing = !reduced && (touch ? inView : hovered);
+  const playing = !reduced && canHover && hovered;
 
   useEffect(() => {
     const el = ref.current;
@@ -54,7 +41,7 @@ export function CardHoverVideo({
     }
   }, [playing]);
 
-  if (reduced) return null;
+  if (reduced || !canHover) return null;
   return (
     <video
       ref={ref}

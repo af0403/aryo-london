@@ -3152,7 +3152,7 @@ body:has(.home-main) .house-header.has-menu {
     opacity 700ms var(--motion-ease),
     transform 600ms ease;
 }
-/* Card hover clip: plays on hover (pointer) or in view (touch); the still stays under it. */
+/* Card hover clip: plays only on pointer hover; the still stays under it. */
 .store-card-video {
   position: absolute;
   inset: 0;
