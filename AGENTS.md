@@ -1,3 +1,50 @@
+# ARYO site — working rules for every agent (Codex, Claude, anyone)
+
+More than one AI agent works on this site. These rules keep everyone on one
+copy of it. Read them before you change anything.
+
+## One source of truth
+
+- The site lives in GitHub: `af0403/aryo-london`. **`main` is what is live.**
+- Vercel project `aryo` (team `afs-projects-f3c729a9`) serves aryo.london and
+  auto-deploys production on every push to `main`.
+- If it isn't committed and pushed to GitHub, it doesn't exist. Another agent
+  can't see it, and the next deploy from `main` will wipe it off the live site.
+
+## Never
+
+- **Never deploy production from the command line** (`vercel --prod`,
+  `vercel deploy --prod`, or any deploy of a local working tree). Production
+  only ever comes from `main`.
+- Never leave work uncommitted at the end of a session.
+- Never serve images or files that exist only in a deploy or on one machine.
+  Every asset goes into `public/assets/` and gets committed.
+- Never force-push `main` or rewrite its history.
+
+## Every session
+
+1. Start from the latest code: `git fetch origin`, then branch from
+   `origin/main` (or pull your existing branch and merge `origin/main` into it).
+2. Work on a branch named for the task, e.g. `images/noir-jacket-open`,
+   `feat/campaign-archive`.
+3. Commit as you go and push the branch. Vercel builds a preview for every
+   branch, so share that link for review.
+4. Going live = merging the branch into `main`. Customer-facing changes go live
+   **only after Aryo has approved them**. Pull `origin/main` first and resolve
+   any conflicts before you merge.
+5. Before you finish, check `git status` is clean and `git log origin/<branch>..`
+   is empty. That means everything is pushed.
+
+## Who does what
+
+- **Codex owns imagery**: generating, replacing and retouching product,
+  campaign and editorial images.
+- **Claude owns site features and code**: pages, components, SEO, checkout.
+- If you need to touch the other agent's area, keep the change small and say so
+  in the commit message.
+- To see what's in flight before you start: `git branch -r` and
+  `git log origin/main..origin/<branch> --oneline` for each open branch.
+
 <claude-mem-context>
 # Memory Context
 
