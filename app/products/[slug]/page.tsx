@@ -103,11 +103,11 @@ export default async function ProductPage({
       <div className="product-page-layout">
         <ProductShowcase product={product} />
 
-        <aside className="product-page-copy reveal-block" data-purchase-sentinel>
-          <p className="product-page-kicker">{product.line}</p>
+        <aside className="product-page-copy" data-purchase-sentinel>
+
           <h1>{product.name}</h1>
           <p className="product-page-price">{formatProductPrice(product.price)}{product.price === null ? "" : " GBP"}</p>
-          <p className="product-page-colour">{product.color}</p>
+          <div className="store-product-colours"><p>Colour: {product.color}</p><nav aria-label="Colourways">{products.filter(p => !p.hidden && p.name === product.name).map(p => <Link key={p.slug} href={`/products/${p.slug}`} aria-label={`${product.name} in ${p.color}`} aria-current={p.slug===product.slug?"page":undefined} title={p.color} className={`store-swatch ${p.slug===product.slug?"is-active":""}`} style={{background:/noir|black/i.test(p.color)?"#111":/ivory|bone|white/i.test(p.color)?"#e8e1d1":"#a89576"}}/>)}</nav></div>
           {product.editionNote ? (
             <p className="product-page-edition">{product.editionNote}</p>
           ) : null}
@@ -117,13 +117,13 @@ export default async function ProductPage({
 
           {product.category === "Outerwear" && (
             <Link href="/size-guide" className="product-size-guide-link">
-              View Size Guide →
+              Size guide
             </Link>
           )}
 
           <div className="product-accordion-stack">
             <details className="product-accordion">
-              <summary>Description</summary>
+              <summary>Details</summary>
               <div className="product-accordion-content">
                 <p>{product.longDescription}</p>
               </div>
@@ -131,7 +131,7 @@ export default async function ProductPage({
 
             {product.category === "Outerwear" && (
               <details className="product-accordion">
-                <summary>Sizing</summary>
+                <summary>Size and Fit</summary>
                 <div className="product-accordion-content">
                   <p>
                     The Pennicella Jacket is cut to a size M block pattern. We recommend checking our
@@ -166,7 +166,7 @@ export default async function ProductPage({
             )}
 
             <details className="product-accordion">
-              <summary>Care</summary>
+              <summary>Care and Maintenance</summary>
               <div className="product-accordion-content">
                 <ul>
                   {product.notes.map((note) => (
@@ -177,7 +177,7 @@ export default async function ProductPage({
             </details>
 
             <details className="product-accordion">
-              <summary>Shipping and returns</summary>
+              <summary>Shipping / Returns</summary>
               <div className="product-accordion-content">
                 <p>Worldwide shipping on every order. Returns accepted within 14 days in unworn condition.</p>
                 {product.fulfillmentNote ? <p>{product.fulfillmentNote}</p> : null}

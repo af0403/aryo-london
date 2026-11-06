@@ -28,10 +28,11 @@ export default function ContactPage() {
   };
 
   return (
-    <main className="section info-page">
+    <main className="section info-page store-contact">
       <div className="page-intro">
         <p className="eyebrow">Contact</p>
-        <h1 className="page-title">Client services for every order.</h1>
+        <h1 className="page-title">Contact Us</h1>
+        <p>Client services for every order.</p>
         <p>
           Reach client services directly for order questions, shipping updates, returns, and sizing guidance.
         </p>

@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { createPortal } from "react-dom";
 import {
+  useCallback,
   useEffect,
   useRef,
   useState,
@@ -10,8 +11,9 @@ import {
   type WheelEvent,
 } from "react";
 
-import type { Product } from "../lib/products";
+import type { Product, ProductMedia } from "../lib/products";
 import { CloseIcon } from "./site-icons";
+import { useModal } from "./storefront/use-modal";
 
 type LightboxTransform = {
   scale: number;
@@ -44,6 +46,16 @@ const getTouchDistance = (
   );
 };
 
+
+const CroppedPhoto = ({ media, alt, className = "" }: { media: ProductMedia; alt: string; className?: string }) => {
+  const crop = media.crop!;
+  return <span className={className} style={{position:"absolute",inset:0,overflow:"hidden"}}>
+    <span style={{position:"absolute",inset:0,transform:media.rotation ? `rotate(${media.rotation}deg)` : undefined}}>
+      <Image src={media.src} alt={alt} width={4284} height={5712} unoptimized style={{position:"absolute",maxWidth:"none",width:`${100/crop.width}%`,height:`${100/crop.height}%`,left:`${-100*crop.left/crop.width}%`,top:`${-100*crop.top/crop.height}%`,objectFit:"fill"}} />
+    </span>
+  </span>;
+};
+
 export const ProductShowcase = ({ product }: { product: Product }) => {
   const gallery = product.editorialImage
     ? [...product.gallery, { ...product.editorialImage, type: "image" as const }]
@@ -55,11 +67,17 @@ export const ProductShowcase = ({ product }: { product: Product }) => {
     x: 0,
     y: 0,
   });
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const swipeRef = useRef<{x:number;y:number}|null>(null);
+  const suppressClickRef = useRef(false);
   const lightboxStageRef = useRef<HTMLDivElement>(null);
   const panStartRef = useRef<PanStart | null>(null);
   const pinchStartRef = useRef<PinchStart | null>(null);
   const media = gallery[activeIndex] ?? {
     type: "image" as const,
+    rotation: undefined,
+    crop: undefined,
+    aspectRatio: undefined,
     src: product.leadImage,
     alt: `${product.name} in ${product.color}`,
     fit: product.leadImageFit,
@@ -72,32 +90,14 @@ export const ProductShowcase = ({ product }: { product: Product }) => {
     pinchStartRef.current = null;
   }, [activeIndex]);
 
-  useEffect(() => {
-    if (!lightboxOpen) return;
-
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        closeLightbox();
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-
-    return () => {
-      document.body.style.overflow = previousOverflow;
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [lightboxOpen]);
-
-  const closeLightbox = () => {
+  const closeLightbox = useCallback(() => {
     setLightboxOpen(false);
     setLightboxTransform({ scale: 1, x: 0, y: 0 });
     panStartRef.current = null;
     pinchStartRef.current = null;
-  };
+  }, []);
+  useModal(lightboxOpen, closeLightbox, dialogRef);
+  const nextMedia = (direction: number) => setActiveIndex(index => (index + direction + gallery.length) % gallery.length);
 
   const clampTransform = (next: LightboxTransform) => {
     if (media.type === "video" || next.scale <= 1) {
@@ -218,49 +218,19 @@ export const ProductShowcase = ({ product }: { product: Product }) => {
   };
 
   return (
-    <section className="product-showcase" aria-label={`${product.name} gallery`}>
-      <figure className="product-showcase-frame">
-        <button
-          key={media.src}
-          className="product-showcase-frame-button"
-          type="button"
-          onClick={() => setLightboxOpen(true)}
-          aria-label={`Open ${product.name} fullscreen`}
-        >
-          {media.type === "video" ? (
-            <video
-              key={media.src}
-              className="product-showcase-video"
-              poster={media.poster ?? product.leadImage}
-              aria-label={media.alt}
-              autoPlay
-              muted
-              loop
-              playsInline
-              preload="metadata"
-              style={{
-                objectFit: "cover",
-                objectPosition:
-                  media.position ?? product.leadImagePosition ?? "center center",
-              }}
-            >
-              <source src={media.src} type="video/mp4" />
-            </video>
-          ) : (
-            <Image
-              key={media.src}
-              src={media.src}
-              alt={media.alt}
-              fill
-              priority
-              sizes="(max-width: 768px) 100vw, 60vw"
-              style={{
-                objectFit: "cover",
-                objectPosition:
-                  media.position ?? product.leadImagePosition ?? "center center",
-              }}
-            />
-          )}
+    <section className={"product-showcase" + ((product.category === "Trouser" || product.subcategory === "headwear") ? " product-showcase-trouser" : "")} aria-label={`${product.name} gallery`} tabIndex={0}
+      onKeyDown={event => { if (event.key === "ArrowRight" || event.key === "ArrowLeft") { event.preventDefault(); if (gallery.length > 1) nextMedia(event.key === "ArrowRight" ? 1 : -1); } }}
+      onTouchStart={event => { const touch=event.touches[0]; swipeRef.current={x:touch.clientX,y:touch.clientY}; }}
+      onTouchEnd={event => { const start=swipeRef.current; const touch=event.changedTouches[0]; if(start && gallery.length>1 && Math.abs(touch.clientX-start.x)>45 && Math.abs(touch.clientY-start.y)<60){suppressClickRef.current=true;nextMedia(touch.clientX<start.x?1:-1)}swipeRef.current=null; }}>
+      <figure className="product-showcase-frame" style={(product.category === "Trouser" || product.subcategory === "headwear") ? {aspectRatio: media.aspectRatio ?? "1000 / 1570"} : undefined}>
+        <button className="product-showcase-frame-button" type="button"
+          onClick={() => { if(suppressClickRef.current){suppressClickRef.current=false;return}setLightboxOpen(true); }}
+          aria-label={`Open ${product.name} fullscreen`}>
+          {gallery.length ? gallery.map((item,index) => item.type === "video" ? index === activeIndex ? (
+            <video key={item.src} className="product-showcase-video store-gallery-layer is-active" poster={item.poster ?? product.leadImage} aria-label={item.alt} autoPlay muted loop playsInline preload="metadata" style={{objectFit:"cover",objectPosition:item.position??"center"}}><source src={item.src} type="video/mp4" /></video>
+          ) : null : item.crop ? <CroppedPhoto key={`${item.src}-${index}`} media={item} alt={index===activeIndex?item.alt:""} className={`store-gallery-layer ${index===activeIndex?"is-active":""}`} /> : (
+            <Image key={`${item.src}-${index}`} className={`store-gallery-layer ${index===activeIndex?"is-active":""}`} aria-hidden={index!==activeIndex} src={item.src} alt={index===activeIndex?item.alt:""} fill quality={95} priority={index===0} loading={index===0?undefined:"eager"} sizes="(max-width: 820px) 100vw, 50vw" style={{objectFit:item.fit??product.leadImageFit??"cover",objectPosition:item.position??product.leadImagePosition??"center",transform:item.rotation?`rotate(${item.rotation}deg)`:undefined}} />
+          )) : <Image src={product.leadImage} alt={product.name} fill priority sizes="(max-width: 820px) 100vw, 50vw" style={{objectFit:"cover"}} />}
         </button>
         {gallery.length > 1 ? (
           <>
@@ -269,13 +239,13 @@ export const ProductShowcase = ({ product }: { product: Product }) => {
               type="button"
               aria-label="Previous product image"
               onClick={() => setActiveIndex((index) => (index - 1 + gallery.length) % gallery.length)}
-            ><span aria-hidden="true">‹</span></button>
+            ><svg aria-hidden="true" viewBox="0 0 24 24" width="26" height="26" fill="none"><path d="m14 5-7 7 7 7" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /></svg></button>
             <button
               className="product-gallery-arrow product-gallery-arrow-next"
               type="button"
               aria-label="Next product image"
               onClick={() => setActiveIndex((index) => (index + 1) % gallery.length)}
-            ><span aria-hidden="true">›</span></button>
+            ><svg aria-hidden="true" viewBox="0 0 24 24" width="26" height="26" fill="none"><path d="m10 5 7 7-7 7" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /></svg></button>
             <span className="sr-only" aria-live="polite">Image {activeIndex + 1} of {gallery.length}</span>
           </>
         ) : null}
@@ -283,6 +253,7 @@ export const ProductShowcase = ({ product }: { product: Product }) => {
 
       {lightboxOpen ? createPortal(
         <div
+          ref={dialogRef}
           className="product-lightbox"
           role="dialog"
           aria-modal="true"
@@ -341,6 +312,8 @@ export const ProductShowcase = ({ product }: { product: Product }) => {
                 >
                   <source src={media.src} type="video/mp4" />
                 </video>
+              ) : media.crop ? (
+                <div style={{position:"relative",width:`min(100%, calc(72dvh * ${Number(media.aspectRatio) || 1}))`,aspectRatio:media.aspectRatio,margin:"auto"}}><CroppedPhoto media={media} alt={media.alt} /></div>
               ) : (
                 <div
                   className="product-lightbox-media"
@@ -352,9 +325,11 @@ export const ProductShowcase = ({ product }: { product: Product }) => {
                     src={media.src}
                     alt={media.alt}
                     fill
+                    quality={95}
                     priority
                     sizes="100vw"
                     style={{
+                      transform: media.rotation ? `rotate(${media.rotation}deg)` : undefined,
                       objectFit: media.fit ?? product.leadImageFit ?? "contain",
                       objectPosition:
                         media.position ?? product.leadImagePosition ?? "center center",

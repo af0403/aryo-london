@@ -13,6 +13,14 @@ console.log(`[ARYO build] NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: ${pkStatus}`);
 console.log(`[ARYO build] STRIPE KEY SET: ${!!process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY}`);
 
 const nextConfig: NextConfig = {
+  images: { qualities: [75, 95] },
+  async rewrites() {
+    const origin = process.env.NODE_ENV === "development" ? process.env.ARYO_ASSET_ORIGIN : undefined;
+    return origin ? [
+      { source: "/assets/:path*", destination: `${origin}/assets/:path*` },
+      { source: "/favicon:ext", destination: `${origin}/favicon:ext` },
+    ] : [];
+  },
   webpack(config) {
     // Optional deps from MetaMask SDK and WalletConnect's pino logger
     config.resolve.alias = {

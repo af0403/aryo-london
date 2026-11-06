@@ -1,0 +1,10 @@
+{
+  "tool": "built-in image_gen",
+  "files": {
+    "noir-back": "/Users/aryofarzad/.codex/generated_images/01a18245-4a99-7b03-9d94-976245f114d6/exec-6f89241c-5990-4d76-90a5-723a7feaeb45.png",
+    "ivory-back": "/Users/aryofarzad/.codex/generated_images/01a18245-4a99-7b03-9d94-976245f114d6/exec-ba6b8eae-44c2-412a-865a-d4289a05d7f0.png",
+    "noir-detail": "/Users/aryofarzad/.codex/generated_images/01a18245-4a99-7b03-9d94-976245f114d6/exec-5edf53f6-a7f5-42b7-a600-87ef54e26c8d.png",
+    "ivory-detail": "/Users/aryofarzad/.codex/generated_images/01a18245-4a99-7b03-9d94-976245f114d6/exec-9d1d7b5e-7788-438c-9d9b-42cbcf3c469e.png"
+  },
+  "prompt": "Match the existing front images limestone setting and lighting; preserve real rear pockets and signature. Final edit: rotate ONLY signature 180 degrees in place, loop at bottom, long strokes up; keep trousers and pocket upright."
+}

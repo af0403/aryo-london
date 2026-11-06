@@ -179,25 +179,7 @@ export default function AccountPage() {
   return (
     <main className="account-page">
       <div className="account-inner">
-        <p className="eyebrow">Your account</p>
-
-        <div className="account-tabs">
-          <button
-            className={`account-tab-btn ${tab === "signin" ? "is-active" : ""}`}
-            type="button"
-            onClick={() => { setTab("signin"); setError(null); setSuccess(null); }}
-          >
-            Sign in
-          </button>
-          <button
-            className={`account-tab-btn ${tab === "create" ? "is-active" : ""}`}
-            type="button"
-            onClick={() => { setTab("create"); setError(null); setSuccess(null); }}
-          >
-            Create account
-          </button>
-        </div>
-
+        <h1 className="store-account-title">{tab === "signin" ? "Login" : "Create an Account"}</h1>
         {error && <p className="account-error">{error}</p>}
         {success && <p className="account-success">{success}</p>}
 
@@ -207,6 +189,7 @@ export default function AccountPage() {
               <label className="account-label" htmlFor="signin-email">Email address</label>
               <input
                 id="signin-email"
+                placeholder="Email"
                 className="account-input"
                 type="email"
                 required
@@ -219,6 +202,7 @@ export default function AccountPage() {
               <label className="account-label" htmlFor="signin-password">Password</label>
               <input
                 id="signin-password"
+                placeholder="Password"
                 className="account-input"
                 type="password"
                 required
@@ -227,16 +211,8 @@ export default function AccountPage() {
                 onChange={(e) => setSignInPassword(e.target.value)}
               />
             </div>
-            <button className="account-submit" type="submit" disabled={busy}>
-              {busy ? "Signing in…" : "Sign in"}
-            </button>
-            <button
-              className="account-forgot"
-              type="button"
-              onClick={handleForgotPassword}
-            >
-              Forgot password?
-            </button>
+            <button className="account-forgot" type="button" onClick={handleForgotPassword}>Forgot your password?</button>
+            <button className="account-submit" type="submit" disabled={busy}>{busy ? "Signing in…" : "Sign in"}</button>
           </form>
         ) : (
           <form className="account-form" onSubmit={handleCreate}>
@@ -244,6 +220,7 @@ export default function AccountPage() {
               <label className="account-label" htmlFor="first-name">First name</label>
               <input
                 id="first-name"
+                placeholder="First name"
                 className="account-input"
                 type="text"
                 required
@@ -256,6 +233,7 @@ export default function AccountPage() {
               <label className="account-label" htmlFor="create-email">Email address</label>
               <input
                 id="create-email"
+                placeholder="Email"
                 className="account-input"
                 type="email"
                 required
@@ -268,6 +246,7 @@ export default function AccountPage() {
               <label className="account-label" htmlFor="create-password">Password</label>
               <input
                 id="create-password"
+                placeholder="Password"
                 className="account-input"
                 type="password"
                 required
@@ -281,6 +260,7 @@ export default function AccountPage() {
               <label className="account-label" htmlFor="confirm-password">Confirm password</label>
               <input
                 id="confirm-password"
+                placeholder="Confirm password"
                 className="account-input"
                 type="password"
                 required
@@ -294,6 +274,7 @@ export default function AccountPage() {
             </button>
           </form>
         )}
+        <button className="store-account-switch" type="button" onClick={() => {setTab(tab === "signin" ? "create" : "signin");setError(null);setSuccess(null)}}>{tab === "signin" ? "Create an account" : "Sign in"}</button>
       </div>
     </main>
   );

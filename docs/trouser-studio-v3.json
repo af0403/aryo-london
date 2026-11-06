@@ -1,0 +1,17 @@
+{
+  "tool": "built-in image_gen",
+  "files": {
+    "noir-back": "/Users/aryofarzad/.codex/generated_images/01a18245-4a99-7b03-9d94-976245f114d6/exec-f6a22a20-3544-492e-8396-db6811cb0ea5.png",
+    "ivory-back": "/Users/aryofarzad/.codex/generated_images/01a18245-4a99-7b03-9d94-976245f114d6/exec-2259d47b-cb05-4bac-935e-0020ae08aab6.png",
+    "noir-detail": "/Users/aryofarzad/.codex/generated_images/01a18245-4a99-7b03-9d94-976245f114d6/exec-7a7c3495-bf51-4bb0-b147-b54d995d13bb.png",
+    "ivory-detail": "/Users/aryofarzad/.codex/generated_images/01a18245-4a99-7b03-9d94-976245f114d6/exec-c857d77e-1794-4658-8d3b-85122e033613.png"
+  },
+  "prompt": "Refine only embroidery using actual photos: fine flat thread strokes, exact natural signature shape and texture; loop at bottom, long strokes up. Preserve warm limestone setting and all pocket geometry.",
+  "finalAssets": {
+    "noir-back": "/Users/aryofarzad/Documents/New project/aryo-amiri-rebuild/public/assets/generated/trouser-studio-v3/noir-back.png",
+    "ivory-back": "/Users/aryofarzad/Documents/New project/aryo-amiri-rebuild/public/assets/generated/trouser-studio-v3/ivory-back.png",
+    "noir-detail": "/Users/aryofarzad/Documents/New project/aryo-amiri-rebuild/public/assets/generated/trouser-studio-v3/noir-detail.png",
+    "ivory-detail": "/Users/aryofarzad/Documents/New project/aryo-amiri-rebuild/public/assets/generated/trouser-studio-v3/ivory-detail.png"
+  },
+  "deployment": "https://aryo-1qnyyzxb1-afs-projects-f3c729a9.vercel.app"
+}

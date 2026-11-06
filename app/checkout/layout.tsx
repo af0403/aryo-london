@@ -1,3 +1,4 @@
+import { Web3Providers } from "../../components/web3-providers";
 import type { ReactNode } from "react";
 
 import { createNoIndexMetadata } from "../../lib/seo";
@@ -9,5 +10,5 @@ export const metadata = createNoIndexMetadata({
 });
 
 export default function CheckoutLayout({ children }: { children: ReactNode }) {
-  return children;
+  return <Web3Providers>{children}</Web3Providers>;
 }

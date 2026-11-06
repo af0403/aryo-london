@@ -1,0 +1,12 @@
+{
+  "tool": "built-in image_gen",
+  "prompt": "Retouch directly from original physical garment photographs. Match limestone background only. Preserve natural real weave, elastic waistband and fine embroidery; no synthetic grain or exaggerated looped fabric. Signature loop bottom.",
+  "assets": {
+    "noir-front": "/Users/aryofarzad/Documents/New project/aryo-amiri-rebuild/public/assets/generated/trouser-photo-v4/noir-front.png",
+    "noir-back": "/Users/aryofarzad/Documents/New project/aryo-amiri-rebuild/public/assets/generated/trouser-photo-v4/noir-back.png",
+    "noir-detail": "/Users/aryofarzad/Documents/New project/aryo-amiri-rebuild/public/assets/generated/trouser-photo-v4/noir-detail.png",
+    "ivory-front": "/Users/aryofarzad/Documents/New project/aryo-amiri-rebuild/public/assets/generated/trouser-photo-v4/ivory-front.png",
+    "ivory-back": "/Users/aryofarzad/Documents/New project/aryo-amiri-rebuild/public/assets/generated/trouser-photo-v4/ivory-back.png",
+    "ivory-detail": "/Users/aryofarzad/Documents/New project/aryo-amiri-rebuild/public/assets/generated/trouser-photo-v4/ivory-detail.png"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "tool": "built-in image_gen",
+  "prompt": "Edit only front waistband to match actual narrow elastic waistband, subtle natural gathers and fine parallel stitched channels. Keep limestone setting and rest of garment unchanged.",
+  "sources": {
+    "noir": "/Users/aryofarzad/.codex/generated_images/01a18245-4a99-7b03-9d94-976245f114d6/exec-65587dcf-ee97-425e-a8c6-fde9a9948c76.png",
+    "ivory": "/Users/aryofarzad/.codex/generated_images/01a18245-4a99-7b03-9d94-976245f114d6/exec-30b5d8d4-dcae-4237-a03b-ab18e3b0958d.png"
+  },
+  "assets": [
+    "/Users/aryofarzad/Documents/New project/aryo-amiri-rebuild/public/assets/generated/trouser-front-v2/noir-front.png",
+    "/Users/aryofarzad/Documents/New project/aryo-amiri-rebuild/public/assets/generated/trouser-front-v2/ivory-front.png"
+  ]
+}

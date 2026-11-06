@@ -56,10 +56,10 @@ export default function FAQsPage() {
       </div>
       <div className="info-layout">
         {FAQS.map(({ q, a }) => (
-          <div className="info-card" key={q}>
-            <strong className="client-services-head">{q}</strong>
+          <details className="info-card store-faq" key={q}>
+            <summary className="client-services-head">{q}</summary>
             <p>{a}</p>
-          </div>
+          </details>
         ))}
       </div>
     </main>
