@@ -252,7 +252,7 @@ export const products: Product[] = [
     leadImagePosition: "center top",
     leadImageFit: "cover",
     cardImage: `${refreshedStillPath}/noir-jacket-front.png`,
-    hover: hoverClip("noir-jacket-hover.mp4", "Noir Pennicella Jacket in motion"),
+    hover: hoverClip("noir-jacket-hover-v2.mp4", "Noir Pennicella Jacket in motion"),
     fabric: pennicellaFabric.noir,
     cardImagePosition: "center top",
     cardImageFit: "cover",
