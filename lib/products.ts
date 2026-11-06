@@ -595,10 +595,10 @@ export const products: Product[] = [
         position: "center top",
       },
       {
-        src: "/assets/reference/black-jacket-open.jpeg",
+        src: `${refreshedStillPath}/noir-jacket-open-label.png`,
         alt: "Open view of the Noir Pennicella Jacket showing the lining, concealed placket, and ARYO neck label",
-        fit: "contain",
-        position: "center center",
+        fit: "cover",
+        position: "center top",
       },
     ],
     details: [
