@@ -3530,3 +3530,39 @@ body:has(.home-main) .house-header.has-menu {
     font-size: 24px;
   }
 }
+
+/* Photography remains pending for the white linen release. */
+.store-linen-preview {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 1.25rem;
+  padding: clamp(2rem, 6vw, 6rem);
+}
+.store-home-pair .store-linen-preview h2 {
+  position: static;
+  inset: auto;
+  color: inherit;
+}
+.store-linen-preview p {
+  max-width: 38ch;
+  line-height: 1.6;
+}
+
+/* Match trouser and beanie media proportions so every edge remains visible. */
+.product-showcase.product-showcase-trouser {
+  position: relative;
+  top: auto;
+  height: auto;
+  align-self: start;
+}
+.product-showcase-trouser .product-showcase-frame {
+  position: relative;
+  height: auto;
+  display: block;
+}
+.product-showcase-trouser .product-showcase-frame-button {
+  position: absolute;
+  inset: 0;
+}

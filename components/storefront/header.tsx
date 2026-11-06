@@ -13,8 +13,6 @@ import { useHeaderScroll } from "../motion/use-header-scroll";
 
 const navigation = [
   { label: "Men", slug: "men", href: "/collections/men" },
-  { label: "Women", slug: "women", href: "/collections/women" },
-  { label: "Home", slug: "home", href: "/collections/home" },
   { label: "Pennicella", slug: "pennicella", href: "/collections/pennicella" },
   { label: "World of ARYO", slug: "house", href: "/about" },
 ];
@@ -54,7 +52,7 @@ function MenuColumns({ active, close }: { active: string; close: () => void }) {
         <span>
           {department?.label === "Home" ? "The Collection" : "Ready-to-wear"}
         </span>
-        {(department?.categories ?? departmentNavigation[1].categories).map(
+        {(department?.categories ?? departmentNavigation[0].categories).map(
           (c) => (
             <Link
               href={categoryHref(department?.slug ?? "men", c.slug)}

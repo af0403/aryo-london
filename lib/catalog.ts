@@ -30,71 +30,21 @@ const wardrobeCategories: readonly CatalogCategory[] = [
   {
     slug: "headwear",
     label: "Headwear",
-    description: "Beanies, caps, and seasonal forms.",
+    description: "The ARYO beanie collection.",
   },
-  {
-    slug: "scarves",
-    label: "Scarves & wraps",
-    description: "Silk, cashmere, and considered wraps.",
-  },
-  {
-    slug: "gloves",
-    label: "Gloves",
-    description: "Tactile leather and winter accessories.",
-  },
-  {
-    slug: "eyewear",
-    label: "Eyewear",
-    description: "Sculpted frames and everyday optical objects.",
-  },
+
 ];
 
 export const departmentNavigation: readonly DepartmentNavigation[] = [
-  {
-    slug: "women",
-    label: "Women",
-    eyebrow: "The wardrobe / Women",
-    description:
-      "A future ARYO wardrobe in development, considered through proportion, material, and movement.",
-    categories: wardrobeCategories,
-  },
   {
     slug: "men",
     label: "Men",
     eyebrow: "The wardrobe / Men",
     description:
-      "Pennicella, headwear, and material-led accessories for the everyday.",
+      "Pennicella and the ARYO beanie collection.",
     categories: wardrobeCategories,
   },
-  {
-    slug: "home",
-    label: "Home",
-    eyebrow: "The house / Home",
-    description:
-      "Tabletop, textiles, fragrance, and sculptural objects with presence.",
-    categories: [
-      {
-        slug: "tabletop",
-        label: "Tabletop",
-        description: "Objects for considered rituals and everyday use.",
-      },
-      {
-        slug: "textiles",
-        label: "Textiles",
-        description: "Soft objects, woven surfaces, and quiet warmth.",
-      },
-      {
-        slug: "fragrance",
-        label: "Fragrance",
-        description: "Atmospheric objects for the ARYO home.",
-      },
-      {
-        slug: "small-objects",
-        label: "Small objects",
-        description: "Sculptural details for the spaces around you.",
-      },
-    ],
-  },
+
 ] as const satisfies readonly DepartmentNavigation[];
 
 export const getDepartmentNavigation = (department: string) =>

@@ -1,5 +1,4 @@
 import Link from "next/link";
-import Image from "next/image";
 import { RevealScope } from "./motion/reveal-scope";
 
 export const HomeCarousel = () => (
@@ -20,31 +19,6 @@ export const HomeCarousel = () => (
       </div>
     </section>
     <RevealScope>
-      <section className="store-home-pair" aria-label="Explore ARYO">
-        <Link href="/collections/men">
-          <img
-            src="/assets/generated/aryo-campaign-noir.jpg"
-            alt="ARYO Pennicella Noir campaign"
-            loading="lazy"
-            data-reveal=""
-          />
-          <h2 data-reveal="copy">Shop Men</h2>
-        </Link>
-        <Link
-          href="/products/structure-jacket-ivory"
-          className="store-home-panel-light"
-        >
-          <Image
-            src="/assets/generated/product-refresh/stills/ivory-jacket-front.png"
-            alt="Ivory Pennicella Jacket against pale stone"
-            fill
-            sizes="(max-width: 820px) 100vw, 50vw"
-            quality={85}
-            data-reveal=""
-          />
-          <h2 data-reveal="copy">Pennicella in Ivory</h2>
-        </Link>
-      </section>
       <section className="store-home-feature">
         <Link href="/campaigns/pennicella">
           <img
@@ -64,21 +38,19 @@ export const HomeCarousel = () => (
           <span
             className="store-headwear-portrait"
             role="img"
-            aria-label="Model wearing the black Gozar beanie with blurred ARYO lettering"
+            aria-label="Model wearing the Gozar beanie in Noir with blurred ARYO lettering"
           />
-          <h2 data-reveal="copy">Explore Headwear</h2>
+          <h2 data-reveal="copy">Explore Beanies</h2>
         </Link>
-        <Link href="/pennicella-jacket">
-          <Image
-            src="/assets/generated/product-refresh/stills/noir-jacket-detail.png"
-            alt="Noir Pennicella Jacket fabric, collar and silver hardware detail"
-            fill
-            sizes="(max-width: 820px) 100vw, 50vw"
-            quality={85}
-            data-reveal=""
-          />
-          <h2 data-reveal="copy">The Pennicella Jacket</h2>
-        </Link>
+        <div className="store-linen-preview">
+          <p>Forthcoming</p>
+          <h2>The White Linen Set</h2>
+          <p>
+            A formal set in white linen. Double layers, revealed through loose
+            stitching. Fur-trimmed pockets with embroidery.
+          </p>
+          <p>Currently in sampling. Release details and photography to follow.</p>
+        </div>
       </section>
     </RevealScope>
   </>

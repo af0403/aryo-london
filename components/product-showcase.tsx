@@ -68,6 +68,8 @@ export const ProductShowcase = ({ product }: { product: Product }) => {
   const lightboxStageRef = useRef<HTMLDivElement>(null);
   const panStartRef = useRef<PanStart | null>(null);
   const pinchStartRef = useRef<PinchStart | null>(null);
+  const fitted =
+    product.category === "Trouser" || product.subcategory === "headwear";
   const media = gallery[activeIndex] ?? {
     type: "image" as const,
     src: product.leadImage,
@@ -212,7 +214,7 @@ export const ProductShowcase = ({ product }: { product: Product }) => {
 
   return (
     <section
-      className="product-showcase"
+      className={`product-showcase${fitted ? " product-showcase-trouser" : ""}`}
       aria-label={`${product.name} gallery`}
       tabIndex={0}
       onKeyDown={(event) => {
@@ -241,7 +243,12 @@ export const ProductShowcase = ({ product }: { product: Product }) => {
         swipeRef.current = null;
       }}
     >
-      <figure className="product-showcase-frame">
+      <figure
+        className="product-showcase-frame"
+        style={
+          fitted ? { aspectRatio: media.aspectRatio ?? "1000 / 1570" } : undefined
+        }
+      >
         <button
           className="product-showcase-frame-button"
           type="button"
@@ -288,7 +295,7 @@ export const ProductShowcase = ({ product }: { product: Product }) => {
                   loading={index === 0 ? undefined : "eager"}
                   sizes="(max-width: 820px) 100vw, 50vw"
                   style={{
-                    objectFit: "cover",
+                    objectFit: fitted ? (item.fit ?? "contain") : "cover",
                     objectPosition:
                       item.position ?? product.leadImagePosition ?? "center",
                   }}

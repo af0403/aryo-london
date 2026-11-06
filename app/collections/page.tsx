@@ -5,31 +5,15 @@ import { createPageMetadata } from "../../lib/seo";
 
 export const metadata = createPageMetadata({
   title: "Collections",
-  description: "Explore the ARYO house by wardrobe, accessories, and home.",
+  description: "Explore Pennicella and the ARYO beanie collection.",
   path: "/collections",
   image: "/assets/generated/aryo-drop01-products.png",
   imageAlt: "ARYO Pennicella collection arranged in an editorial still life",
 });
 
 const departments = [
-  {
-    href: "/collections/women",
-    label: "Women",
-    image: "/assets/concepts/generated/personal-accessories/silk-headscarf.png",
-    alt: "ARYO silk headscarf in a Persian-inspired black and gold pattern",
-  },
-  {
-    href: "/collections/men",
-    label: "Men",
-    image: "/assets/generated/aryo-campaign-noir.jpg",
-    alt: "ARYO Pennicella set styled in a quiet editorial portrait",
-  },
-  {
-    href: "/collections/home",
-    label: "Home",
-    image: "/assets/concepts/generated/home/marble-chess-set.png",
-    alt: "ARYO marble chess set in black and ivory stone",
-  },
+  { href: "/collections/pennicella", label: "Pennicella", image: "/assets/generated/aryo-campaign-noir.jpg", alt: "ARYO Pennicella Noir campaign" },
+  { href: "/collections/men/headwear", label: "Beanies", image: "/assets/beanies/nur-signature-noir/editorial-approved-model.png", alt: "Nūr Signature Beanie Noir" },
 ];
 
 export default function CollectionsPage() {
