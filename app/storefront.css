@@ -2439,6 +2439,9 @@ body:has(.home-main) .house-header.has-menu {
   padding: 65px 30px;
 }
 .house-panel-copy .house-intro {
+  width: auto;
+  max-width: none;
+  margin-inline: 0;
   padding: 0;
   margin-bottom: 45px;
 }

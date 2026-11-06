@@ -15,9 +15,6 @@ const houseSections = [
     label: "Founder",
     title: "The house carries its founder's name.",
     text: "ARYO is Aryo's own name, written آریو in Persian. He started the house in London to make clothing at the level of the houses he admired, built here and made to order. The heritage is carried in the name, and in every decision that follows.",
-    image: "/assets/generated/product-refresh/stills/noir-jacket-open-label.png",
-    alt: "The Noir Pennicella Jacket open to show the lining and the ARYO neck label",
-    position: "center 14%",
   },
   {
     id: "savoir-faire",
@@ -50,17 +47,11 @@ export default function AboutPage() {
       <div className="house-stack">
         {houseSections.map((section, index) => (
           <section className="house-panel" id={section.id} key={section.id}>
-            <figure className="house-panel-media">
-              <img
-                src={section.image}
-                alt={section.alt}
-                style={
-                  "position" in section
-                    ? { objectPosition: section.position }
-                    : undefined
-                }
-              />
-            </figure>
+            {"image" in section ? (
+              <figure className="house-panel-media">
+                <img src={section.image} alt={section.alt} />
+              </figure>
+            ) : null}
             <div className="house-panel-copy">
               {index === 0 ? (
                 <div className="house-intro">
