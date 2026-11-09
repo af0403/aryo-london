@@ -5777,3 +5777,39 @@ body:has(.home-main) .site-header:focus-within {
     padding: 2rem 1.25rem 3rem;
   }
 }
+
+.cookie-banner {
+  position: fixed;
+  left: 1rem;
+  right: 1rem;
+  bottom: calc(1rem + var(--safe-area-bottom));
+  z-index: 90;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem;
+  max-width: 44rem;
+  margin: 0 auto;
+  padding: 1rem 1.25rem;
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--line-strong);
+}
+.cookie-banner p { margin: 0; color: var(--text-soft); font-size: 0.875rem; line-height: 1.5; }
+.cookie-banner a { text-decoration: underline; }
+.cookie-actions { display: flex; flex: none; gap: 0.5rem; }
+.cookie-choice {
+  min-width: 6rem;
+  min-height: 44px;
+  padding: 0 1rem;
+  background: var(--panel);
+  color: var(--text-inverse);
+  border: 0;
+  font: inherit;
+  cursor: pointer;
+}
+.cookie-settings { padding: 0; border: 0; background: none; color: inherit; font: inherit; text-decoration: underline; cursor: pointer; }
+@media (max-width: 560px) {
+  .cookie-banner { flex-direction: column; align-items: stretch; }
+  .cookie-choice { flex: 1; }
+}

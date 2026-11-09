@@ -43,7 +43,8 @@ export default function PrivacyPage() {
           <p>
             We do not sell your personal data. We share data only with service
             providers necessary to fulfil your order (e.g. payment processors,
-            delivery partners).
+            delivery partners) and, if you accept analytics cookies, with
+            Google, which provides our site analytics.
           </p>
         </div>
         <div className="info-card">
@@ -57,8 +58,16 @@ export default function PrivacyPage() {
         <div className="info-card">
           <strong className="client-services-head">Cookies</strong>
           <p>
-            We use essential cookies to operate this site. No third-party
-            advertising cookies are used without your explicit consent.
+            Essential cookies and browser storage keep this site working. They
+            hold your bag, saved pieces and recently viewed items on your
+            device, and our payment provider uses them at checkout to prevent
+            fraud. With your acceptance, Google Analytics sets cookies that
+            count visits, pages viewed, how you arrived, your type of device,
+            your approximate location and how pages are used, such as
+            scrolling and links followed. Two actions are also counted: adding
+            to the bag and going to checkout. Reject them and they are not
+            set. Change your choice at any time under Cookie settings, at the
+            foot of every page. No advertising cookies are used.
           </p>
         </div>
       </div>

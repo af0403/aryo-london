@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { FooterSignupForm } from "../footer-signup-form";
+import { CookieSettings } from "../cookie-banner";
 const columns = [
   {
     title: "About ARYO",
@@ -58,6 +59,7 @@ export function StoreFooter() {
       <div className="house-footer-base">
         <span>© {new Date().getFullYear()} ARYO London</span>
         <span>United Kingdom / English / GBP £</span>
+        <CookieSettings />
       </div>
     </footer>
   );

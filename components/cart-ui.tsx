@@ -8,6 +8,7 @@ import { formatPrice } from "../lib/format";
 import { getProduct } from "../lib/products";
 import { useCart } from "./cart-provider";
 import { BagIcon } from "./site-icons";
+import { track } from "../lib/consent";
 
 export const CartUI = () => {
   const {
@@ -59,7 +60,14 @@ export const CartUI = () => {
               <p>
                 Complimentary worldwide shipping. International duties may apply.
               </p>
-              <Link className="store-button" href="/checkout" onClick={close}>
+              <Link
+                className="store-button"
+                href="/checkout"
+                onClick={() => {
+                  track("checkout");
+                  close();
+                }}
+              >
                 Checkout
               </Link>
               <button className="store-reset" onClick={close}>

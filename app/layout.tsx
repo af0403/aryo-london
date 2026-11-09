@@ -8,6 +8,7 @@ import { StoreHeader } from "../components/storefront/header";
 import { StoreFooter } from "../components/storefront/footer";
 import { StorefrontProvider } from "../components/storefront/store-provider";
 import { SiteChatButton } from "../components/site-chat-button";
+import { CookieBanner } from "../components/cookie-banner";
 import {
   DEFAULT_SITE_DESCRIPTION,
   INSTAGRAM_URL,
@@ -123,6 +124,7 @@ export default function RootLayout({
               {children}
             </div>
             <SiteChatButton />
+            <CookieBanner />
             <StoreFooter />
           </StorefrontProvider>
         </CartProvider>

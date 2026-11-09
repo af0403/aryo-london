@@ -11,6 +11,7 @@ import {
 } from "react";
 
 import { getProduct, getSelectedVariant, type Size } from "../lib/products";
+import { track } from "../lib/consent";
 
 type CartItem = {
   slug: string;
@@ -81,6 +82,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
   // ── Cart mutations ───────────────────────────────────────────────────────
   const addItem = ({ slug, size }: { slug: string; size: Size }) => {
+    track("add_to_bag", { item_id: slug, size });
     setItems((current) => {
       const product = getProduct(slug);
       if (
