@@ -5783,7 +5783,8 @@ body:has(.home-main) .site-header:focus-within {
   left: 1rem;
   right: 1rem;
   bottom: calc(1rem + var(--safe-area-bottom));
-  z-index: 90;
+  /* Above the chat button (95) so it never covers Accept or Reject. */
+  z-index: 96;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -5808,7 +5809,7 @@ body:has(.home-main) .site-header:focus-within {
   font: inherit;
   cursor: pointer;
 }
-.cookie-settings { padding: 0; border: 0; background: none; color: inherit; font: inherit; text-decoration: underline; cursor: pointer; }
+.cookie-settings { align-self: flex-start; padding: 0; border: 0; text-align: left; background: none; color: inherit; font: inherit; text-decoration: underline; cursor: pointer; }
 @media (max-width: 560px) {
   .cookie-banner { flex-direction: column; align-items: stretch; }
   .cookie-choice { flex: 1; }
