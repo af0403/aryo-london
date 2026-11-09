@@ -74,3 +74,24 @@ export function track(name: string, params: Record<string, unknown> = {}) {
   const gtag = (window as unknown as Win).gtag;
   if (typeof gtag === "function") gtag("event", name, params);
 }
+
+// GA4's standard ecommerce shape, so its built-in reports pick these up.
+// Prices in lib/products are whole pounds.
+export type BagLine = { slug: string; name: string; size: string; price: number; quantity?: number };
+
+const gaItem = (line: BagLine) => ({
+  item_id: line.slug,
+  item_name: line.name,
+  item_variant: line.size,
+  price: line.price,
+  quantity: line.quantity ?? 1,
+});
+
+export function addToCartParams(line: BagLine) {
+  return { currency: "GBP", value: line.price, items: [gaItem({ ...line, quantity: 1 })] };
+}
+
+export function beginCheckoutParams(lines: BagLine[]) {
+  const items = lines.map(gaItem);
+  return { currency: "GBP", value: items.reduce((sum, i) => sum + i.price * i.quantity, 0), items };
+}

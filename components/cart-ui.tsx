@@ -8,7 +8,7 @@ import { formatPrice } from "../lib/format";
 import { getProduct } from "../lib/products";
 import { useCart } from "./cart-provider";
 import { BagIcon } from "./site-icons";
-import { track } from "../lib/consent";
+import { beginCheckoutParams, track } from "../lib/consent";
 
 export const CartUI = () => {
   const {
@@ -64,7 +64,18 @@ export const CartUI = () => {
                 className="store-button"
                 href="/checkout"
                 onClick={() => {
-                  track("checkout");
+                  track(
+                    "begin_checkout",
+                    beginCheckoutParams(
+                      lineItems.map((line) => ({
+                        slug: line.slug,
+                        name: line.product.name,
+                        size: line.size,
+                        price: line.price,
+                        quantity: line.quantity,
+                      })),
+                    ),
+                  );
                   close();
                 }}
               >
