@@ -64,7 +64,8 @@ export default function PrivacyPage() {
             fraud. With your acceptance, Google Analytics sets cookies that
             count visits, pages viewed, how you arrived, your type of device,
             your approximate location and how pages are used, such as
-            scrolling and links followed. Two actions are also counted: adding
+            scrolling, links followed, use of forms, site searches, video
+            plays and file downloads. Two actions are also counted: adding
             to the bag and going to checkout. Reject them and they are not
             set. Change your choice at any time under Cookie settings, at the
             foot of every page. No advertising cookies are used.
